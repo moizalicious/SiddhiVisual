@@ -55,3 +55,49 @@
     /*padding: 0.5em;*/
     font-size: 0.9em;
 }
+.connectorInExecutionPlan, .connectorInPublisher{
+    float: left;
+    margin-top: -37%;
+    margin-left: -8px;
+}
+.connectorOutExecutionPlan, .connectorOutReceiver{
+    float: right;
+    margin-top: -37%;
+    margin-right: -8px;
+}
+.element-prop-icon{
+    float:right;
+    width:26px;
+    height:26px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    margin-top:-116px;
+    margin-right:22px;
+    cursor:pointer;
+    color: red;
+    border-radius: 40px;
+}
+.element-conn-icon{
+    float:right;
+    width:26px;
+    height:26px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    margin-top:-116px;
+    margin-right:-3px;
+    cursor:pointer;
+    color: red;
+    border-radius: 40px;
+}
+.element-close-icon{
+    float:right;
+    width:26px;
+    height:26px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    margin-top:-116px;
+    margin-right:-30px;
+    cursor:pointer;
+    color: red;
+    border-radius: 40px;
+}

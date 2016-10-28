@@ -2035,6 +2035,7 @@
 
         jsPlumb.makeSource(connection2, {
             // parent:finalElement,
+            deleteEndpointsOnDetach : true,
             anchor: 'Continuous'
         });
 
