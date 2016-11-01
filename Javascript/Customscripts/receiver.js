@@ -14,7 +14,7 @@ function dropReceiver(newAgent, i,topP,left,asName)
     $(droppedElement).draggable({containment: "container"});
 
     var finalElement =  newAgent;
-    var connectionOut = $('<div class="connectorOutReceiver">').attr('id', i + '-out').addClass('connection');
+    var connectionOut = $('<div class="connectorOutReceiver">').attr('id', i + '-out');
 
     finalElement.css({
         'top': topP,
@@ -28,19 +28,20 @@ function dropReceiver(newAgent, i,topP,left,asName)
         containment: 'parent'
     });
 
-    // jsPlumb.addEndpoint(connectionOut,{
-    //     isSource : true,
-    //     isTarget : true,
-    //     endpoint : "Dot",
-    //     anchors:["Right", "Continuous"],
-    //     uniqueEndpoint :true,
-    //     maxConnection : 1
-    // });
-    jsPlumb.makeSource(connectionOut,{
-        endPoint : "Dot",
-            anchor :"Continuous",
-            connectionsDetachable:true,
-            uniqueEndpoint :true,
-            maxConnection : 1
+    jsPlumb.addEndpoint(connectionOut,{
+        isSource : true,
+        isTarget : true,
+        endpoint : "Dot",
+        anchor : "Right",
+        uniqueEndpoint :true,
+        maxConnection : 1,
+        deleteEndpointsOnDetach:false
     });
+    // jsPlumb.makeSource(connectionOut,{
+    //     endPoint : "Dot",
+    //         anchor :"Continuous",
+    //         connectionsDetachable:true,
+    //         uniqueEndpoint :true,
+    //         maxConnection : 1
+    // });
 }

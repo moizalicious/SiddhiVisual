@@ -15,9 +15,8 @@ function dropExecutionPlan(newAgent, i,topP,left,asName)
 
     var finalElement =  newAgent;
 
-    var connectionIn = $('<div class="connectorInExecutionPlan">').attr('id', i + '-in').addClass('connection');
-    var connectionOut = $('<div class="connectorOutExecutionPlan">').attr('id', i + '-out').addClass('connection');
-
+    var connectionIn = $('<div class="connectorInExecutionPlan">').attr('id', i + '-in');
+    var connectionOut = $('<div class="connectorOutExecutionPlan">').attr('id', i + '-out');
     finalElement.css({
         'top': topP,
         'left': left
@@ -32,16 +31,30 @@ function dropExecutionPlan(newAgent, i,topP,left,asName)
         containment: 'parent'
     });
 
-    jsPlumb.makeTarget(connectionIn,{
-        anchor :"Continuous",
-        uniqueEndpoint : true,
+    // jsPlumb.makeTarget(connectionIn,{
+    //     anchor :"Continuous",
+    //     uniqueEndpoint : true,
+    //     maxConnections : -1
+    //
+    // });
+    //
+    // jsPlumb.makeSource(connectionOut,{
+    //     anchor : "Continuous",
+    //     uniqueEndpoint : true,
+    //     maxConnections : -1
+    // });
+    jsPlumb.addEndpoint(connectionIn,{
+        isTarget : true,
+        isSource : true,
+        endpoint : "Dot",
+        anchor : 'Left',
         maxConnections : -1
-
     });
-
-    jsPlumb.makeSource(connectionOut,{
-        anchor : "Continuous",
-        uniqueEndpoint : true,
+    jsPlumb.addEndpoint(connectionOut,{
+        isTarget : true,
+        isSource : true,
+        endpoint : "Dot",
+        anchor : 'Right',
         maxConnections : -1
     });
 

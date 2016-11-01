@@ -14,7 +14,7 @@ function dropPublisher(newAgent, i, topP,left,asName)
     $(droppedElement).draggable({containment: "container"});
 
     var finalElement =  newAgent;
-    var connectionIn = $('<div class="connectorInPublisher">').attr('id', i + '-in').addClass('connection');
+    var connectionIn = $('<div class="connectorInPublisher">').attr('id', i + '-in');
 
     finalElement.css({
         'top': topP,
@@ -28,21 +28,20 @@ function dropPublisher(newAgent, i, topP,left,asName)
         containment : 'parent'
     });
 
-    // jsPlumb.addEndpoint(connectionIn,{
-    //     isTarget : true,
-    //     isSource : true,
-    //     uuid : "134054",
-    //     maxConnections :1,
-    //     endpoint : "Dot",
-    //     anchors : ["Left", "Continuous"],
-    //     uniqueEndpoint : true,
-    //     maxConnection : 1
-    // });
-
-    jsPlumb.makeTarget(connectionIn, {
-        anchor: 'Continuous',
-        maxConnections:1
+    jsPlumb.addEndpoint(connectionIn,{
+        isTarget : true,
+        isSource : true,
+        endpoint : "Dot",
+        anchor : 'Left',
+        uniqueEndpoint : true,
+        maxConnection : 1,
+        deleteEndpointsOnDetach: false
     });
+
+    // jsPlumb.makeTarget(connectionIn, {
+    //     anchor: 'Continuous',
+    //     maxConnections:1
+    // });
 
 
 }

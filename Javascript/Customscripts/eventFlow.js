@@ -96,7 +96,7 @@ jsPlumb.ready(function () {
         }
     });
 
-    jsPlumb.bind('connection', function(connection) {
+    jsPlumb.bind('beforeDrop', function(connection) {
         var targetId = connection.targetId[0];
         var targetClass = $('#'+targetId).attr('class');
         console.log( "Target: "+targetClass);
@@ -104,9 +104,44 @@ jsPlumb.ready(function () {
         var sourceId = connection.sourceId[0];
         var sourceClass = $('#'+sourceId).attr('class');
         console.log( "Source: "+sourceClass);
-
-        jsPlumb.detach(connection);
-
+        var validity = true;
+        if (sourceClass == "streamdrop ui-draggable"){
+            if(connection.sourceId[2]=='I'){
+                if (!(targetClass == "receiver-drop ui-draggable" || targetClass == "execution-plan-drop ui-draggable")){
+                    validity= false;
+                }
+            }
+            if(connection.sourceId[2]=='O') {
+                if (!(targetClass == "publisher-drop ui-draggable" || targetClass == "execution-plan-drop ui-draggable")) {
+                    validity= false;
+                }
+            }
+        }
+        else if (sourceClass == "receiver-drop ui-draggable"){
+            if( targetClass != "streamdrop ui-draggable"){
+                validity= false;
+            }
+            else if (targetClass == "streamdrop ui-draggable" && connection.targetId[2]=='O'){
+                validity= false;
+            }
+        }
+        else if (sourceClass == "publisher-drop ui-draggable"){
+            if (targetClass != "streamdrop ui-draggable"){
+                validity= false;
+            }
+            else if (targetClass == "streamdrop ui-draggable" && connection.targetId[2]=='I'){
+                validity= false;
+            }
+        }
+        else if (sourceClass == "execution-plan-drop ui-draggable"){
+            if (targetClass != "streamdrop ui-draggable"){
+                validity= false;
+            }
+        }
+        if (!validity){
+            alert("Invalid connection");
+        }
+        return validity;
     });
 
     //Display the model in Json format in the text area
@@ -405,7 +440,7 @@ jsPlumb.ready(function () {
 
         });
         //Remove Element Icon for the stream elements
-        newAgent.on('click', '.boxclose', function (e) {
+        newAgent.on('click', '.boxclose', function () {
             jsPlumb.remove(newAgent);
             // jsPlumb.detachAllConnections(newAgent.attr('id'));
             // jsPlumb.removeAllEndpoints($(this));
