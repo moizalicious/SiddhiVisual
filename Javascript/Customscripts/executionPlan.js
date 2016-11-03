@@ -1,5 +1,10 @@
 function dropExecutionPlan(newAgent, i,topP,left,asName)
 {
+    var executionModel = new app.Receiver;
+    executionModel.set('id' , i);
+    executionModel.set('name' , 'ExecutionPlan');
+    executionPlanList.add(executionModel);
+
     var planNode = document.createElement("div");
     planNode.id = i+"-planNode";
     planNode.className = "planNameNode";
@@ -7,7 +12,7 @@ function dropExecutionPlan(newAgent, i,topP,left,asName)
     planTextNode.id = i+"-planTextNode";
     planNode.appendChild(planTextNode);
 
-    var propertiesIcon = $('<a onclick=""><b><img src="../Images/settings.png" class="element-prop-icon"></b></a> ').attr('id', (i+('-prop')));
+    var propertiesIcon = $('<a  class="element-prop-icon"><b><img src="../Images/settings.png"</b></a> ').attr('id', (i+('-prop')));
     var conIcon = $('<img src="../Images/connection.png" onclick="" class="element-conn-icon"></b></a> ').attr('id', (i+'vis'));
     newAgent.append(planNode).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(propertiesIcon);
 
@@ -15,8 +20,8 @@ function dropExecutionPlan(newAgent, i,topP,left,asName)
 
     var finalElement =  newAgent;
 
-    var connectionIn = $('<div class="connectorInExecutionPlan">').attr('id', i + '-in');
-    var connectionOut = $('<div class="connectorOutExecutionPlan">').attr('id', i + '-out');
+    var connectionIn = $('<div class="connectorInExecutionPlan">').attr('id', i + '-In');
+    var connectionOut = $('<div class="connectorOutExecutionPlan">').attr('id', i + '-Out');
     finalElement.css({
         'top': topP,
         'left': left

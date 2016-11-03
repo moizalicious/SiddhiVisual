@@ -40,6 +40,10 @@ jsPlumb.ready(function () {
             var newAgent;
             //If the dropped Element is a Stream then->
             if (dropElem == "stream ui-draggable") {
+                var streamModel = new app.Stream;
+                streamModel.set('name' , 'streamX');
+                streamModel.set('id' , i);
+                streamList.add(streamModel);
                 newAgent = $('<div>').attr('id', i).addClass('streamdrop');
 
                 //The container and the toolbox are disabled to prevent the user from dropping any elements before initializing a Stream Element
@@ -77,6 +81,7 @@ jsPlumb.ready(function () {
                 droptype = "squerydrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropPublisher(newAgent, i,mouseTop, mouseLeft, "Publisher");
+
                 i++;
                 finalElementCount = i;
             }
@@ -91,57 +96,151 @@ jsPlumb.ready(function () {
                 i++;
                 finalElementCount = i;
             }
-
             closeButtonEvent(newAgent);
+            settingsButtonEvent(newAgent)
         }
     });
 
+    //restrict the invalid connections considering the source element and target.
     jsPlumb.bind('beforeDrop', function(connection) {
         var targetId = connection.targetId[0];
         var targetClass = $('#'+targetId).attr('class');
-        console.log( "Target: "+targetClass);
-
         var sourceId = connection.sourceId[0];
         var sourceClass = $('#'+sourceId).attr('class');
-        console.log( "Source: "+sourceClass);
         var validity = true;
-        if (sourceClass == "streamdrop ui-draggable"){
+        if (sourceClass == 'streamdrop ui-draggable'){
             if(connection.sourceId[2]=='I'){
-                if (!(targetClass == "receiver-drop ui-draggable" || targetClass == "execution-plan-drop ui-draggable")){
+                if (!(targetClass == 'receiver-drop ui-draggable' || targetClass == 'execution-plan-drop ui-draggable')){
                     validity= false;
                 }
             }
             if(connection.sourceId[2]=='O') {
-                if (!(targetClass == "publisher-drop ui-draggable" || targetClass == "execution-plan-drop ui-draggable")) {
+                if (!(targetClass == 'publisher-drop ui-draggable' || targetClass == 'execution-plan-drop ui-draggable')) {
                     validity= false;
                 }
             }
         }
-        else if (sourceClass == "receiver-drop ui-draggable"){
-            if( targetClass != "streamdrop ui-draggable"){
+        else if (sourceClass == 'receiver-drop ui-draggable'){
+            if( targetClass != 'streamdrop ui-draggable'){
                 validity= false;
             }
-            else if (targetClass == "streamdrop ui-draggable" && connection.targetId[2]=='O'){
-                validity= false;
-            }
-        }
-        else if (sourceClass == "publisher-drop ui-draggable"){
-            if (targetClass != "streamdrop ui-draggable"){
-                validity= false;
-            }
-            else if (targetClass == "streamdrop ui-draggable" && connection.targetId[2]=='I'){
+            else if (targetClass == 'streamdrop ui-draggable' && connection.targetId[2]=='O'){
                 validity= false;
             }
         }
-        else if (sourceClass == "execution-plan-drop ui-draggable"){
-            if (targetClass != "streamdrop ui-draggable"){
+        else if (sourceClass == 'publisher-drop ui-draggable'){
+            if (targetClass != 'streamdrop ui-draggable'){
+                validity= false;
+            }
+            else if (targetClass == 'streamdrop ui-draggable' && connection.targetId[2]=='I'){
+                validity= false;
+            }
+        }
+        else if (sourceClass == 'execution-plan-drop ui-draggable'){
+            if (targetClass != 'streamdrop ui-draggable'){
                 validity= false;
             }
         }
         if (!validity){
-            alert("Invalid connection");
+            alert('Invalid connection');
         }
         return validity;
+    });
+
+    // Update the model when a connection is established
+    jsPlumb.bind('connection' , function(connection){
+        var targetId = connection.targetId[0];
+        var targetClass = $('#'+targetId).attr('class');
+        var sourceId = connection.sourceId[0];
+        var sourceClass = $('#'+sourceId).attr('class');
+        var model;
+        if( targetClass == 'receiver-drop ui-draggable'){
+            model = receiverList.get(targetId);
+            model.set('stream' , sourceId);
+        }
+        else if ( sourceClass == 'receiver-drop ui-draggable'){
+            model = receiverList.get(sourceId);
+            model.set('stream' , targetId);
+        }
+        if( targetClass == 'publisher-drop ui-draggable'){
+            model = publisherList.get(targetId);
+            model.set('stream' , sourceId);
+        }
+        else if ( sourceClass == 'publisher-drop ui-draggable'){
+            model = publisherList.get(sourceId);
+            model.set('stream' , targetId);
+        }
+
+        if (targetClass == 'execution-plan-drop ui-draggable'){
+            model = executionPlanList.get(targetId);
+            var streams;
+            if(connection.targetId[2]=='I'){
+                streams = model.get('inStream');
+                if (streams == undefined){
+                    streams = [ sourceId]
+                }
+                else streams.push(sourceId);
+                model.set('inStream', streams);
+            }
+            else if(connection.targetId[2]=='O') {
+                streams = model.get('outStream');
+                if (streams== undefined){
+                    streams = [ sourceId]
+                }
+                else streams.push(sourceId);
+                model.set('outStream', streams)
+            }
+        }
+        else if (sourceClass =='execution-plan-drop ui-draggable' ){
+            model = executionPlanList.get(sourceId);
+            if(connection.sourceId[2]=='I'){
+                streams = model.get('inStream');
+                if (streams== undefined){
+                    streams = [ targetId]
+                }
+                else streams.push(targetId);
+                model.set('inStream', streams);
+                }
+            else if(connection.sourceId[2]=='O') {
+                streams = model.get('outStream');
+                if (streams== undefined){
+                    streams = [ targetId]
+                }
+                else streams.push(targetId);
+                model.set('outStream', streams)
+            }
+        }
+    });
+
+    jsPlumb.bind('connectionDetached', function (connection) {
+        var targetId = connection.targetId[0];
+        var targetClass = $('#'+targetId).attr('class');
+        var sourceId = connection.sourceId[0];
+        var sourceClass = $('#'+sourceId).attr('class');
+        if( targetClass == 'receiver-drop ui-draggable'){
+            var model = receiverList.get(targetId);
+            if (model != undefined){
+                model.set('stream' , '');
+            }
+        }
+        else if ( sourceClass == 'receiver-drop ui-draggable'){
+            var model = receiverList.get(sourceId);
+            if (model != undefined){
+                model.set('stream' , '');
+            }
+        }
+        if( targetClass == 'publisher-drop ui-draggable'){
+            var model = publisherList.get(targetId);
+            if (model != undefined){
+                model.set('stream' , '');
+            }
+        }
+        else if ( sourceClass == 'publisher-drop ui-draggable'){
+            var model = publisherList.get(sourceId);
+            if (model != undefined){
+                model.set('stream' , '');
+            }
+        }
     });
 
     //Display the model in Json format in the text area
@@ -320,7 +419,6 @@ jsPlumb.ready(function () {
         var elements = flowChart.node;
         var connections = flowChart.connections;
         $.each(elements , function (index,element) {
-            console.log(element);
             var id = element.id;
             var elementType = element.class;
             var kind = element.kind;
@@ -332,6 +430,12 @@ jsPlumb.ready(function () {
             if (id != null && id != "" && id != undefined) {
                 var newAgent;
                 if (elementType == "streamdrop ui-draggable") {
+                    //create a model for the stream
+                    var streamModel = new app.Stream;
+                    streamModel.set('name' , 'streamX');
+                    streamModel.set('id' , i);
+                    streamList.add(streamModel);
+
                     var node = document.createElement("div");
                     node.id = id + "-nodeInitial";
                     node.className = "streamNameNode";
@@ -353,6 +457,7 @@ jsPlumb.ready(function () {
                         newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
                         dropCompleteElement(newAgent, id, e, kind, top, left);
                         closeButtonEvent(newAgent);
+                        settingsButtonEvent(newAgent);
                     }
                     else if (kind == "export") {
 
@@ -367,6 +472,7 @@ jsPlumb.ready(function () {
                         newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
                         dropCompleteElement(newAgent, id, e, kind, top, left);
                         closeButtonEvent(newAgent);
+                        settingsButtonEvent(newAgent);
 
                     }
                     else if (kind == "defined") {
@@ -393,6 +499,7 @@ jsPlumb.ready(function () {
                         newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
                         dropCompleteElement(newAgent, id, e, kind, top, left);
                         closeButtonEvent(newAgent);
+                        settingsButtonEvent(newAgent);
                     }
                 }
 
@@ -400,18 +507,21 @@ jsPlumb.ready(function () {
                     newAgent = $('<div>').attr('id', id).addClass('receiver-drop');
                     dropReceiver(newAgent, id, top, left, "Receiver");
                     closeButtonEvent(newAgent);
+                    settingsButtonEvent(newAgent);
                 }
 
                 else if (elementType == "publisher-drop ui-draggable") {
                     newAgent = $('<div>').attr('id', id).addClass('publisher-drop');
                     dropPublisher(newAgent, id, top, left, "Publisher");
                     closeButtonEvent(newAgent);
+                    settingsButtonEvent(newAgent);
                 }
 
                 else if (elementType == "execution-plan-drop ui-draggable") {
                     newAgent = $('<div>').attr('id', id).addClass('execution-plan-drop');
                     dropExecutionPlan(newAgent, id, top, left, "Plan");
                     closeButtonEvent(newAgent);
+                    settingsButtonEvent(newAgent);
                 }
             }
         i = parseInt(id)+1;
@@ -431,22 +541,53 @@ jsPlumb.ready(function () {
     function closeButtonEvent(newAgent) {
         //Remove Element Icon for the stream elements
         newAgent.on('click', '.element-close-icon', function () {
-            jsPlumb.remove(newAgent);
-            // jsPlumb.detachAllConnections(newAgent.attr('id'));
-            // jsPlumb.deleteEndpoint(newAgent.attr('id')+'-in');
-            // jsPlumb.deleteEndpoint(newAgent.attr('id')+'-out');
-            // jsPlumb.removeAllEndpoints($(this));
-            // jsPlumb.detach($(this));
+            if (newAgent.attr('class') == 'receiver-drop ui-draggable'){
+                receiverList.remove([{ id : newAgent.attr('id')}]);
+            }
+            else if (newAgent.attr('class') == 'publisher-drop ui-draggable'){
+                publisherList.remove([{ id : newAgent.attr('id')}]);
+            }
+            else if (newAgent.attr('class') == 'execution-plan-drop ui-draggable'){
+                executionPlanList.remove([{ id : newAgent.attr('id')}]);
+            }
 
+            jsPlumb.remove(newAgent);
         });
         //Remove Element Icon for the stream elements
         newAgent.on('click', '.boxclose', function () {
+            if (newAgent.attr('class') == 'streamdrop ui-draggable'){
+                streamList.remove([{ id : newAgent.attr('id')}]);
+            }
             jsPlumb.remove(newAgent);
-            // jsPlumb.detachAllConnections(newAgent.attr('id'));
-            // jsPlumb.removeAllEndpoints($(this));
-            // jsPlumb.detach($(this));
-            // $(newAgent).remove();
         });
+    }
+
+    function settingsButtonEvent(newAgent) {
+            newAgent.on('click', '.element-prop-icon', function () {
+                var clickedModel;
+                var streamConnected;
+                if (newAgent.attr('class') == 'receiver-drop ui-draggable'){
+                    clickedModel = receiverList.get(newAgent.attr('id'));
+                    alert( 'Name : ' + clickedModel.get('name')+ '\n'+
+                        'Element ID : ' + clickedModel.get('id') + '\n'+
+                        'Stream connected : ' + clickedModel.get('stream'));
+                }
+                else if (newAgent.attr('class') == 'publisher-drop ui-draggable'){
+                    clickedModel = publisherList.get(newAgent.attr('id'));
+                    alert( 'Name : ' + clickedModel.get('name')+ '\n'+
+                        'Element ID : ' + clickedModel.get('id') + '\n'+
+                        'Stream connected : ' + clickedModel.get('stream'));
+                }
+                else if (newAgent.attr('class') == 'execution-plan-drop ui-draggable'){
+                    clickedModel = executionPlanList.get(newAgent.attr('id'));
+                    alert( 'Name : ' + clickedModel.get('name')+ '\n'+
+                        'Element ID : ' + clickedModel.get('id') + '\n'+
+                        'Stream connected IN : ' + clickedModel.get('inStream')+ '\n'+
+                        'Stream connected OUT : ' + clickedModel.get('outStream'));
+                }
+
+
+            });
     }
 
 

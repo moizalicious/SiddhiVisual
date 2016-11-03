@@ -1,5 +1,10 @@
 function dropReceiver(newAgent, i,topP,left,asName)
 {
+    var receiverModel = new app.Receiver;
+    receiverModel.set('id' , i);
+    receiverModel.set('name' , 'ReceiverY');
+    receiverList.add(receiverModel);
+
     var receiver = document.createElement("div");
     receiver.id = i+"-receiver";
     receiver.className = "receiverNameNode";
@@ -7,14 +12,14 @@ function dropReceiver(newAgent, i,topP,left,asName)
     receiverTextNode.id = i+"-receiverText";
     receiver.appendChild(receiverTextNode);
 
-    var propertiesIcon = $('<a onclick="getConnectionDetailsForWindow(this)"><b><img src="../Images/settings.png" class="element-prop-icon"></b></a> ').attr('id', (i+('-prop')));
-    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon"></b></a> ').attr('id', (i+'vis'));
-    newAgent.append(receiver).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(propertiesIcon);
+    var propertiesIcon = $('<div class="element-prop-icon"><b><img src="../Images/settings.png" ></b></div> ').attr('id', (i+('-prop')));
+    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon"></b></div> ').attr('id', (i+'vis'));
+    newAgent.append(receiver).append('<div class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></div> ').append(conIcon).append(propertiesIcon);
 
     $(droppedElement).draggable({containment: "container"});
 
     var finalElement =  newAgent;
-    var connectionOut = $('<div class="connectorOutReceiver">').attr('id', i + '-out');
+    var connectionOut = $('<div class="connectorOutReceiver">').attr('id', i + '-Out');
 
     finalElement.css({
         'top': topP,

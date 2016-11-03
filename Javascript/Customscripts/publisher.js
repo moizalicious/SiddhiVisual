@@ -1,5 +1,10 @@
 function dropPublisher(newAgent, i, topP,left,asName)
 {
+    var publisherModel = new app.Publisher;
+    publisherModel.set('id' , i);
+    publisherModel.set('name' , 'PublisherZ');
+    publisherList.add(publisherModel);
+
     var publisher= document.createElement("div");
     publisher.id = i+"-publisher";
     publisher.className = "publisherNameNode";
@@ -7,14 +12,14 @@ function dropPublisher(newAgent, i, topP,left,asName)
     publisherTextNode.id = i+"-publisherText";
     publisher.appendChild(publisherTextNode);
 
-    var propertiesIcon = $('<a onclick=""><b><img src="../Images/settings.png" class="element-prop-icon"></b></a> ').attr('id', (i+('-prop')));
-    var conIcon = $('<img src="../Images/connection.png" onclick="" class="element-conn-icon"></b></a> ').attr('id', (i+'vis'));
+    var propertiesIcon = $('<a class="element-prop-icon"><b><img src="../Images/settings.png" ></b></a> ').attr('id', (i+('-prop')));
+    var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon"></b></a> ').attr('id', (i+'vis'));
     newAgent.append(publisher).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(propertiesIcon);
 
     $(droppedElement).draggable({containment: "container"});
 
     var finalElement =  newAgent;
-    var connectionIn = $('<div class="connectorInPublisher">').attr('id', i + '-in');
+    var connectionIn = $('<div class="connectorInPublisher">').attr('id', i + '-In');
 
     finalElement.css({
         'top': topP,
