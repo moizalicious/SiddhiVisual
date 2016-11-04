@@ -170,10 +170,9 @@ jsPlumb.ready(function () {
             model = publisherList.get(sourceId);
             model.set('stream' , targetId);
         }
-
+        var streams;
         if (targetClass == 'execution-plan-drop ui-draggable'){
             model = executionPlanList.get(targetId);
-            var streams;
             if(connection.targetId[2]=='I'){
                 streams = model.get('inStream');
                 if (streams == undefined){
@@ -239,6 +238,37 @@ jsPlumb.ready(function () {
             var model = publisherList.get(sourceId);
             if (model != undefined){
                 model.set('stream' , '');
+            }
+        }
+        var streams;
+        if( targetClass == 'execution-plan-drop ui-draggable'){
+            var model = executionPlanList.get(targetId);
+            if(connection.targetId[2]=='I'){
+                streams = model.get('inStream');
+                var removedStream = streams.indexOf(sourceId);
+                streams.splice(removedStream,1);
+                model.set('inStream', streams);
+            }
+            else if(connection.targetId[2]=='O') {
+                streams = model.get('outStream');
+                var removedStream = streams.indexOf(sourceId);
+                streams.splice(removedStream,1);
+                model.set('outStream', streams);
+            }
+        }
+        else if ( sourceClass == 'execution-plan-drop ui-draggable'){
+            var model = executionPlanList.get(sourceId);
+            if(connection.sourceId[2]=='I'){
+                streams = model.get('inStream');
+                var removedStream = streams.indexOf(targetId);
+                streams.splice(removedStream,1);
+                model.set('inStream', streams);
+            }
+            else if(connection.sourceId[2]=='O') {
+                streams = model.get('outStream');
+                var removedStream = streams.indexOf(targetId);
+                streams.splice(removedStream,1);
+                model.set('outStream', streams);
             }
         }
     });
