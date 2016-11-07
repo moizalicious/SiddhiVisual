@@ -166,8 +166,9 @@
                 
                 //mouseTop, mouseLeft - To retrieve the mouse position at the time of drop so that the elements can be placed at the same spot
                 //TODO retrieve offset with regard to the container and not the page
-                var mouseTop = e.clientY;
-                var mouseLeft = e.clientX;
+
+                var mouseTop = e.pageY - $("#container").offset().top;
+                var mouseLeft = e.pageX - $("#container").offset().left;
                 // var coords = "X coords: " + mouseTop + ", Y coords: " + mouseLeft;
                 // document.getElementById("container").innerHTML = coords;
 
