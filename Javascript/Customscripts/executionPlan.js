@@ -16,10 +16,7 @@ function dropExecutionPlan(newAgent, i,topP,left,asName)
     var conIcon = $('<img src="../Images/connection.png" onclick="" class="element-conn-icon"></b></a> ').attr('id', (i+'vis'));
     newAgent.append(planNode).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(propertiesIcon);
 
-    $(droppedElement).draggable({containment: "container"});
-
     var finalElement =  newAgent;
-
     var connectionIn = $('<div class="connectorInExecutionPlan">').attr('id', i + '-In');
     var connectionOut = $('<div class="connectorOutExecutionPlan">').attr('id', i + '-Out');
     finalElement.css({

@@ -595,7 +595,6 @@ jsPlumb.ready(function () {
     function settingsButtonEvent(newAgent) {
             newAgent.on('click', '.element-prop-icon', function () {
                 var clickedModel;
-                var streamConnected;
                 if (newAgent.attr('class') == 'receiver-drop ui-draggable'){
                     clickedModel = receiverList.get(newAgent.attr('id'));
                     alert( 'Name : ' + clickedModel.get('name')+ '\n'+

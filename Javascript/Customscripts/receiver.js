@@ -1,3 +1,14 @@
+app.Receiver = Backbone.Model.extend({
+    defaults: {
+        id : '',
+        name: '',
+        stream:''
+    }
+});
+
+
+
+
 function dropReceiver(newAgent, i,topP,left,asName)
 {
     var receiverModel = new app.Receiver;
@@ -15,8 +26,6 @@ function dropReceiver(newAgent, i,topP,left,asName)
     var propertiesIcon = $('<div class="element-prop-icon"><b><img src="../Images/settings.png" ></b></div> ').attr('id', (i+('-prop')));
     var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon"></b></div> ').attr('id', (i+'vis'));
     newAgent.append(receiver).append('<div class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></div> ').append(conIcon).append(propertiesIcon);
-
-    $(droppedElement).draggable({containment: "container"});
 
     var finalElement =  newAgent;
     var connectionOut = $('<div class="connectorOutReceiver">').attr('id', i + '-Out');

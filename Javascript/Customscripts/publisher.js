@@ -16,8 +16,6 @@ function dropPublisher(newAgent, i, topP,left,asName)
     var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon"></b></a> ').attr('id', (i+'vis'));
     newAgent.append(publisher).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(propertiesIcon);
 
-    $(droppedElement).draggable({containment: "container"});
-
     var finalElement =  newAgent;
     var connectionIn = $('<div class="connectorInPublisher">').attr('id', i + '-In');
 
