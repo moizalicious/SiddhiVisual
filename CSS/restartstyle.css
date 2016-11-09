@@ -7,9 +7,8 @@
     position: relative;
     resize: both;
     border: 1px solid #aaaaaa;
-    width: 1000px;;
     float: left;
-    margin: -60px auto 20px 10px;
+    margin-top: 10px;
     height: 800px;
     overflow-x: scroll;
     overflow-y: scroll;
@@ -26,11 +25,11 @@
     Toolbox Elements
 */
 
-.stream {
+.stream, .wstream ,.squery, .filter,.wquery,.joquery,.stquery{
     border-radius: 0.5em;
     opacity: 0.8;
     width: 120px;
-    height: 72px;
+    height: 80px;
     line-height: 80px;
     cursor: pointer;
     text-align: center;
@@ -52,148 +51,28 @@
 
 
 .wstream {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    /*position: absolute;*/
-    background-color: transparent;
     background-image: url("../Images/windowStream.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 }
 
 .squery {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    /*position: absolute;*/
-    background-color: transparent;
     background-image: url("../Images/Passthrough.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
+
 }
 
 .filter {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    /*position: absolute;*/
-    background-color: transparent;
     background-image: url("../Images/filter.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 }
 
 .wquery {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    /*position: absolute;*/
-    background-color: transparent;
     background-image: url("../Images/window1.png");
-    background-size: 120px 72px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
-
 
 }
 .joquery {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    /*position: absolute;*/
-    background-color: transparent;
     background-image: url("../Images/join.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 
 }
 .stquery {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    /*position: absolute;*/
-    background-color: transparent;
     background-image: url("../Images/statemachine.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 }
 /*
     Grouping Element
@@ -231,11 +110,11 @@
     Dropped Elements corresponding to their toolbox elements
 */
 
-.streamdrop {
+.streamdrop, .wstreamdrop ,.squerydrop, .filterdrop, .wquerydrop, .joquerydrop, .stquerydrop {
     border-radius: 0.5em;
     opacity: 0.8;
     width: 120px;
-    height: 72px;
+    height: 80px;
     line-height: 80px;
     cursor: pointer;
     text-align: center;
@@ -243,11 +122,11 @@
     position: absolute;
     background-color: transparent;
     background-image: url("../Images/stream.png") ;
-    background-size: 120px 72px;
+    background-size: 120px 80px;
     background-repeat: no-repeat;
     color: black;
     font-family: helvetica, sans-serif;
-    /*padding: 0.5em;*/
+    padding: 0.5em;
     font-size: 0.9em;
     -webkit-transition: -webkit-box-shadow 0.15s ease-in;
     -moz-transition: -moz-box-shadow 0.15s ease-in;
@@ -256,149 +135,27 @@
 }
 
 .wstreamdrop {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    position: absolute;
-    background-color: transparent;
     background-image: url("../Images/windowStream.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 }
 
 .squerydrop {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    position: absolute;
-    background-color: transparent;
     background-image: url("../Images/Passthrough.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 }
 
 .filterdrop {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    position: absolute;
-    background-color: transparent;
     background-image: url("../Images/filter.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 }
 
-
 .wquerydrop {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    position: absolute;
-    background-color: transparent;
     background-image: url("../Images/window1.png");
-    background-size: 120px 72px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
-
 }
 
 .joquerydrop {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    position: absolute;
-    background-color: transparent;
     background-image: url("../Images/join.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 }
 
 .stquerydrop {
-    border-radius: 0.5em;
-    opacity: 0.8;
-    width: 120px;
-    height: 72px;
-    line-height: 80px;
-    cursor: pointer;
-    text-align: center;
-    z-index: 20;
-    position: absolute;
-    background-color: transparent;
     background-image: url("../Images/statemachine.png");
-    background-size: 120px 80px;
-    background-repeat: no-repeat;
-    color: black;
-    font-family: helvetica, sans-serif;
-    padding: 0.5em;
-    font-size: 0.9em;
-    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
-    -moz-transition: -moz-box-shadow 0.15s ease-in;
-    -o-transition: -o-box-shadow 0.15s ease-in;
-    transition: box-shadow 0.15s ease-in;
 }
 
 /*
@@ -483,7 +240,12 @@
     background-color: lightgrey;
     height: 650px;
 }
-
+.property {
+    float: left;
+    margin-top: 10px;
+    background: #f4f4f4;
+    border: 1px solid #aaaaaa;
+}
 .jsplumb-connector {
     z-index: 4;
 }

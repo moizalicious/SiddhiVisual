@@ -4,10 +4,7 @@ body {
 }
 
 .toolbox-title {
-    width: 270px;
     line-height: 43px;
-    margin: 50px auto 20px;
-    margin-left: 10px;
     font-size: 19px;
     font-weight: 500;
     color: white;
@@ -58,13 +55,10 @@ body {
     box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 .toolbox {
-    margin: 0 auto;
     margin-left: 10px;
-    width: 230px;
-    height:850px;
     padding: 20px;
     font-family: "Helvetica";
-    font-size: small;
+    font-size: smaller;
     background: #f4f4f4;
     border-radius: 3px;
     -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -487,13 +481,13 @@ td {
 .connectorInStream{
     float: left;
     margin-top: -33%;
-    margin-left: 0%;
+    margin-left: -13px;
 }
 
 .connectorOutStream{
     float: right;
     margin-top: -33%;
-    /*margin-right: -110%;*/
+    margin-right: -13px;
 }
 
 .connectorInWindow{
@@ -511,14 +505,14 @@ td {
 
 .connectorIn{
     float: left;
-    margin-top: 25%;
-    margin-left: -10%;
+    margin-top: -80%;
+    margin-left: -13px;
 }
 
 .connectorOut{
     float: right;
-    margin-top: 25%;
-    margin-right: -110%;
+    margin-top: -80%;
+    margin-right: -13px;
 }
 
 .connectorInPart{

@@ -6,9 +6,6 @@ app.Receiver = Backbone.Model.extend({
     }
 });
 
-
-
-
 function dropReceiver(newAgent, i,topP,left,asName)
 {
     var receiverModel = new app.Receiver;

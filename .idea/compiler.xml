@@ -18,5 +18,9 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="org.wso2.siddhi.visualEditor.api" target="1.5" />
+      <module name="server" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>

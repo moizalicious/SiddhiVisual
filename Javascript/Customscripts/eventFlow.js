@@ -276,6 +276,9 @@ jsPlumb.ready(function () {
     //Display the model in Json format in the text area
     $('#saveButton').click(function () {
         saveEventFlow();
+        console.log(streamList.toJSON());
+        console.log(receiverList.toJSON());
+        console.log(publisherList.toJSON());
     });
 
     //Recreate the model based on the Json output provided

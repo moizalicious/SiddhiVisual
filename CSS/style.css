@@ -6,8 +6,6 @@
 #container {
     position: relative;
     resize: both;
-    border: 1px solid #aaaaaa;
-    width: 1000px;;
     float: left;
     margin: -60px auto 20px 10px;
     height: 800px;

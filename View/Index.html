@@ -2,35 +2,45 @@
 <head>
 
     <script src="../Javascript/Helperscripts/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="../Javascript/Helperscripts/jquery-ui.min.js"></script>
     <script src="../Javascript/Helperscripts/jquery.jsPlumb-1.4.1-all-min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jsPlumb/1.4.1/jquery.jsPlumb-1.4.1-all-min.js"></script>
+    <script src="../Javascript/Helperscripts/jsoneditor.js"></script>
     <script src="../Javascript/Helperscripts/jquery.jsPlumb-1.6.4-min.js"></script>
-    <script src="../Javascript/Customscripts/trail.js" type="text/javascript"></script>
+    <script src="../Javascript/Customscripts/main.js" type="text/javascript"></script>
+    <script src="../Javascript/Customscripts/formBuilder.js" type="text/javascript"></script>
+    <script src="../Javascript/Customscripts/storage.js" type="text/javascript"></script>
+    <script src="../Javascript/Customscripts/stream.js" type="text/javascript"></script>
+
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"/>
-    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../CSS/restartstyle.css">
     <link rel="stylesheet" type="text/css" href="../CSS/propertybox.css">
+    <link rel="stylesheet" type="text/css" href="../CSS/eventFlow.css.css">
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
     <link href="../CSS/pe-icon-7-stroke.css" rel="stylesheet" />
 
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 </head>
 
 <body>
-
 <section>
-
-    <!--Toolbox for Elements-->
-
+<!--Tool box for elements-->
+<div class ="col-sm-2" >
     <h1 class="toolbox-title">Toolbox</h1>
-    <div style="float: left;" class="toolbox" id="toolbox">
+    <div class="toolbox" id="toolbox">
         <table>
             <tr>
                 <td>
-                    <label class="col-md-4 control-label">Stream</label>
+                    <label class="control-label">Stream</label>
                 </td>
                 <td>
                     <div class="stream" id="cId"></div>
@@ -38,7 +48,7 @@
             </tr>
             <tr>
                 <td>
-                    <label class="col-md-4 control-label">Window</label>
+                    <label class="control-label">Window</label>
                 </td>
                 <td>
                     <div class="wstream" id="wiId"></div>
@@ -46,7 +56,7 @@
             </tr>
             <tr>
                 <td>
-                    <label class="col-md-4 control-label">Pass-through</label>
+                    <label class="control-label">Pass-through</label>
                 </td>
                 <td>
                     <div class="squery" id="lId"></div>
@@ -54,7 +64,7 @@
             </tr>
             <tr>
                 <td>
-                    <label class="col-md-4 control-label">Filter Query</label>
+                    <label class="control-label">Filter Query</label>
                 </td>
                 <td>
                     <div class="filter" id="rId"></div>
@@ -62,7 +72,7 @@
             </tr>
             <tr>
                 <td>
-                    <label class="col-md-4 control-label">Window Query</label>
+                    <label class="control-label">Window Query</label>
                 </td>
                 <td>
                     <div class="wquery" id="wId"></div>
@@ -70,7 +80,7 @@
             </tr>
             <tr>
                 <td>
-                    <label class="col-md-4 control-label">Join Query</label>
+                    <label class="control-label">Join Query</label>
                 </td>
                 <td>
                     <div class="joquery" id="jId"></div>
@@ -78,7 +88,7 @@
             </tr>
             <tr>
                 <td>
-                    <label class="col-md-4 control-label">State Machine Query</label>
+                    <label class="control-label">State Machine Query</label>
                 </td>
                 <td>
                     <div class="stquery" id="stId"></div>
@@ -86,7 +96,7 @@
             </tr>
             <tr>
                 <td>
-                    <label class="col-md-4 control-label">Partition</label>
+                    <label class="control-label">Partition</label>
                 </td>
                 <td>
                     <div class="partition" id="pId"></div>
@@ -94,22 +104,24 @@
             </tr>
         </table>
     </div>
+</div>
 
     <!--Container/Canvas-->
-
-    <div id="container" class="container">
+    <div class="col-sm-7 container" id="container" >
     </div>
 
-    <div style="float: left" class="property" id="propertypane">
-        <h1 class="toolbox-titlex" id="toolbox-titlex" name="toolbox-titlex">Properties</h1>
-        <form class="panel"  id="lot" name="lot">
-        </form>
+    <!--<div style="float: left" class="property" id="propertypane">-->
+            <!--<h1 class="toolbox-titlex" id="toolbox-titlex" name="toolbox-titlex">Properties</h1>-->
+            <!--<form class="panel"  id="lot" name="lot">-->
+            <!--</form>-->
+    <!--</div>-->
+    <div class="property col-sm-3 collapse">
+
     </div>
 
     <!--Json Output and Manipulation Panel-->
-
-    <div>
-        <table style="margin-top: 780px" class="form-group">
+    <div class = "col-sm-12">
+        <table  class="form-group">
             <tr>
                 <td>
                     <label>Json Output:</label>

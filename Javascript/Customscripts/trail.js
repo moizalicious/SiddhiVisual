@@ -28,7 +28,7 @@
         jsPlumb.Defaults.EndpointStyle = {radius: 7, fillStyle: "darkblue"}; //Connector endpoint/anchor style
         jsPlumb.importDefaults({Connector: ["Bezier", {curviness: 50}]}); //Connector line style
         jsPlumb.setContainer($('#container'));
-
+        defineStream();
         /**
          * @function draggable method for the 'import stream' tool
          * @helper clone
@@ -312,6 +312,7 @@
         //Display the model in Json format in the text area
         $('#saveButton').click(function(){
             saveFlowchart();
+            //generateForms();
         });
 
         //Export the generated Json output as a text file for storage purposes
@@ -325,6 +326,18 @@
         });
     });
 
+    function generateQuery() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/visual-editor",
+            success: function (response) {
+                console.log("successfully executed");
+            },
+            error: function (e){
+                console.log(e.message);
+            }
+        });
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1806,6 +1819,12 @@
 
         dropCompleteElement(newAgent,i,e,kind,mouseTop,mouseLeft);
 
+        var newStream = new app.Stream;
+        newStream.set('id' , i);
+        newStream.set('name' , selectedStream);
+        newStream.set('asName' , asName);
+        newStream.set('type' , 'import');
+        streamList.add(newStream);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1841,6 +1860,13 @@
         newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
         dropCompleteElement(newAgent,i,e,kind,mouseTop,mouseLeft);
 
+        var newStream = new app.Stream;
+        newStream.set('id' , i);
+        newStream.set('name' , selectedStream);
+        newStream.set('asName' , asName);
+        newStream.set('type' , 'export');
+        streamList.add(newStream);
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1863,6 +1889,12 @@
         var tblerows = (table.rows.length);
         createdDefinedStreamArray[i][2]=new Array(tblerows);    //Create an array within the 2nd row of the createdDefinedStreamArray to store the attribute details
 
+        //add the stream to the stream collection
+        var newStream = new app.Stream;
+        newStream.set('id' , i);
+        newStream.set('name' , StrName);
+        newStream.set('type' , 'defined');
+        streamList.add(newStream);
 
         for (r = 1; r < tblerows; r++) {
             for(var c=0; c<1;c++) {
@@ -1887,6 +1919,7 @@
         var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined"></b></a> ').attr('id', (i+'vis'));
         newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
         dropCompleteElement(newAgent,i,e,kind,mouseTop,mouseLeft);
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2571,6 +2604,7 @@
         DefwindowStreamDiv.appendChild(DefCreateWindow);
 
     }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
