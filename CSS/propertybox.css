@@ -490,28 +490,15 @@ td {
     margin-right: -13px;
 }
 
-.connectorInWindow{
+.connectorInWindow, .connectorIn{
     float: left;
     margin-top: -37%;
     margin-left: -13px;
 }
 
-.connectorOutWindow{
+.connectorOutWindow, .connectorOut{
     float: right;
     margin-top: -37%;
-    margin-right: -13px;
-}
-
-
-.connectorIn{
-    float: left;
-    margin-top: -80%;
-    margin-left: -13px;
-}
-
-.connectorOut{
-    float: right;
-    margin-top: -80%;
     margin-right: -13px;
 }
 
@@ -583,16 +570,6 @@ td {
     padding-top: 4px;
 }
 
-.queryNameNode{
-    float:right;
-    width:inherit;
-    height:inherit;
-    background-color: transparent;
-    border: 1px solid transparent;
-    margin-top:40px;
-    margin-right:-3px;
-    font-weight:bolder;
-}
 
 .windowNameNode{
     /*margin-top:40px;*/
@@ -600,7 +577,7 @@ td {
     font-weight:bolder;
 }
 
-.streamNameNode{
+.streamNameNode , .queryNameNode{
     float:right;
     width:inherit;
     height:inherit;

@@ -168,9 +168,6 @@ jsPlumb.ready(function() {
 
             var mouseTop = e.pageY - $("#container").offset().top;
             var mouseLeft = e.pageX - $("#container").offset().left;
-            // var coords = "X coords: " + mouseTop + ", Y coords: " + mouseLeft;
-            // document.getElementById("container").innerHTML = coords;
-
             var dropElem = ui.draggable.attr('class');
             //Clone the element in the toolbox in order to drop the clone on the canvas
             droppedElement = ui.helper.clone();
@@ -181,10 +178,10 @@ jsPlumb.ready(function() {
             //Repaint to reposition all the elements that are on the canvas after the drop/addition of a new element on the canvas
             jsPlumb.repaint(ui.helper);
 
-
+            var newAgent;
             //If the dropped Element is a Stream then->
             if (dropElem == "stream ui-draggable") {
-                var newAgent = $('<div>').attr('id', i).addClass('streamdrop');
+                newAgent = $('<div>').attr('id', i).addClass('streamdrop');
 
                 //The container and the toolbox are disabled to prevent the user from dropping any elements before initializing a Stream Element
                 $("#container").addClass("disabledbutton");
@@ -197,13 +194,14 @@ jsPlumb.ready(function() {
                  */
 
                 $('#container').append(newAgent);
-                var kind = 'defined';
-                defineStream(newAgent,i,kind,mouseTop,mouseLeft);
+                defineStream(newAgent,i,mouseTop,mouseLeft);
+                i++;    //Increment the Element ID for the next dropped Element
+                finalElementCount = i;
             }
 
             //If the dropped Element is a Window(not window query) then->
             else if (dropElem == "wstream ui-draggable") {
-                var newAgent = $('<div>').attr('id', i).addClass('wstreamdrop');
+                newAgent = $('<div>').attr('id', i).addClass('wstreamdrop');
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropWindowStream(newAgent, i, e,mouseTop,mouseLeft,"Window");
                 i++;
@@ -212,7 +210,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a Pass through Query then->
             else if (dropElem == "squery ui-draggable") {
-                var newAgent = $('<div>').attr('id', i).addClass('squerydrop');
+                newAgent = $('<div>').attr('id', i).addClass('squerydrop');
                 droptype = "squerydrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropQuery(newAgent, i, e,droptype,mouseTop,mouseLeft,"Empty Query");
@@ -222,7 +220,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a Filter query then->
             else if (dropElem == "filter ui-draggable") {
-                var newAgent = $('<div>').attr('id', i).addClass('filterdrop');
+                newAgent = $('<div>').attr('id', i).addClass('filterdrop');
                 droptype = "filterdrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropQuery(newAgent, i, e,droptype,mouseTop,mouseLeft,"Empty Query");
@@ -232,7 +230,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a Window Query then->
             else if (dropElem == "wquery ui-draggable") {
-                var newAgent = $('<div>').attr('id', i).addClass('wquerydrop');
+                newAgent = $('<div>').attr('id', i).addClass('wquerydrop');
                 droptype = "wquerydrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropQuery(newAgent, i, e, droptype,mouseTop,mouseLeft,"Empty Query");
@@ -242,7 +240,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a Join Query then->
             else if (dropElem == "joquery ui-draggable") {
-                var newAgent = $('<div>').attr('id', i).addClass('joquerydrop');
+                newAgent = $('<div>').attr('id', i).addClass('joquerydrop');
                 droptype = "joquerydrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropQuery(newAgent, i, e, droptype,mouseTop,mouseLeft,"Empty Query");
@@ -252,7 +250,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a State machine Query(Pattern and Sequence) then->
             else if(dropElem == "stquery ui-draggable") {
-                var newAgent = $('<div>').attr('id', i).addClass('stquerydrop');
+                newAgent = $('<div>').attr('id', i).addClass('stquerydrop');
                 droptype = "stquerydrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropQuery(newAgent, i, e, droptype,mouseTop,mouseLeft,"Empty Query");
@@ -262,7 +260,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a Partition then->
             else{
-                var newAgent = $('<div>').attr('id', i).addClass('partitiondrop');
+                newAgent = $('<div>').attr('id', i).addClass('partitiondrop');
                 droptype = "partitiondrop";
                 $(droppedElement).draggable({containment: "container"});
                 //Drop the element instantly since its attributes will be set only when the user requires it
@@ -279,30 +277,25 @@ jsPlumb.ready(function() {
 
             //Remove Element Icon for the stream elements
             newAgent.on('click', '.boxclose', function (e) {
-
+                jsPlumb.remove(newAgent);
                 jsPlumb.detachAllConnections(newAgent.attr('id'));
                 jsPlumb.removeAllEndpoints($(this));
                 jsPlumb.detach($(this));
-                $(newAgent).remove();
             });
 
             //Remove Element Icon for the Window stream element
             newAgent.on('click', '.boxclosewindow', function (e) {
-
-                jsPlumb.detachAllConnections(newAgent.attr('id'));
-                jsPlumb.removeAllEndpoints($(this));
-                jsPlumb.detach($(this));
-                $(newAgent).remove();
+                jsPlumb.remove(newAgent);
             });
 
             //Remove Element Icon for the query element
             newAgent.on('click', '.boxclose1', function (e) {
-
-                jsPlumb.detachAllConnections(newAgent.attr('id'));
-                jsPlumb.removeAllEndpoints($(this));
-                jsPlumb.detach($(this));
-                $(newAgent).remove();
+                jsPlumb.remove(newAgent);
             });
+            newAgent.on('click', '.element-close-icon', function (e) {
+                jsPlumb.remove(newAgent);
+            });
+
         }
     });
 
@@ -348,14 +341,6 @@ function saveFlowchart(){
     var node = [];
     //matches - Array that stores element IDs of elements that exist on te canvas
     var matches = [];
-    /*attrArray - Array that stores the attributes of an element
-     Since there maybe multiple attributes for a single element, they need to be related to the element.
-     Hence, attrArray is an array within the 'node' array's 'attributes' object*/
-    var attrArray = [];
-    /*states - Array that stores the different states of a state machine query element
-     Since there maybe multiple states for a single element, they need to be related to the element.
-     Hence, states is an array within the 'node' array's 'states' object*/
-    var states = [];
     //totalElementCount - Number of elements at the time of saving the json for the model
     var totalElementCount=0;
     //Get the element IDs of all the elements existing on the canvas
@@ -854,7 +839,6 @@ function loadFlowchart(e) {
                     createdImportStreamArray[id - 1][3] = "Import";
                     var newAgent = $('<div style="top:' + top + ';bottom:' + bottom + ';left:' + left + ';right:' + right + '">').attr('id', id).addClass('streamdrop');
                     var prop = $('<a onclick="doclick(this)"><b><img src="../Images/settings.png" class="settingsIconLoc"></b></a> ').attr('id', (id + '-propImportStream'));
-                    var showIcon = $('<img src="../Images/Import.png" class="streamIconloc"></b></a> ').attr('id', (id));
                     var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined"></b></a> ').attr('id', (id + 'vis'));
                     newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
                     dropCompleteElement(newAgent, id, e, kind, top, left);
@@ -868,7 +852,6 @@ function loadFlowchart(e) {
 
                     var newAgent = $('<div style="top:' + top + ';bottom:' + bottom + ';left:' + left + ';right:' + right + '">').attr('id', id).addClass('streamdrop');
                     var prop = $('<a onclick="doclick(this)"><b><img src="../Images/settings.png" class="settingsIconLoc"></b></a> ').attr('id', (id + '-propExportStream'));
-                    var showIcon = $('<img src="../Images/Export.png" class="streamIconloc"></b></a> ').attr('id', (id));
                     var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined"></b></a> ').attr('id', (id + 'vis'));
                     newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
                     dropCompleteElement(newAgent, id, e, kind, top, left);
@@ -1654,12 +1637,7 @@ function storeImportStreamInfo(newAgent,i,e,kind,mouseTop,mouseLeft)
 
     dropCompleteElement(newAgent,i,e,kind,mouseTop,mouseLeft);
 
-    var newStream = new app.Stream;
-    newStream.set('id' , i);
-    newStream.set('name' , selectedStream);
-    newStream.set('asName' , asName);
-    newStream.set('type' , 'import');
-    streamList.add(newStream);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1695,13 +1673,6 @@ function storeExportStreamInfo(newAgent,i,e,kind,mouseTop,mouseLeft)
     newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
     dropCompleteElement(newAgent,i,e,kind,mouseTop,mouseLeft);
 
-    var newStream = new app.Stream;
-    newStream.set('id' , i);
-    newStream.set('name' , selectedStream);
-    newStream.set('asName' , asName);
-    newStream.set('type' , 'export');
-    streamList.add(newStream);
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1723,13 +1694,6 @@ function storeDefinedStreamInfo(newAgent,i,e,kind,mouseTop,mouseLeft)
     var table = document.getElementById('attrtable');
     var tblerows = (table.rows.length);
     createdDefinedStreamArray[i][2]=new Array(tblerows);    //Create an array within the 2nd row of the createdDefinedStreamArray to store the attribute details
-
-    //add the stream to the stream collection
-    var newStream = new app.Stream;
-    newStream.set('id' , i);
-    newStream.set('name' , StrName);
-    newStream.set('type' , 'defined');
-    streamList.add(newStream);
 
     for (r = 1; r < tblerows; r++) {
         for(var c=0; c<1;c++) {
@@ -2083,6 +2047,44 @@ function dropWindowStream(newAgent, i, e,topP,left,asName)
 
 }
 
+
+// Update the model when a connection is established
+jsPlumb.bind('connection' , function(connection){
+    var targetId = connection.targetId[0];
+    var targetClass = $('#'+targetId).attr('class');
+    var sourceId = connection.sourceId[0];
+    var sourceClass = $('#'+sourceId).attr('class');
+    var model;
+    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop' || targetClass == ' wquery'){
+        model = queryList.get(targetId);
+        model.set('inStream' , sourceId);
+    }
+    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop' || sourceClass == ' wquery'){
+        model = queryList.get(sourceId);
+        model.set('outStream' , targetId);
+    }
+});
+
+
+jsPlumb.bind('connectionDetached', function (connection) {
+    var targetId = connection.targetId[0];
+    var targetClass = $('#'+targetId).attr('class');
+    var sourceId = connection.sourceId[0];
+    var sourceClass = $('#'+sourceId).attr('class');
+    var model;
+    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop' || targetClass == ' wquery'){
+        model = queryList.get(targetId);
+        if (model != undefined){
+            model.set('inStream' , '');
+        }
+    }
+    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop' || sourceClass == ' wquery'){
+        model = queryList.get(sourceId);
+        if (model != undefined){
+            model.set('outStream' , '');
+        }
+    }
+});
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -2469,30 +2471,13 @@ function dropQuery(newAgent, i,e,droptype,topP,left,text)
     textnode.id = i+"-textnodeInitial";
     node.appendChild(textnode);
 
-    //For a pass through query
-    if(droptype=="squerydrop")
-    {
-        var prop = $('<a onclick="getConnectionDetails(this)"><b><img src="../Images/settings.png" class="querySettingIconLoc"></b></a>').attr('id', (i+('-propsquerydrop')));
-        var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined1"></b></a> ').attr('id', (i+'vis'));
-        newAgent.append(node).append('<a class="boxclose1" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
-        dropCompleteQueryElement(newAgent,i,e,topP,left);
-    }
-
-    //For a Window query
-    else if(droptype=="wquerydrop")
-    {
-        var prop = $('<a onclick="getConnectionDetails(this)"><b><img src="../Images/settings.png" class="querySettingIconLoc"></b></a>').attr('id', (i+('-propwquerydrop')));
-        var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined1"></b></a> ').attr('id', (i+'vis'));
-        newAgent.append(node).append('<a class="boxclose1" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
-        dropCompleteQueryElement(newAgent,i,e,topP,left);
-    }
-
-    //For a filter query
-    if(droptype=="filterdrop")
-    {
-        var prop = $('<a onclick="getConnectionDetails(this)"><b><img src="../Images/settings.png" class="querySettingIconLoc"></b></a>').attr('id', (i+('-propfilterdrop')));
-        var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined1"></b></a> ').attr('id', (i+'vis'));
-        newAgent.append(node).append('<a class="boxclose1" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
+    if( droptype=='squerydrop' || droptype =='wquerydrop' || droptype == 'filterdrop'){
+        var newQuery = new app.Query;
+        newQuery.set('id', i);
+        queryList.add(newQuery);
+        var prop = $('<a onclick="generatePropertiesFormForQueries(this)"><b><img src="../Images/settings.png" class="element-prop-icon"></b></a>').attr('id', (i+('-prop')));
+        var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon"></b></a> ').attr('id', (i+'vis'));
+        newAgent.append(node).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
         dropCompleteQueryElement(newAgent,i,e,topP,left);
     }
 
@@ -2560,15 +2545,6 @@ function dropCompleteQueryElement(newAgent,i,e,topP,left)
         maxConnections:1
     });
 
-
-    var myNode = document.getElementById("lot");
-    var fc = myNode.firstChild;
-
-    while( fc ) {
-        myNode.removeChild( fc );
-        fc = myNode.firstChild;
-    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2582,40 +2558,6 @@ var fromStreamId, intoStreamId;
  * @param element
  */
 
-function getConnectionDetails(element)
-{
-    var arr = element.id.match(/-prop(.*)/);
-    if (arr != null) {
-        droptype = arr[1];
-    }
-    var clickedId =  element.id;
-    var elementID=clickedId = clickedId.charAt(0);
-    var from = clickedId+"-out";
-    var from1 = clickedId;
-    clickedId = clickedId+"-in";
-    var con=jsPlumb.getAllConnections();
-    var list=[];
-    for(var i=0;i<con.length;i++)
-    {
-        if(con[i].targetId==clickedId)
-        {
-            list[i] = new Array(2);
-            list[i][0] = con[i].sourceId;
-            fromStreamId =list[i][0];
-            list[i][1] = con[i].targetId;
-        }
-
-        if(con[i].sourceId==from || con[i].sourceId==from1 ||true)
-        {
-            list[i] = new Array(2);
-            list[i][0] = con[i].sourceId;
-            list[i][1] = con[i].targetId;
-            intoStreamId =list[i][1];
-        }
-    }
-    intoStreamId = intoStreamId.charAt(0);
-    getFromStreamName(fromStreamId,intoStreamId,elementID);
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -3175,6 +3117,7 @@ function createattribute() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 function connectionShowHideToggle(element)
 {
@@ -3972,14 +3915,6 @@ function dropCompleteJoinQueryElement(newAgent,i,e,topP,left)
         maxConnections:1
     });
 
-    var myNode = document.getElementById("lot");
-    var fc = myNode.firstChild;
-
-    while( fc ) {
-        myNode.removeChild( fc );
-        fc = myNode.firstChild;
-    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4024,15 +3959,6 @@ function dropCompleteStateMQueryElement(newAgent,i,e,topP,left)
         anchor: 'Continuous',
         maxConnections:1
     });
-
-    var myNode = document.getElementById("lot");
-    var fc = myNode.firstChild;
-
-    while( fc ) {
-        myNode.removeChild( fc );
-        fc = myNode.firstChild;
-    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4418,13 +4344,6 @@ function getFilterQueryData(elementID,fromNameSt,intoNameSt, fromStreamIndex,int
     var myNode = document.getElementById("lot");
     var fc = myNode.firstChild;
 
-    while( fc ) {
-        myNode.removeChild( fc );
-        fc = myNode.firstChild;
-    }
-
-    $(".toolbox-titlex").hide();
-    $(".panel").hide();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4471,13 +4390,6 @@ function getPassThroughQueryData(elementID,fromNameSt,intoNameSt, fromStreamInde
     var myNode = document.getElementById("lot");
     var fc = myNode.firstChild;
 
-    while( fc ) {
-        myNode.removeChild( fc );
-        fc = myNode.firstChild;
-    }
-
-    $(".toolbox-titlex").hide();
-    $(".panel").hide();
 }
 
 

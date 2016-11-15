@@ -36,7 +36,6 @@
     z-index: 20;
     /*position: absolute;*/
     background-color: transparent;
-    background-image: url("../Images/stream.png") ;
     background-size: 120px 72px;
     background-repeat: no-repeat;
     color: black;
@@ -48,7 +47,9 @@
     -o-transition: -o-box-shadow 0.15s ease-in;
     transition: box-shadow 0.15s ease-in;
 }
-
+.stream{
+    background-image: url("../Images/stream.png") ;
+}
 
 .wstream {
     background-image: url("../Images/windowStream.png");
@@ -121,7 +122,6 @@
     z-index: 20;
     position: absolute;
     background-color: transparent;
-    background-image: url("../Images/stream.png") ;
     background-size: 120px 80px;
     background-repeat: no-repeat;
     color: black;
@@ -134,6 +134,9 @@
     transition: box-shadow 0.15s ease-in;
 }
 
+.streamdrop{
+    background-image: url("../Images/stream.png") ;
+}
 .wstreamdrop {
     background-image: url("../Images/windowStream.png");
 }

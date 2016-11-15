@@ -1,7 +1,7 @@
 /**
  * Created by pamoda on 11/9/16.
  */
-function dropStream(newAgent,i,kind,ptop,left) {
+function dropStream(newAgent,i,kind,ptop,left, name) {
     /*
      The node hosts a text node where the Stream's name input by the user will be held.
      Rather than simply having a `newAgent.text(streamName)` statement, as the text function tends to
@@ -11,7 +11,7 @@ function dropStream(newAgent,i,kind,ptop,left) {
     node.id = i+"-nodeInitial";
     node.className = "streamNameNode";
 
-    var asName = "SS1"
+    var asName = name;
     //Assign the Stream name input by the user to the textnode to be displayed on the dropped Stream
     var textnode = document.createTextNode(asName);
     textnode.id = i+"-textnodeInitial";
@@ -23,9 +23,9 @@ function dropStream(newAgent,i,kind,ptop,left) {
      conIcon --> Clicking this icon is supposed to toggle between showing and hiding the "Connection Anchor Points" (Not implemented)
      boxclose --> Icon to remove/delete an element
      */
-    var prop = $('<a onclick="doclick(this)"><b><img src="../Images/settings.png" class="windowSettingIconLoc"></b></a> ').attr('id', (i+'-propImportStream'));
-    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefinedwindow"></b></div> ').attr('id', (i+'vis'));
-    newAgent.append(node).append('<a class="boxclosewindow" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
+    var prop = $('<a onclick="doclick(this)"><b><img src="../Images/settings.png" class="element-prop-icon"></b></a> ').attr('id', (i+'-propImportStream'));
+    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon"></b></div> ').attr('id', (i+'vis'));
+    newAgent.append(node).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
     var finalElement = newAgent;
 
     /*
@@ -74,5 +74,9 @@ function dropStream(newAgent,i,kind,ptop,left) {
 
     $("#container").removeClass("disabledbutton");
     $("#toolbox").removeClass("disabledbutton");
+
+    $(".toolbox-titlex").hide();
+    $(".panel").hide();
+    $("#attrtable tr").remove();
 
 }

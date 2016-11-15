@@ -28,7 +28,6 @@
         jsPlumb.Defaults.EndpointStyle = {radius: 7, fillStyle: "darkblue"}; //Connector endpoint/anchor style
         jsPlumb.importDefaults({Connector: ["Bezier", {curviness: 50}]}); //Connector line style
         jsPlumb.setContainer($('#container'));
-        defineStream();
         /**
          * @function draggable method for the 'import stream' tool
          * @helper clone

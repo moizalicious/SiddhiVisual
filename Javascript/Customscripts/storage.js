@@ -64,10 +64,22 @@ app.WindowQuery = Backbone.Model.extend({
         outStream: '',
         filter1: '',
         filter2: '',
+        window:'',
         attributes: []
     }
 });
-
+app.Query = Backbone.Model.extend({
+    defaults: {
+        id: '',
+        name: '',
+        inStream: '',
+        outStream: '',
+        filter1: '',
+        filter2: '',
+        window:'',
+        attributes: []
+    }
+});
 //--------------
 // Collections
 //--------------
@@ -91,10 +103,12 @@ app.FilterList = Backbone.Collection.extend({
 app.PassThroughList = Backbone.Collection.extend({
     model: app.PassThroughQuery
 });
-app.WindowList = Backbone.Collection.extend({
+app.WindowQueryList = Backbone.Collection.extend({
     model: app.WindowQuery
 });
-
+app.QueryList = Backbone.Collection.extend({
+    model: app.Query
+});
 
 streamList = new app.StreamList();
 receiverList = new app.ReceiverList();
@@ -102,4 +116,5 @@ publisherList = new app.PublisherList();
 executionPlanList = new app.ExecutionPlanList();
 filterList = new app.FilterList();
 passThroughList = new app.PassThroughList();
-windowList = new app.WindowList();
+windowQueryList = new app.WindowQueryList();
+queryList = new app.QueryList();
