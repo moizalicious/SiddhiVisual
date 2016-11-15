@@ -317,6 +317,44 @@ jsPlumb.ready(function() {
 
 });
 
+// Update the model when a connection is established
+jsPlumb.bind('connection' , function(connection){
+    var targetId = connection.targetId[0];
+    var targetClass = $('#'+targetId).attr('class');
+    var sourceId = connection.sourceId[0];
+    var sourceClass = $('#'+sourceId).attr('class');
+    var model;
+    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquery ui-draggable'){
+        model = queryList.get(targetId);
+        model.set('inStream' , sourceId);
+    }
+    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop ui-draggable' || sourceClass == 'wquery ui-draggable'){
+        model = queryList.get(sourceId);
+        model.set('outStream' , targetId);
+    }
+});
+
+
+jsPlumb.bind('connectionDetached', function (connection) {
+    var targetId = connection.targetId[0];
+    var targetClass = $('#'+targetId).attr('class');
+    var sourceId = connection.sourceId[0];
+    var sourceClass = $('#'+sourceId).attr('class');
+    var model;
+    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquery ui-draggable'){
+        model = queryList.get(targetId);
+        if (model != undefined){
+            model.set('inStream' , '');
+        }
+    }
+    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop ui-draggable' || sourceClass == 'wquery ui-draggable'){
+        model = queryList.get(sourceId);
+        if (model != undefined){
+            model.set('outStream' , '');
+        }
+    }
+});
+
 function generateQuery() {
     $.ajax({
         type: "GET",
@@ -2047,44 +2085,6 @@ function dropWindowStream(newAgent, i, e,topP,left,asName)
 
 }
 
-
-// Update the model when a connection is established
-jsPlumb.bind('connection' , function(connection){
-    var targetId = connection.targetId[0];
-    var targetClass = $('#'+targetId).attr('class');
-    var sourceId = connection.sourceId[0];
-    var sourceClass = $('#'+sourceId).attr('class');
-    var model;
-    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop' || targetClass == ' wquery'){
-        model = queryList.get(targetId);
-        model.set('inStream' , sourceId);
-    }
-    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop' || sourceClass == ' wquery'){
-        model = queryList.get(sourceId);
-        model.set('outStream' , targetId);
-    }
-});
-
-
-jsPlumb.bind('connectionDetached', function (connection) {
-    var targetId = connection.targetId[0];
-    var targetClass = $('#'+targetId).attr('class');
-    var sourceId = connection.sourceId[0];
-    var sourceClass = $('#'+sourceId).attr('class');
-    var model;
-    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop' || targetClass == ' wquery'){
-        model = queryList.get(targetId);
-        if (model != undefined){
-            model.set('inStream' , '');
-        }
-    }
-    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop' || sourceClass == ' wquery'){
-        model = queryList.get(sourceId);
-        if (model != undefined){
-            model.set('outStream' , '');
-        }
-    }
-});
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
