@@ -1,5 +1,6 @@
 
 var app = {}; // create namespace for our app
+
 app.Stream = Backbone.Model.extend({
     defaults: {
         id : '',

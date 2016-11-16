@@ -1,6 +1,4 @@
-/**
- * Created by pamoda on 11/9/16.
- */
+
 function dropStream(newAgent,i,kind,ptop,left, name) {
     /*
      The node hosts a text node where the Stream's name input by the user will be held.
@@ -78,5 +76,40 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
     $(".toolbox-titlex").hide();
     $(".panel").hide();
     $("#attrtable tr").remove();
+}
 
+/**
+ @function drop stream that is defined as the output stream in a query configuration
+ * @param position   position of selected query
+ * @param id    id of selected query
+ * @param outStream     name for new output stream
+ * @param streamAttributes      attributes list for output stream
+ */
+function dropStreamFromQuery(position , id, outStream, streamAttributes) {
+    var elementID = i;
+    var newAgent = $('<div>').attr('id', elementID).addClass('streamdrop');
+
+    //The container and the toolbox are disabled to prevent the user from dropping any elements before initializing a Stream Element
+    $('#container').addClass("disabledbutton");
+    $("#toolbox").addClass("disabledbutton");
+    $('#container').append(newAgent);
+
+    //drop the stream
+    dropStream(newAgent, i, 'defined-stream', position.top, position.left + 200, outStream);
+
+    //add the new out stream to the stream collection
+    var newStream = new app.Stream;
+    newStream.set('id', elementID);
+    newStream.set('name', outStream);
+    newStream.set('type', 'define-stream');
+    newStream.set('attributes', streamAttributes);
+    streamList.add(newStream);
+    //make the connection
+    jsPlumb.connect({
+        source: id+'-out',
+        target: elementID+'-Indefined'
+    });
+    //increment the global variable i and the final element count
+    finalElementCount = i;
+    i++;
 }

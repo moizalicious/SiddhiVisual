@@ -168,8 +168,6 @@
 
                 var mouseTop = e.pageY - $("#container").offset().top;
                 var mouseLeft = e.pageX - $("#container").offset().left;
-                // var coords = "X coords: " + mouseTop + ", Y coords: " + mouseLeft;
-                // document.getElementById("container").innerHTML = coords;
 
                 var dropElem = ui.draggable.attr('class');
                 //Clone the element in the toolbox in order to drop the clone on the canvas
@@ -1271,8 +1269,8 @@
      * @description Though an element is deleted, its id will still remain unique hence denying any other new elements to take that id
      * @param element
      */
-    
-    
+
+
     function removeElem(element) {
         element.remove();
         // var parentnode = $(element)[0].parentNode.parentNode;
