@@ -167,7 +167,7 @@ jsPlumb.ready(function() {
             var newAgent;
             //If the dropped Element is a Stream then->
             if (dropElem == "stream ui-draggable") {
-                newAgent = $('<div>').attr('id', i).addClass('streamdrop');
+                newAgent = $('<div>').attr('id', i).addClass('streamdrop ');
 
                 //The container and the toolbox are disabled to prevent the user from dropping any elements before initializing a Stream Element
                 canvas.addClass("disabledbutton");
@@ -192,7 +192,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a Pass through Query then->
             else if (dropElem == "squery ui-draggable") {
-                newAgent = $('<div>').attr('id', i).addClass('squerydrop');
+                newAgent = $('<div>').attr('id', i).addClass('squerydrop ');
                 droptype = "squerydrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropQuery(newAgent, i, e,droptype,mouseTop,mouseLeft,"Empty Query");
@@ -202,7 +202,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a Filter query then->
             else if (dropElem == "filter ui-draggable") {
-                newAgent = $('<div>').attr('id', i).addClass('filterdrop');
+                newAgent = $('<div>').attr('id', i).addClass('filterdrop ');
                 droptype = "filterdrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropQuery(newAgent, i, e,droptype,mouseTop,mouseLeft,"Empty Query");
@@ -212,7 +212,7 @@ jsPlumb.ready(function() {
 
             //If the dropped Element is a Window Query then->
             else if (dropElem == "wquery ui-draggable") {
-                newAgent = $('<div>').attr('id', i).addClass('wquerydrop');
+                newAgent = $('<div>').attr('id', i).addClass('wquerydrop ');
                 droptype = "wquerydrop";
                 //Drop the element instantly since its attributes will be set only when the user requires it
                 dropQuery(newAgent, i, e, droptype,mouseTop,mouseLeft,"Empty Query");
@@ -294,7 +294,10 @@ jsPlumb.ready(function() {
     $('#loadButton').click(function(e){
         loadFlowchart(e);
     });
-
+    $('#auto-align').click(function(){
+        autoAlign();
+        //generateForms();
+    });
 });
 
 // Update the model when a connection is established
@@ -345,6 +348,47 @@ function generateQuery() {
         error: function (e){
             console.log(e.message);
         }
+    });
+}
+
+
+/**
+ * @function Auto align the diagram
+ */
+function autoAlign() {
+    var g = new dagre.graphlib.Graph();
+    g.setGraph({});
+    g.setDefaultEdgeLabel(function () {
+        return {};
+    });
+    var nodes = $(".ui-draggable");
+    for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i];
+        var connections = $(n).find('.connection');
+        g.setNode(n.id, {width: 120, height: 80});
+    }
+    var edges = jsPlumb.getAllConnections();
+    for (var i = 0; i < edges.length; i++) {
+        var connection = edges[i];
+        var targetId = connection.targetId[0];
+        var sourceId = connection.sourceId[0];
+        g.setEdge(sourceId, targetId);
+    }
+    // calculate the layout (i.e. node positions)
+    dagre.layout(g);
+    // Applying the calculated layout
+
+    g.nodes().forEach(function (v) {
+        $("#" + v).css("left", g.node(v).x + "px");
+        $("#" + v).css("top", g.node(v).y + "px");
+    });
+    $.each(edges, function (index, connection) {
+        jsPlumb.connect({
+            source: connection.pageSourceId,
+            target: connection.pageTargetId,
+            anchors: ["BottomCenter", [0.75, 0, 0, -1]]
+
+        });
     });
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
