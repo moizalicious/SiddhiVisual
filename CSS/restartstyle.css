@@ -251,6 +251,7 @@
 }
 .jsplumb-connector {
     z-index: 4;
+
 }
 .jsplumb-endpoint, .endpointTargetLabel, .endpointSourceLabel {
     z-index: 21;

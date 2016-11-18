@@ -60,14 +60,14 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
     jsPlumb.draggable(finalElement, {
         containment: 'parent'
     });
-
     jsPlumb.makeTarget(connection1, {
-        anchor: 'Continuous'
+        deleteEndpointsOnDetach:true,
+        anchor: 'Left'
     });
 
     jsPlumb.makeSource(connection2, {
         deleteEndpointsOnDetach : true,
-        anchor: 'Continuous'
+        anchor: 'Right'
     });
 
     $("#container").removeClass("disabledbutton");

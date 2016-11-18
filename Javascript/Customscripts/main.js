@@ -152,8 +152,8 @@ jsPlumb.ready(function() {
          */
 
         drop: function (e, ui) {
-            var mouseTop = e.pageY - canvas.offset().top;
-            var mouseLeft = e.pageX - canvas.offset().left;
+            var mouseTop = e.pageY - canvas.offset().top - 40;
+            var mouseLeft = e.pageX - canvas.offset().left - 60;
             var dropElem = ui.draggable.attr('class');
             //Clone the element in the toolbox in order to drop the clone on the canvas
             droppedElement = ui.helper.clone();
@@ -302,10 +302,14 @@ jsPlumb.ready(function() {
 
 // Update the model when a connection is established
 jsPlumb.bind('connection' , function(connection){
-    var targetId = connection.targetId[0];
+    var target = connection.targetId;
+    var targetId= target.substr(0, target.indexOf('-'));
     var targetClass = $('#'+targetId).attr('class');
-    var sourceId = connection.sourceId[0];
+
+    var source = connection.sourceId;
+    var sourceId = source.substr(0, source.indexOf('-'));
     var sourceClass = $('#'+sourceId).attr('class');
+
     var model;
     if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable'){
         model = queryList.get(targetId);
@@ -319,10 +323,15 @@ jsPlumb.bind('connection' , function(connection){
 
 // Update the model when a connection is detached
 jsPlumb.bind('connectionDetached', function (connection) {
-    var targetId = connection.targetId[0];
+
+    var target = connection.targetId;
+    var targetId= target.substr(0, target.indexOf('-'));
     var targetClass = $('#'+targetId).attr('class');
-    var sourceId = connection.sourceId[0];
+
+    var source = connection.sourceId;
+    var sourceId = source.substr(0, source.indexOf('-'));
     var sourceClass = $('#'+sourceId).attr('class');
+
     var model;
     if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable'){
         model = queryList.get(targetId);
@@ -357,39 +366,49 @@ function generateQuery() {
  */
 function autoAlign() {
     var g = new dagre.graphlib.Graph();
-    g.setGraph({});
+    g.setGraph({
+        rankDir : 'LR',
+        edgesep : 25
+    });
     g.setDefaultEdgeLabel(function () {
         return {};
     });
-    var nodes = $(".ui-draggable");
+    var nodes = document.getElementById("container").children;
+    // var nodes = $(".ui-draggable");
     for (var i = 0; i < nodes.length; i++) {
         var n = nodes[i];
-        var connections = $(n).find('.connection');
-        g.setNode(n.id, {width: 120, height: 80});
+        var nodeID = n.id ;
+        g.setNode(nodeID, {width: 120, height: 80});
     }
     var edges = jsPlumb.getAllConnections();
     for (var i = 0; i < edges.length; i++) {
         var connection = edges[i];
-        var targetId = connection.targetId[0];
-        var sourceId = connection.sourceId[0];
+        var target = connection.targetId;
+        var source = connection.sourceId;
+        var targetId= target.substr(0, target.indexOf('-'));
+        var sourceId= source.substr(0, source.indexOf('-'));
         g.setEdge(sourceId, targetId);
     }
     // calculate the layout (i.e. node positions)
     dagre.layout(g);
     // Applying the calculated layout
-
     g.nodes().forEach(function (v) {
         $("#" + v).css("left", g.node(v).x + "px");
         $("#" + v).css("top", g.node(v).y + "px");
     });
-    $.each(edges, function (index, connection) {
+    edges = edges.slice(0);
+    for (var j = 0; j<edges.length ; j++){
+        var source = edges[j].sourceId;
+        var target = edges[j].targetId;
+        jsPlumb.detach(edges[j]);
         jsPlumb.connect({
-            source: connection.pageSourceId,
-            target: connection.pageTargetId,
-            anchors: ["BottomCenter", [0.75, 0, 0, -1]]
-
+            source: source,
+            target: target
         });
-    });
+
+    }
+
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1251,34 +1270,6 @@ function loadFlowchart(e) {
         i = parseInt(id)+1;
     });
 
-    // var objFromJson = JSON.parse(flowChartJson);
-    // var node = objFromJson.node;
-    // $.each(node, function (index, element) {
-    //     var id = element.id;
-    //     var classes = element.class;
-    //     var positionTop = element.position.top
-    //     alert("Id of element parsed: " + id + "\nclass: " + classes + "\npositionTop: " + positionTop);
-    // });
-
-
-
-    // var elements = flowChart.node;
-    // $.each(elements, function( index, elem ) {
-    //     if(elem.class === 'streamdrop ui-draggable') {
-    //         alert('identified');
-    //     //  repositionElement('startpoint', elem.positionX, elem.positionY);
-    //     //     }else if(elem.nodetype === 'endpoint'){
-    //     //         repositionElement('endpoint', elem.positionX, elem.positionY);
-    //     //     }else if(elem.nodetype === 'streamdrop'){
-    //     //         var id = addStream(elem.blockId);
-    //     //         repositionElement(id, elem.positionX, elem.positionY);
-    //     //     }else if(elem.nodetype === 'decision'){
-    //     //         var id = addDecision(elem.blockId);
-    //     //         repositionElement(id, elem.positionX, elem.positionY);
-    //     //     }else{
-    //     //
-    //     }
-    // });
 
     var connections = flowChart.connections;
     $.each(connections, function( index, elem ) {
@@ -2377,13 +2368,15 @@ function dropCompleteQueryElement(newAgent,i,e,topP,left)
     });
 
     jsPlumb.makeTarget(connectionIn, {
-        anchor: 'Continuous',
-        maxConnections:1
+        anchor: 'Left',
+        maxConnections:1,
+        deleteEndpointsOnDetach:true
     });
 
     jsPlumb.makeSource(connectionOut, {
-        anchor: 'Continuous',
-        maxConnections:1
+        anchor: 'Right',
+        maxConnections:1,
+        deleteEndpointsOnDetach:true
     });
 
 }
@@ -2590,10 +2583,10 @@ function dropCompletePartitionElement(newAgent,i,e,mouseTop,mouseLeft)
         finalElement.append(connectionIn);
 
         jsPlumb.makeTarget(connectionIn, {
-            anchor: 'Continuous'
+            anchor: 'Left'
         });
         jsPlumb.makeSource(connectionIn, {
-            anchor: 'Continuous'
+            anchor: 'Right'
         });
 
         x++;
@@ -3180,12 +3173,12 @@ function dropCompleteJoinQueryElement(newAgent,i,e,topP,left)
     });
 
     jsPlumb.makeTarget(connectionIn, {
-        anchor: 'Continuous',
+        anchor: 'Left',
         maxConnections:2
     });
 
     jsPlumb.makeSource(connectionOut, {
-        anchor: 'Continuous',
+        anchor: 'Right',
         maxConnections:1
     });
 
@@ -3226,11 +3219,11 @@ function dropCompleteStateMQueryElement(newAgent,i,e,topP,left)
     });
 
     jsPlumb.makeTarget(connectionIn, {
-        anchor: 'Continuous'
+        anchor: 'Left'
     });
 
     jsPlumb.makeSource(connectionOut, {
-        anchor: 'Continuous',
+        anchor: 'Right',
         maxConnections:1
     });
 }
@@ -4022,7 +4015,7 @@ function getPartitionFromStreamName(clickedId, connectedStream)
 
 var stqueryDiv, stqueryDivState, stMultipleStateDiv, stqueryDivLogic, stqueryDivAttrMap;
 
-function createStateMachineQueryForm(elementID, fromStreamNameListArray, intoNameSt, intoStreamIndex, streamType, defAttrNum)
+ function createStateMachineQueryForm(elementID, fromStreamNameListArray, intoNameSt, intoStreamIndex, streamType, defAttrNum)
 {
     $("#container").addClass("disabledbutton");
     $("#toolbox").addClass("disabledbutton");

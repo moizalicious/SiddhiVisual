@@ -98,7 +98,6 @@ function generatePropertiesFormForQueries(element) {
     var id = $(element).parent().attr('id');
     var clickedElement = queryList.get(id);
     var queryType = $(element).parent().attr('class');
-    console.log(clickedElement);
     if (clickedElement.get('inStream') == '') {
         alert('Connect to streams');
         $("#container").removeClass('disabledbutton');
