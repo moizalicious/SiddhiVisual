@@ -18,6 +18,7 @@ jsPlumb.ready(function () {
     jsPlumb.setContainer($('#container'));
     var canvas = $('#container');
     // $("#container").droppable({
+    enableElements();
     canvas.droppable({
         accept: '.stream, .receiver, .publisher, .execution-plan',
         containment: 'container',
@@ -58,10 +59,10 @@ jsPlumb.ready(function () {
 
                 canvas.append(newAgent);
 
-                createStreamForm(newAgent, i, e, mouseTop, mouseLeft);
+                defineStream(newAgent, i, e, mouseTop, mouseLeft);
                 i++;    //Increment the Element ID for the next dropped Element
                 finalElementCount = i;
-                enableElements();
+
 
             }
 
@@ -103,18 +104,22 @@ jsPlumb.ready(function () {
 
     //restrict the invalid connections considering the source element and target.
     jsPlumb.bind('beforeDrop', function(connection) {
-        var targetId = connection.targetId[0];
+        var target = connection.targetId;
+        var targetId= target.substr(0, target.indexOf('-'));
         var targetClass = $('#'+targetId).attr('class');
-        var sourceId = connection.sourceId[0];
+
+        var source = connection.sourceId;
+        var sourceId = source.substr(0, source.indexOf('-'));
         var sourceClass = $('#'+sourceId).attr('class');
+
         var validity = true;
         if (sourceClass == 'streamdrop ui-draggable'){
-            if(connection.sourceId[2]=='I'){
+            if(source.charAt(source.indexOf('-') +1) == 'I' ){
                 if (!(targetClass == 'receiver-drop ui-draggable' || targetClass == 'execution-plan-drop ui-draggable')){
                     validity= false;
                 }
             }
-            if(connection.sourceId[2]=='O') {
+            if(source.charAt(source.indexOf('-') +1) == 'O'){
                 if (!(targetClass == 'publisher-drop ui-draggable' || targetClass == 'execution-plan-drop ui-draggable')) {
                     validity= false;
                 }
@@ -124,7 +129,8 @@ jsPlumb.ready(function () {
             if( targetClass != 'streamdrop ui-draggable'){
                 validity= false;
             }
-            else if (targetClass == 'streamdrop ui-draggable' && connection.targetId[2]=='O'){
+            else if (targetClass == 'streamdrop ui-draggable' &&
+                target.substr(target.indexOf('-') , target.indexOf('-') +1 ) == 'O'){
                 validity= false;
             }
         }
@@ -132,7 +138,8 @@ jsPlumb.ready(function () {
             if (targetClass != 'streamdrop ui-draggable'){
                 validity= false;
             }
-            else if (targetClass == 'streamdrop ui-draggable' && connection.targetId[2]=='I'){
+            else if (targetClass == 'streamdrop ui-draggable' &&
+                target.charAt(target.indexOf('-') +1) == 'I'){
                 validity= false;
             }
         }
@@ -149,9 +156,12 @@ jsPlumb.ready(function () {
 
     // Update the model when a connection is established
     jsPlumb.bind('connection' , function(connection){
-        var targetId = connection.targetId[0];
+        var target = connection.targetId;
+        var targetId= target.substr(0, target.indexOf('-'));
         var targetClass = $('#'+targetId).attr('class');
-        var sourceId = connection.sourceId[0];
+
+        var source = connection.sourceId;
+        var sourceId = source.substr(0, source.indexOf('-'));
         var sourceClass = $('#'+sourceId).attr('class');
         var model;
         if( targetClass == 'receiver-drop ui-draggable'){
@@ -173,7 +183,7 @@ jsPlumb.ready(function () {
         var streams;
         if (targetClass == 'execution-plan-drop ui-draggable'){
             model = executionPlanList.get(targetId);
-            if(connection.targetId[2]=='I'){
+            if(target.charAt(target.indexOf('-') +1) == 'I'){
                 streams = model.get('inStream');
                 if (streams == undefined){
                     streams = [ sourceId]
@@ -181,7 +191,7 @@ jsPlumb.ready(function () {
                 else streams.push(sourceId);
                 model.set('inStream', streams);
             }
-            else if(connection.targetId[2]=='O') {
+            else if(target.charAt(target.indexOf('-') +1) == 'O') {
                 streams = model.get('outStream');
                 if (streams== undefined){
                     streams = [ sourceId]
@@ -192,7 +202,7 @@ jsPlumb.ready(function () {
         }
         else if (sourceClass =='execution-plan-drop ui-draggable' ){
             model = executionPlanList.get(sourceId);
-            if(connection.sourceId[2]=='I'){
+            if(source.charAt(source.indexOf('-') +1) == 'I'){
                 streams = model.get('inStream');
                 if (streams== undefined){
                     streams = [ targetId]
@@ -200,7 +210,7 @@ jsPlumb.ready(function () {
                 else streams.push(targetId);
                 model.set('inStream', streams);
                 }
-            else if(connection.sourceId[2]=='O') {
+            else if(source.charAt(source.indexOf('-') +1) == 'O') {
                 streams = model.get('outStream');
                 if (streams== undefined){
                     streams = [ targetId]
@@ -212,10 +222,14 @@ jsPlumb.ready(function () {
     });
 
     jsPlumb.bind('connectionDetached', function (connection) {
-        var targetId = connection.targetId[0];
+        var target = connection.targetId;
+        var targetId= target.substr(0, target.indexOf('-'));
         var targetClass = $('#'+targetId).attr('class');
-        var sourceId = connection.sourceId[0];
+
+        var source = connection.sourceId;
+        var sourceId = source.substr(0, source.indexOf('-'));
         var sourceClass = $('#'+sourceId).attr('class');
+
         if( targetClass == 'receiver-drop ui-draggable'){
             var model = receiverList.get(targetId);
             if (model != undefined){
@@ -243,13 +257,13 @@ jsPlumb.ready(function () {
         var streams;
         if( targetClass == 'execution-plan-drop ui-draggable'){
             var model = executionPlanList.get(targetId);
-            if(connection.targetId[2]=='I'){
+            if(target.charAt(target.indexOf('-') +1) == 'I'){
                 streams = model.get('inStream');
                 var removedStream = streams.indexOf(sourceId);
                 streams.splice(removedStream,1);
                 model.set('inStream', streams);
             }
-            else if(connection.targetId[2]=='O') {
+            else if(target.charAt(target.indexOf('-') +1) == 'O') {
                 streams = model.get('outStream');
                 var removedStream = streams.indexOf(sourceId);
                 streams.splice(removedStream,1);
@@ -258,13 +272,13 @@ jsPlumb.ready(function () {
         }
         else if ( sourceClass == 'execution-plan-drop ui-draggable'){
             var model = executionPlanList.get(sourceId);
-            if(connection.sourceId[2]=='I'){
+            if(source.charAt(source.indexOf('-') +1) == 'I'){
                 streams = model.get('inStream');
                 var removedStream = streams.indexOf(targetId);
                 streams.splice(removedStream,1);
                 model.set('inStream', streams);
             }
-            else if(connection.sourceId[2]=='O') {
+            else if(source.charAt(source.indexOf('-') +1) == 'O') {
                 streams = model.get('outStream');
                 var removedStream = streams.indexOf(targetId);
                 streams.splice(removedStream,1);
@@ -289,6 +303,13 @@ jsPlumb.ready(function () {
 
 
     function enableElements() {
+        $(".stream").draggable
+        ({
+            helper: 'clone',
+            cursor: 'pointer',
+            tolerance: 'fit',
+            revert: true
+        });
         $(".receiver").css("opacity", 0.8);
         $(".publisher").css("opacity", 0.8);
         $(".execution-plan").css("opacity", 0.8);

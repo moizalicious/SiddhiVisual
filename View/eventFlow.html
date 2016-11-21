@@ -1,39 +1,46 @@
 <html>
 <head>
-    <!--backbone-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>
 
     <script src="../Javascript/Helperscripts/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"
+            type="text/javascript"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"
+            type="text/javascript"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js"
+            type="text/javascript"></script>
+
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="../Javascript/Helperscripts/jquery-ui.min.js"></script>
-
-    <!--JSPlumb libraries-->
     <script src="../Javascript/Helperscripts/jquery.jsPlumb-1.4.1-all-min.js"></script>
+    <script src="../Javascript/Helperscripts/jsoneditor.js"></script>
     <script src="../Javascript/Helperscripts/jquery.jsPlumb-1.6.4-min.js"></script>
-    <script src="../Javascript/Helperscripts/jquery.blockUI.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="../Javascript/Helperscripts/dagre.js"></script>
+    <script src="../Javascript/Helperscripts/dagre.min.js"></script>
 
-    <!--Custom scipts-->
-    <script src="../Javascript/Customscripts/trail.js" type="text/javascript"></script>
     <script src="../Javascript/Customscripts/eventFlow.js" type="text/javascript"></script>
+    <!--<script src="../Javascript/Customscripts/main.js" type="text/javascript"></script>-->
+    <script src="../Javascript/Customscripts/formBuilder.js" type="text/javascript"></script>
+    <script src="../Javascript/Customscripts/storage.js" type="text/javascript"></script>
+    <script src="../Javascript/Customscripts/stream.js" type="text/javascript"></script>
     <script src="../Javascript/Customscripts/receiver.js" type="text/javascript"></script>
     <script src="../Javascript/Customscripts/publisher.js" type="text/javascript"></script>
     <script src="../Javascript/Customscripts/executionPlan.js" type="text/javascript"></script>
-    <script src="../Javascript/Customscripts/storage.js" type="text/javascript"></script>
 
+
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet"
+          type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../CSS/restartstyle.css">
     <link rel="stylesheet" type="text/css" href="../CSS/propertybox.css">
     <link rel="stylesheet" type="text/css" href="../CSS/eventFlow.css">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"/>
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
-    <link href="../CSS/pe-icon-7-stroke.css" rel="stylesheet" />
+    <link href="../CSS/pe-icon-7-stroke.css" rel="stylesheet"/>
 
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
-    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </head>
 
@@ -43,52 +50,50 @@
 
     <!--Toolbox for Elements-->
 
-    <h1 class="toolbox-title">Toolbox</h1>
-    <div style="float: left;" class="toolbox" id="toolbox">
-        <table>
-            <tr>
-                <td>
-                    <label class="col-md-4 control-label">Stream</label>
-                </td>
-                <td>
-                    <div class="stream" id="sID"></div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label class="col-md-4 control-label">Receiver</label>
-                </td>
-                <td>
-                    <div class="receiver" id="rID"></div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label class="col-md-4 control-label">Publisher</label>
-                </td>
-                <td>
-                    <div class="publisher" id="pID"></div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label class="col-md-4 control-label">Execution Plan</label>
-                </td>
-                <td>
-                    <div class="execution-plan" id="planID"></div>
-                </td>
-            </tr>
-        </table>
+    <div class="col-sm-2">
+        <h1 class="toolbox-title">Toolbox</h1>
+        <div class="toolbox" id="toolbox">
+            <table>
+                <tr>
+                    <td>
+                        <label class="control-label">Stream</label>
+                    </td>
+                    <td>
+                        <div class="stream" id="sID"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="control-label">Receiver</label>
+                    </td>
+                    <td>
+                        <div class="receiver" id="rID"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="control-label">Publisher</label>
+                    </td>
+                    <td>
+                        <div class="publisher" id="pID"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="control-label">Execution Plan</label>
+                    </td>
+                    <td>
+                        <div class="execution-plan" id="planID"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
+
 
     <!--Container/Canvas-->
-
-    <div id="container" class="container">
-    </div>
-
-    <div class="property col-sm-3 collapse" id="propertypane">
-
-    </div>
+    <div class="col-sm-7 container" id="container" ></div>
+    <div class="property col-sm-3 collapse" id="propertypane"></div>
 
     <!--Json Output and Manipulation Panel-->
 

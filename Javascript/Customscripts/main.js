@@ -23,9 +23,14 @@ var finalElementCount=0;
 
 jsPlumb.ready(function() {
 
-    jsPlumb.Defaults.PaintStyle = {strokeStyle: "darkblue", lineWidth: 2, dashstyle: '3 3'}; //Connector line style
+    jsPlumb.Defaults.PaintStyle = {strokeStyle: "darkblue",outlineColor:"transparent", outlineWidth:"25", lineWidth: 2 }; //Connector line style
+    jsPlumb.Defaults.HoverPaintStyle = { strokeStyle: 'darkblue',lineWidth : 3};
     jsPlumb.Defaults.EndpointStyle = {radius: 7, fillStyle: "darkblue"}; //Connector endpoint/anchor style
-    jsPlumb.importDefaults({Connector: ["Bezier", {curviness: 50}]}); //Connector line style
+    jsPlumb.Defaults.Overlays =[["Arrow",  {location:1, id:"arrow" }] ];
+    jsPlumb.importDefaults({
+        ConnectionsDetachable:false,
+        Connector: ["Bezier", {curviness: 10}]
+    }); //Connector line style
     jsPlumb.setContainer($('#container'));
     var canvas = $('#container');
     /**
@@ -298,6 +303,7 @@ jsPlumb.ready(function() {
         autoAlign();
         //generateForms();
     });
+
 });
 
 // Update the model when a connection is established
@@ -344,6 +350,28 @@ jsPlumb.bind('connectionDetached', function (connection) {
         if (model != undefined){
             model.set('outStream' , '');
         }
+    }
+});
+
+jsPlumb.bind('click' , function (connection){
+    if(connection.getOverlays().length ==1 ){
+        connection.addOverlay([
+            "Custom", {
+                create:function(component) {
+                    return $('<img src="../Images/Cancel.png" alt="">');
+                },
+                location :0.5,
+                id:"close",
+                events:{
+                    click:function() {
+                        if (confirm('Are you sure you want to remove the connection?')) {
+                            jsPlumb.detach(connection);
+                        } else {
+                        }
+                    }
+                }
+            }
+        ]);
     }
 });
 
