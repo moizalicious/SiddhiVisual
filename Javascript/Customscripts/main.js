@@ -26,10 +26,10 @@ jsPlumb.ready(function() {
     jsPlumb.Defaults.PaintStyle = {strokeStyle: "darkblue",outlineColor:"transparent", outlineWidth:"25", lineWidth: 2 }; //Connector line style
     jsPlumb.Defaults.HoverPaintStyle = { strokeStyle: 'darkblue',lineWidth : 3};
     jsPlumb.Defaults.EndpointStyle = {radius: 7, fillStyle: "darkblue"}; //Connector endpoint/anchor style
-    jsPlumb.Defaults.Overlays =[["Arrow",  {location:0.5, id:"arrow" }] ];
+    jsPlumb.Defaults.Overlays =[["Arrow",  {location:1.0, id:"arrow" }] ];
     jsPlumb.importDefaults({
         ConnectionsDetachable:false,
-        Connector: ["Bezier", {curviness: 10}]
+        Connector: ["Bezier", {curviness: 50}]
     }); //Connector line style
     jsPlumb.setContainer($('#container'));
     var canvas = $('#container');
@@ -157,8 +157,8 @@ jsPlumb.ready(function() {
          */
 
         drop: function (e, ui) {
-            var mouseTop = e.pageY - canvas.offset().top - 40;
-            var mouseLeft = e.pageX - canvas.offset().left - 60;
+            var mouseTop = e.pageY - canvas.offset().top +canvas.scrollTop()- 40;
+            var mouseLeft = e.pageX - canvas.offset().left +canvas.scrollLeft()- 60;
             var dropElem = ui.draggable.attr('class');
             //Clone the element in the toolbox in order to drop the clone on the canvas
             droppedElement = ui.helper.clone();
@@ -299,18 +299,10 @@ jsPlumb.ready(function() {
         autoAlign();
     });
 
-    //remove all the delete icons of the connections when the canvas is selected
-    canvas.click(function(){
-        var connections = jsPlumb.getAllConnections();
-        $.each(connections, function (index, connection) {
-            connection.removeOverlays('close');
-        });
-    });
-
 });
 
 // Update the model when a connection is established
-jsPlumb.bind('connection' , function(connection){
+jsPlumb.bind('connection' , function(connection , originalEvent){
     var target = connection.targetId;
     var targetId= target.substr(0, target.indexOf('-'));
     var targetClass = $('#'+targetId).attr('class');
@@ -328,6 +320,34 @@ jsPlumb.bind('connection' , function(connection){
         model = queryList.get(sourceId);
         model.set('outStream' , targetId);
     }
+    var connectionObject = connection.connection;
+    //add a overlay of a close icon for connection. connection can be detached by clicking on it
+    connectionObject.addOverlay([
+        "Custom", {
+            create:function() {
+                return $('<img src="../Images/Cancel.png" alt="">');
+            },
+            location :0.75,
+            id:"close",
+            events:{
+                click:function() {
+                    if (confirm('Are you sure you want to remove the connection?')) {
+                        jsPlumb.detach(connectionObject);
+                    } else {
+                    }
+                }
+            }
+        }
+    ]);
+    connectionObject.hideOverlay('close');
+    //show the close icon when mouse is over the connection
+    connectionObject.bind('mouseenter', function(conn) {
+        conn.showOverlay('close');
+    });
+    //hide the close icon when the mouse is not on the connection path
+    connectionObject.bind('mouseleave', function(conn) {
+        conn.hideOverlay('close');
+    });
 });
 
 // Update the model when a connection is detached
@@ -353,30 +373,6 @@ jsPlumb.bind('connectionDetached', function (connection) {
         if (model != undefined){
             model.set('outStream' , '');
         }
-    }
-});
-
-//show delete icon for connections when clicked
-jsPlumb.bind('click' , function (connection, originalEvent){
-    originalEvent.stopPropagation();
-    if(connection.getOverlays().length ==1 ){
-        connection.addOverlay([
-            "Custom", {
-                create:function() {
-                    return $('<img src="../Images/Cancel.png" alt="">');
-                },
-                location :0.80,
-                id:"close",
-                events:{
-                    click:function() {
-                        if (confirm('Are you sure you want to remove the connection?')) {
-                            jsPlumb.detach(connection);
-                        } else {
-                        }
-                    }
-                }
-            }
-        ]);
     }
 });
 

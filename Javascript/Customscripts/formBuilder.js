@@ -6,6 +6,7 @@ JSONEditor.defaults.options.disable_edit_json = true;
 JSONEditor.plugins.sceditor.emoticonsEnabled = true;
 JSONEditor.defaults.options.disable_collapse = true;
 
+
 function defineStream(newAgent, i, mouseTop, mouseLeft) {
     var propertyWindow = document.getElementsByClassName('property');
     $(propertyWindow).collapse('show');
@@ -442,4 +443,87 @@ function generatePropertiesFormForQueries(element) {
             $(propertyWindow).collapse('hide');
         });
     }
+}
+
+function generatePropertiesFormForStreams(element){
+    var propertyWindow = document.getElementsByClassName('property');
+    $(propertyWindow).collapse('show');
+    $("#container").addClass('disabledbutton');
+    $("#toolbox").addClass('disabledbutton');
+    var id = $(element).parent().attr('id');
+
+    //retrieve the stream information from the collection
+    var clickedElement = streamList.get(id);
+    var name = clickedElement.get('name');
+    var attributes = clickedElement.get('attributes');
+    var fillWith = {
+        name : name,
+        attributes : attributes
+    };
+    var editor = new JSONEditor(document.getElementById('propertypane'), {
+        schema: {
+            type: "object",
+            title: "Stream",
+            properties: {
+                name: {
+                    type: "string",
+                    title: "Name"
+                },
+                attributes: {
+                    type: "array",
+                    format: "table",
+                    title: "Attributes",
+                    uniqueItems: true,
+                    items: {
+                        type: "object",
+                        properties: {
+                            name: {
+                                type: "string"
+                            },
+                            type: {
+                                type: "string",
+                                enum: [
+                                    "int",
+                                    "long",
+                                    "float",
+                                    "double",
+                                    "boolean"
+                                ],
+                                default: "int"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        disable_properties: true,
+        disable_array_delete_all_rows: true,
+        disable_array_delete_last_row: true,
+        startval: fillWith
+    });
+    $(propertyWindow).append('<div><button id="form-submit">Submit</button>' +
+        '<button id="form-cancel">Cancel</button></div>');
+
+    document.getElementById('form-submit').addEventListener('click', function () {
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+        $(propertyWindow).html('');
+        $(propertyWindow).collapse('hide');
+        var config = editor.getValue();
+
+        //update selected stream model
+        clickedElement.set('name', config.name);
+        clickedElement.set('attributes', config.attributes);
+
+        var textNode = $(element).parent().find('.streamnamenode');
+        textNode.html(config.name);
+    });
+
+    //'Cancel' button action
+    document.getElementById('form-cancel').addEventListener('click', function () {
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+        $(propertyWindow).html('');
+        $(propertyWindow).collapse('hide');
+    });
 }

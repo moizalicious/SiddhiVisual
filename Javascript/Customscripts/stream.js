@@ -20,7 +20,7 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
      conIcon --> Clicking this icon is supposed to toggle between showing and hiding the "Connection Anchor Points" (Not implemented)
      boxclose --> Icon to remove/delete an element
      */
-    var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse">').attr('id', (i+'-propImportStream'));
+    var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick ="generatePropertiesFormForStreams(this)">').attr('id', (i+'-propImportStream'));
     var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon collapse ">').attr('id', (i+'vis'));
     newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(conIcon).append(prop);
     var finalElement = newAgent;
