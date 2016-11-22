@@ -15,7 +15,7 @@ jsPlumb.ready(function() {
 
     jsPlumb.Defaults.PaintStyle = {strokeStyle: "darkblue",outlineColor:"transparent", outlineWidth:"25", lineWidth: 2 }; //Connector line style
     jsPlumb.Defaults.HoverPaintStyle = { strokeStyle: 'darkblue',lineWidth : 3};
-    jsPlumb.Defaults.EndpointStyle = {radius: 7, fillStyle: "darkblue"}; //Connector endpoint/anchor style
+    jsPlumb.Defaults.EndpointStyle = {radius: 3}; //Connector endpoint/anchor style
     jsPlumb.Defaults.Overlays =[["Arrow",  {location:1.0, id:"arrow" }] ];
     jsPlumb.importDefaults({
         ConnectionsDetachable:false,
@@ -291,9 +291,33 @@ jsPlumb.ready(function() {
 
 });
 
-// Update the model when a connection is established
-jsPlumb.bind('beforeDrop' , function(connection , originalEvent){
+jsPlumb.bind('beforeDrop', function(connection){
     var connectionValidity= true;
+    var target = connection.targetId;
+    var targetId= target.substr(0, target.indexOf('-'));
+    var targetClass = $('#'+targetId).attr('class');
+
+    var source = connection.sourceId;
+    var sourceId = source.substr(0, source.indexOf('-'));
+    var sourceClass = $('#'+sourceId).attr('class');
+
+    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable') {
+        if (sourceClass != 'streamdrop ui-draggable') {
+            connectionValidity = false;
+            alert("Invalid Connection");
+        }
+    }
+    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop ui-draggable' || sourceClass == 'wquerydrop ui-draggable'){
+        if(targetClass != 'streamdrop ui-draggable'){
+            connectionValidity = false;
+            alert("Invalid Connection");
+        }
+    }
+    return connectionValidity;
+});
+
+// Update the model when a connection is established and bind events for the connection
+jsPlumb.bind('connection' , function(connection){
     var target = connection.targetId;
     var targetId= target.substr(0, target.indexOf('-'));
     var targetClass = $('#'+targetId).attr('class');
@@ -304,23 +328,15 @@ jsPlumb.bind('beforeDrop' , function(connection , originalEvent){
 
     var model;
     if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable'){
-        if( sourceClass == 'streamdrop ui-draggable'){
+        if( sourceClass == 'streamdrop ui-draggable') {
             model = queryList.get(targetId);
-            model.set('inStream' , sourceId);
-        }
-        else{
-            connectionValidity = false;
-            alert("Invalid Connection");
+            model.set('inStream', sourceId);
         }
     }
     else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop ui-draggable' || sourceClass == 'wquerydrop ui-draggable'){
         if(targetClass == 'streamdrop ui-draggable'){
             model = queryList.get(sourceId);
             model.set('outStream' , targetId);
-        }
-        else{
-            connectionValidity = false;
-            alert("Invalid Connection");
         }
     }
     var connectionObject = connection.connection;
@@ -351,7 +367,6 @@ jsPlumb.bind('beforeDrop' , function(connection , originalEvent){
     connectionObject.bind('mouseleave', function(conn) {
         conn.hideOverlay('close');
     });
-    return connectionValidity;
 });
 
 // Update the model when a connection is detached
@@ -380,6 +395,7 @@ jsPlumb.bind('connectionDetached', function (connection) {
     }
 });
 
+
 /**
  * @function Auto align the diagram
  */
@@ -387,7 +403,7 @@ function autoAlign() {
     var g = new dagre.graphlib.Graph();
     g.setGraph({
         rankDir : 'LR',
-        edgesep : 25
+        edgesep : 50
     });
     g.setDefaultEdgeLabel(function () {
         return {};

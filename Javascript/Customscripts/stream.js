@@ -67,7 +67,8 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
     });
 
     jsPlumb.makeSource(connection2, {
-        deleteEndpointsOnDetach : true
+        deleteEndpointsOnDetach : true,
+        anchor : 'Right'
     });
 
     $("#container").removeClass("disabledbutton");
