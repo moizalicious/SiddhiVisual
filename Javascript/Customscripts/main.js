@@ -1,13 +1,3 @@
-/**
- * Created by nayantara on 6/22/16.
- */
-
-//TODO Load complete Json output after edition
-/**
- * @description Global variable declarations
- * @type {number}
- */
-
 // i --> newAgent ID (Dropped Element ID)
 var i = 1;
 
@@ -255,7 +245,7 @@ jsPlumb.ready(function() {
                 finalElementCount=i;
                 i++;
             }
-            //show configuration icons when mouse is over the element
+            //register event listener to show configuration icons when mouse is over the element
             newAgent.on( "mouseenter", function() {
                 var element = $(this);
                 element.find('.element-prop-icon').show();
@@ -263,7 +253,7 @@ jsPlumb.ready(function() {
                 element.find('.element-close-icon').show();
             });
 
-            //hide configuration icons when mouse is out from the element
+            //register event listener to hide configuration icons when mouse is out from the element
             newAgent.on( "mouseleave", function() {
                 var element = $(this);
                 element.find('.element-prop-icon').hide();
@@ -271,7 +261,7 @@ jsPlumb.ready(function() {
                 element.find('.element-close-icon').hide();
             });
 
-            //remove the element when the close icon is clicked
+            //register event listener to remove the element when the close icon is clicked
             newAgent.on('click', '.element-close-icon', function () {
                 jsPlumb.remove(newAgent);
             });
@@ -302,7 +292,8 @@ jsPlumb.ready(function() {
 });
 
 // Update the model when a connection is established
-jsPlumb.bind('connection' , function(connection , originalEvent){
+jsPlumb.bind('beforeDrop' , function(connection , originalEvent){
+    var connectionValidity= true;
     var target = connection.targetId;
     var targetId= target.substr(0, target.indexOf('-'));
     var targetClass = $('#'+targetId).attr('class');
@@ -313,12 +304,24 @@ jsPlumb.bind('connection' , function(connection , originalEvent){
 
     var model;
     if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable'){
-        model = queryList.get(targetId);
-        model.set('inStream' , sourceId);
+        if( sourceClass == 'streamdrop ui-draggable'){
+            model = queryList.get(targetId);
+            model.set('inStream' , sourceId);
+        }
+        else{
+            connectionValidity = false;
+            alert("Invalid Connection");
+        }
     }
     else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop ui-draggable' || sourceClass == 'wquerydrop ui-draggable'){
-        model = queryList.get(sourceId);
-        model.set('outStream' , targetId);
+        if(targetClass == 'streamdrop ui-draggable'){
+            model = queryList.get(sourceId);
+            model.set('outStream' , targetId);
+        }
+        else{
+            connectionValidity = false;
+            alert("Invalid Connection");
+        }
     }
     var connectionObject = connection.connection;
     //add a overlay of a close icon for connection. connection can be detached by clicking on it
@@ -348,6 +351,7 @@ jsPlumb.bind('connection' , function(connection , originalEvent){
     connectionObject.bind('mouseleave', function(conn) {
         conn.hideOverlay('close');
     });
+    return connectionValidity;
 });
 
 // Update the model when a connection is detached
@@ -1299,179 +1303,6 @@ function loadFlowchart(e) {
     // numberOfElements = flowChart.numberOfElements;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- *
- * @function Create a 3D array to store predefined Stream Definitions
- * @returns {Array}
- * @constructor
- * @decomposed Each row stores details of one Stream
- * @rowInfo col1-> Stream name, col2-> subdivided array for attribute names
- * @rowInfo col3-> Subdivided array for attribute type info
- * @rowInfo col4-> Stream definition in a single line
- *
- */
-function PredefinedStreams()
-{
-    var StreamArray = new Array(3);
-    for (var q = 0; q < 3; q++)
-    {
-        StreamArray[q] = new Array(4);
-        for (var w=1; w<3; w++)
-        {
-            StreamArray[q][w] = new Array(5);
-        }
-    }
-
-    StreamArray[0][0]="Stream1";
-    StreamArray[0][1][0]="1_attr1";
-    StreamArray[0][1][1]="1_attr2";
-    StreamArray[0][1][2]="1_attr3";
-    StreamArray[0][1][3]="1_attr4";
-    StreamArray[0][1][4]="1_attr5";
-    StreamArray[0][2][0]="1_type1";
-    StreamArray[0][2][1]="1_type2";
-    StreamArray[0][2][2]="1_type3";
-    StreamArray[0][2][3]="1_type4";
-    StreamArray[0][2][4]="1_type5";
-    StreamArray[0][3] = "define stream Stream1 (1_attr1 1_type1, 1_attr2 1_type2, 1_attr3 1_type3, 1_attr4 1_type4, 1_attr5 1_type5 );";
-
-    StreamArray[1][0]="Stream2";
-    StreamArray[1][1][0]="2_attr1";
-    StreamArray[1][1][1]="2_attr2";
-    StreamArray[1][1][2]="2_attr3";
-    StreamArray[1][1][3]="2_attr4";
-    StreamArray[1][1][4]="2_attr5";
-    StreamArray[1][2][0]="2_type1";
-    StreamArray[1][2][1]="2_type2";
-    StreamArray[1][2][2]="2_type3";
-    StreamArray[1][2][3]="2_type4";
-    StreamArray[1][2][4]="2_type5";
-    StreamArray[1][3] = "define stream Stream2 (2_attr1 2_type1, 2_attr2 2_type2, 2_attr3 2_type3, 2_attr4 2_type4, 2_attr5 2_type5 );";
-
-    StreamArray[2][0]="Stream3";
-    StreamArray[2][1][0]="3_attr1";
-    StreamArray[2][1][1]="3_attr2";
-    StreamArray[2][1][2]="3_attr3";
-    StreamArray[2][1][3]="3_attr4";
-    StreamArray[2][1][4]="3_attr5";
-    StreamArray[2][2][0]="3_type1";
-    StreamArray[2][2][1]="3_type2";
-    StreamArray[2][2][2]="3_type3";
-    StreamArray[2][2][3]="3_type4";
-    StreamArray[2][2][4]="3_type5";
-    StreamArray[2][3] = "define stream Stream3 (3_attr1 3_type1, 3_attr2 3_type2, 3_attr3 3_type3, 3_attr4 3_type4, 3_attr5 3_type5 );";
-
-
-    return StreamArray;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-var attrNumber,streamInd;
-
-function getAttributes(stream)
-{
-    var PredefStreamArr = PredefinedStreams();
-    for(var c=0;c<3;c++)
-    {
-        if(PredefStreamArr[c][0]==stream)
-        {
-            attrNumber =PredefStreamArr[c][1].length;
-            streamInd = c;
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- *
- * @function Retrieves info from the Predifined array onto individual arrays
- * @type {string}
- *
- */
-
-var streamDef = streamtypes = PredefinedStreams();
-var stream1_attr = streamtypes = PredefinedStreams();
-var stream1_type = streamtypes = PredefinedStreams();
-var stream2_attr = streamtypes = PredefinedStreams();
-var stream2_type = streamtypes = PredefinedStreams();
-var stream3_attr = streamtypes = PredefinedStreams();
-var stream3_type = streamtypes = PredefinedStreams();
-
-//Array that stores all Import stream data
-var createdImportStreamArray = [];
-for(var x = 0; x < 100; x++){
-    createdImportStreamArray[x] = [];
-    for(var y = 0; y < 4; y++){
-        createdImportStreamArray[x][y] = null;
-    }
-}
-
-//Array that stores all Export stream data
-var createdExportStreamArray = [];
-for(var x = 0; x < 100; x++){
-    createdExportStreamArray[x] = [];
-    for(var y = 0; y < 4; y++){
-        createdExportStreamArray[x][y] = null;
-    }
-}
-
-
-//Array that stores all Defined stream data
-var createdDefinedStreamArray = [];
-for(var x = 0; x < 100; x++){
-    createdDefinedStreamArray[x] = [];
-    for(var y = 0; y < 5; y++){
-        createdDefinedStreamArray[x][y] = null
-    }
-}
-
-//Array that stores all Window stream data
-var createdWindowStreamArray = [];
-for(var x = 0; x < 100; x++){
-    createdWindowStreamArray[x] = [];
-    for(var y = 0; y < 5; y++){
-        createdWindowStreamArray[x][y] = null
-    }
-}
-
-//Array that stores connection related data
-var ConnectionArray = [];
-for(var x = 0; x < 100; x++){
-    ConnectionArray[x] = [];
-    for(var y = 0; y < 3; y++){
-        ConnectionArray[x][y] = null;
-    }
-}
-
-//Array that stores Simple query related info
-var createdSimpleQueryArray = [];
-for(var x = 0; x < 100; x++){
-    createdSimpleQueryArray[x] = [];
-    for(var y = 0; y < 6; y++){
-        createdSimpleQueryArray[x][y] = null;
-        if(y==2 || y==5)
-        {
-            createdSimpleQueryArray[x][y]= [];
-        }
-    }
-}
-
-//Array that stores Pass-through query related info
-var createdPassThroughQueryArray = [];
-for(var x = 0; x < 100; x++){
-    createdPassThroughQueryArray[x] = [];
-    for(var y = 0; y < 6; y++){
-        createdPassThroughQueryArray[x][y] = null;
-        if(y==2 || y==5)
-        {
-            createdPassThroughQueryArray[x][y]= [];
-        }
-    }
-}
 
 //Array that stores Window query related info
 var createdWindowQueryArray = [];
@@ -2224,13 +2055,6 @@ function dropCompleteQueryElement(newAgent,i,e,topP,left)
     });
 
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/*--------------------Global Variables needed for the Window Attributes Table--------------------------------*/
-var fromStreamId, intoStreamId;
-/*--------------------Global Variables needed for the Window Attributes Table--------------------------------*/
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
