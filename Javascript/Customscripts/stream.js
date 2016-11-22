@@ -9,9 +9,8 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
     node.id = i+"-nodeInitial";
     node.className = "streamNameNode";
 
-    var asName = name;
     //Assign the Stream name input by the user to the textnode to be displayed on the dropped Stream
-    var textnode = document.createTextNode(asName);
+    var textnode = document.createTextNode(name);
     textnode.id = i+"-textnodeInitial";
     node.appendChild(textnode);
 
@@ -21,29 +20,31 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
      conIcon --> Clicking this icon is supposed to toggle between showing and hiding the "Connection Anchor Points" (Not implemented)
      boxclose --> Icon to remove/delete an element
      */
-    var prop = $('<a onclick="doclick(this)"><b><img src="../Images/settings.png" class="element-prop-icon"></b></a> ').attr('id', (i+'-propImportStream'));
-    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon"></b></div> ').attr('id', (i+'vis'));
-    newAgent.append(node).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
+    var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse">').attr('id', (i+'-propImportStream'));
+    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon collapse ">').attr('id', (i+'vis'));
+    newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(conIcon).append(prop);
     var finalElement = newAgent;
 
     /*
      connection --> The connection anchor point is appended to the element
      */
 
+    var connection1;
+    var connection2;
     if(kind=="import")
     {
-        var connection1 = $('<div class="connectorInStream">').attr('id', i+"-Inimport" ).addClass('connection');
-        var connection2 = $('<div class="connectorOutStream">').attr('id', i+"-Outimport" ).addClass('connection');
+        connection1 = $('<div class="connectorInStream">').attr('id', i+"-Inimport" ).addClass('connection');
+        connection2 = $('<div class="connectorOutStream">').attr('id', i+"-Outimport" ).addClass('connection');
     }
     else if (kind=="export")
     {
-        var connection1 = $('<div class="connectorInStream">').attr('id', i+"-Inexport" ).addClass('connection');
-        var connection2 = $('<div class="connectorOutStream">').attr('id', i+"-Outexport" ).addClass('connection');
+        connection1 = $('<div class="connectorInStream">').attr('id', i+"-Inexport" ).addClass('connection');
+        connection2 = $('<div class="connectorOutStream">').attr('id', i+"-Outexport" ).addClass('connection');
     }
     else
     {
-        var connection1 = $('<div class="connectorInStream">').attr('id', i+"-Indefined" ).addClass('connection');
-        var connection2 = $('<div class="connectorOutStream">').attr('id', i+"-Outdefined" ).addClass('connection');
+        connection1 = $('<div class="connectorInStream">').attr('id', i+"-Indefined" ).addClass('connection');
+        connection2 = $('<div class="connectorOutStream">').attr('id', i+"-Outdefined" ).addClass('connection');
     }
 
 
@@ -71,10 +72,6 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
 
     $("#container").removeClass("disabledbutton");
     $("#toolbox").removeClass("disabledbutton");
-
-    $(".toolbox-titlex").hide();
-    $(".panel").hide();
-    $("#attrtable tr").remove();
 }
 
 /**

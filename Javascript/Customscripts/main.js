@@ -26,7 +26,7 @@ jsPlumb.ready(function() {
     jsPlumb.Defaults.PaintStyle = {strokeStyle: "darkblue",outlineColor:"transparent", outlineWidth:"25", lineWidth: 2 }; //Connector line style
     jsPlumb.Defaults.HoverPaintStyle = { strokeStyle: 'darkblue',lineWidth : 3};
     jsPlumb.Defaults.EndpointStyle = {radius: 7, fillStyle: "darkblue"}; //Connector endpoint/anchor style
-    jsPlumb.Defaults.Overlays =[["Arrow",  {location:1, id:"arrow" }] ];
+    jsPlumb.Defaults.Overlays =[["Arrow",  {location:0.5, id:"arrow" }] ];
     jsPlumb.importDefaults({
         ConnectionsDetachable:false,
         Connector: ["Bezier", {curviness: 10}]
@@ -255,30 +255,24 @@ jsPlumb.ready(function() {
                 finalElementCount=i;
                 i++;
             }
-
-            /*
-             @function Delete an element detaching all its connections when the 'boxclose' icon is clicked
-             @description Though the functionality of the 3 are the same, they are differenciated as their css positioning differs.
-             */
-
-            //Remove Element Icon for the stream elements
-            newAgent.on('click', '.boxclose', function (e) {
-                jsPlumb.remove(newAgent);
-                jsPlumb.detachAllConnections(newAgent.attr('id'));
-                jsPlumb.removeAllEndpoints($(this));
-                jsPlumb.detach($(this));
+            //show configuration icons when mouse is over the element
+            newAgent.on( "mouseenter", function() {
+                var element = $(this);
+                element.find('.element-prop-icon').show();
+                element.find('.element-conn-icon').show();
+                element.find('.element-close-icon').show();
             });
 
-            //Remove Element Icon for the Window stream element
-            newAgent.on('click', '.boxclosewindow', function (e) {
-                jsPlumb.remove(newAgent);
+            //hide configuration icons when mouse is out from the element
+            newAgent.on( "mouseleave", function() {
+                var element = $(this);
+                element.find('.element-prop-icon').hide();
+                element.find('.element-conn-icon').hide();
+                element.find('.element-close-icon').hide();
             });
 
-            //Remove Element Icon for the query element
-            newAgent.on('click', '.boxclose1', function (e) {
-                jsPlumb.remove(newAgent);
-            });
-            newAgent.on('click', '.element-close-icon', function (e) {
+            //remove the element when the close icon is clicked
+            newAgent.on('click', '.element-close-icon', function () {
                 jsPlumb.remove(newAgent);
             });
         }
@@ -299,9 +293,18 @@ jsPlumb.ready(function() {
     $('#loadButton').click(function(e){
         loadFlowchart(e);
     });
+
+    //auto align the diagram when the button is clicked
     $('#auto-align').click(function(){
         autoAlign();
-        //generateForms();
+    });
+
+    //remove all the delete icons of the connections when the canvas is selected
+    canvas.click(function(){
+        var connections = jsPlumb.getAllConnections();
+        $.each(connections, function (index, connection) {
+            connection.removeOverlays('close');
+        });
     });
 
 });
@@ -353,14 +356,16 @@ jsPlumb.bind('connectionDetached', function (connection) {
     }
 });
 
-jsPlumb.bind('click' , function (connection){
+//show delete icon for connections when clicked
+jsPlumb.bind('click' , function (connection, originalEvent){
+    originalEvent.stopPropagation();
     if(connection.getOverlays().length ==1 ){
         connection.addOverlay([
             "Custom", {
-                create:function(component) {
+                create:function() {
                     return $('<img src="../Images/Cancel.png" alt="">');
                 },
-                location :0.5,
+                location :0.80,
                 id:"close",
                 events:{
                     click:function() {
@@ -374,20 +379,6 @@ jsPlumb.bind('click' , function (connection){
         ]);
     }
 });
-
-function generateQuery() {
-    $.ajax({
-        type: "GET",
-        url: "http://localhost:8080/visual-editor",
-        success: function (response) {
-            console.log("successfully executed");
-        },
-        error: function (e){
-            console.log(e.message);
-        }
-    });
-}
-
 
 /**
  * @function Auto align the diagram
@@ -1325,8 +1316,6 @@ function loadFlowchart(e) {
  * @rowInfo col4-> Stream definition in a single line
  *
  */
-
-
 function PredefinedStreams()
 {
     var StreamArray = new Array(3);
@@ -1541,176 +1530,6 @@ for(var x = 0; x < 100; x++){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
- *
- * @function Displays the selected Stream definition in a single line
- *
- */
-
-function showStreamDefLine()
-{
-    var choice=document.getElementById("streamSelect");
-
-    //var choice=document.getElementById("streamSelectExp");
-
-    var selectedStr = choice.options[choice.selectedIndex].text;
-
-    if(selectedStr == "Select an option")
-    {
-        alert("Please select a valid Stream from the list");
-    }
-    else if (selectedStr == "Stream1")
-    {
-        alert("Stream Definition: \n"+streamDef[0][3]);
-    }
-    else if(selectedStr=="Stream2")
-    {
-        alert("Stream Definition: \n"+streamDef[1][3]);
-    }
-    else
-    {
-        alert("Stream Definition: \n"+streamDef[2][3]);
-    }
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function showStreamDefLineExp()
-{
-    var choice=document.getElementById("streamSelectExp");
-
-    //var choice=document.getElementById("streamSelectExp");
-
-    var selectedStr = choice.options[choice.selectedIndex].text;
-
-    if(selectedStr == "Select an option")
-    {
-        alert("Please select a valid Stream from the list");
-    }
-    else if (selectedStr == "Stream1")
-    {
-        alert("Stream Definition: \n"+streamDef[0][3]);
-    }
-    else if(selectedStr=="Stream2")
-    {
-        alert("Stream Definition: \n"+streamDef[1][3]);
-    }
-    else
-    {
-        alert("Stream Definition: \n"+streamDef[2][3]);
-    }
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                                          STREAM ELEMENT RELATED FUNCTIONALITIES
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * @function Create the Stream Property Form dynamically
- * @description The Stream form is divided into 3 sections.
- *      1. Import stream Form
- *      2. Export Stream Form
- *      3. Defined stream Form
- */
-
-var importDiv, iStreamtype,headingimport, br, istreamlbl, istreamtypelbl, iPredefStreamdiv, istreamDefLineDiv, istreamDefDivx, istreamName, importbtn;
-var exportDiv,eStreamtype,headingexport, estreamlbl, estreamtypelbl, ePredefStreamdiv, estreamDefLineDiv, estreamDefDivx, estreamName, exportbtn;
-var streamDiv, streambtn, headingstream;
-var definestreamdiv,inputval,input, attrDiv,newDiv,addenteredattr ;
-var inputLbl,streamnameLbl,StreamNameInput,attrName,attNam,attrTypecomboDiv,addAttrBtn,showAttrDivision,endStreamDefBtn;
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * @function Store Import Stream info to array
- * @param i --> Element Id
- */
-
-function storeImportStreamInfo(newAgent,i,e,kind,mouseTop,mouseLeft)
-{
-    /*
-     The node hosts a text node where the Stream's name input by the user will be held.
-     Rather than simply having a `newAgent.text(streamName)` statement, as the text function tends to
-     reposition the other appended elements with the length of the Stream name input by the user.
-     */
-    var node = document.createElement("div");
-    node.id = i+"-nodeInitial";
-    node.className = "streamNameNode";
-
-    //Retrieve the Predefined stream selected by the user from the combobox
-    var choice=document.getElementById("streamSelect");
-    var selectedStream = choice.options[choice.selectedIndex].text;
-
-    //Retrieve the Stream name input by the user
-    var asName= document.getElementById("istreamName").value;
-
-    var StreamElementID = i;
-
-    createdImportStreamArray[i-1][0]=StreamElementID;   //Element ID
-    createdImportStreamArray[i-1][1]=selectedStream;    //The Predefined Stream selected
-    createdImportStreamArray[i-1][2]=asName;            //The stream name provided by the user
-    createdImportStreamArray[i-1][3]="Import";          //Not mandatory
-
-    //Assign the Stream name input by the user to the textnode to be displayed on the dropped Stream
-    var textnode = document.createTextNode(asName);
-    textnode.id = i+"-textnodeInitial";
-    node.appendChild(textnode);
-
-    /*
-     prop --> When clicked on this icon, a definition and related information of the Stream Element will be displayed as an alert message
-     showIcon --> An icon that elucidates whether the dropped stream element is an Import/Export/Defined stream (In this case: an Import arrow icon)
-     conIcon --> Clicking this icon is supposed to toggle between showing and hiding the "Connection Anchor Points" (Not implemented)
-     boxclose --> Icon to remove/delete an element
-     */
-    var prop = $('<a onclick="doclick(this)"><b><img src="../Images/settings.png" class="settingsIconLoc"></b></a> ').attr('id', (i+'-propImportStream'));
-    var showIcon = $('<img src="../Images/Import.png" class="streamIconloc"></b></a> ').attr('id', (i));
-    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined"></b></a> ').attr('id', (i+'vis'));
-    newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
-
-    dropCompleteElement(newAgent,i,e,kind,mouseTop,mouseLeft);
-
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Store Export stream info to array
- */
-function storeExportStreamInfo(newAgent,i,e,kind,mouseTop,mouseLeft)
-{
-    var node = document.createElement("div");
-    node.id = i+"-nodeInitial";
-    node.className = "streamNameNode";
-
-    var choice=document.getElementById("streamSelectExp");
-    var selectedStream = choice.options[choice.selectedIndex].text;
-    var asName= document.getElementById("estreamName").value;
-    var StreamElementID = i;
-
-    createdExportStreamArray[i-1][0]=StreamElementID;
-    createdExportStreamArray[i-1][1]=selectedStream;
-    createdExportStreamArray[i-1][2]=asName;
-    createdExportStreamArray[i-1][3]="Export";
-
-    var textnode = document.createTextNode(asName);
-    textnode.id = i+"-textnodeInitial";
-    node.appendChild(textnode);
-
-    var element=document.getElementById(newAgent);
-
-    var prop = $('<a onclick="doclick(this)"><b><img src="../Images/settings.png" class="settingsIconLoc"></b></a> ').attr('id', (i+'-propExportStream'));
-    var showIcon = $('<img src="../Images/Export.png" class="streamIconloc"></b></a> ').attr('id', (i));
-    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined"></b></a> ').attr('id', (i+'vis'));
-    newAgent.append(node).append('<a class="boxclose" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
-    dropCompleteElement(newAgent,i,e,kind,mouseTop,mouseLeft);
-
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  *
@@ -1906,9 +1725,9 @@ function dropWindowStream(newAgent, i, e,topP,left,asName)
     windowTextnode.id = i+"-windowTextnode";
     windowNode.appendChild(windowTextnode);
 
-    var prop = $('<a onclick="getConnectionDetailsForWindow(this)"><b><img src="../Images/settings.png" class="windowSettingIconLoc"></b></a> ').attr('id', (i+('-prop')));
-    var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefinedwindow"></b></a> ').attr('id', (i+'vis'));
-    newAgent.append(windowNode).append('<a class="boxclosewindow" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
+    var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick="getConnectionDetailsForWindow(this)">').attr('id', (i+('-prop')));
+    var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
+    newAgent.append(windowNode).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(conIcon).append(prop);
 
     $(droppedElement).draggable({containment: "container"});
 
@@ -2224,7 +2043,7 @@ function addAttributeForWindow()
  */
 
 function typeGenerate() {
-    var typeArray = new Array();
+    var typeArray = [];
     typeArray[0] = "int";
     typeArray[1] = "long";
     typeArray[2] = "double";
@@ -2282,8 +2101,7 @@ function showAttributesForWindowInTable()
     var deletebtn =  document.createElement("button");
     deletebtn.type="button";
     deletebtn.id ="deletebtn";
-    var text3= "<img src='../Images/Delete.png'>";
-    deletebtn.innerHTML = text3;
+    deletebtn.innerHTML = "<img src='../Images/Delete.png'>";
     deletebtn.onclick = function() {
         deleteRowForWindow(this);
     };
@@ -2335,24 +2153,24 @@ function dropQuery(newAgent, i,e,droptype,topP,left,text)
         var newQuery = new app.Query;
         newQuery.set('id', i);
         queryList.add(newQuery);
-        var prop = $('<a onclick="generatePropertiesFormForQueries(this)"><b><img src="../Images/settings.png" class="element-prop-icon"></b></a>').attr('id', (i+('-prop')));
-        var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon"></b></a> ').attr('id', (i+'vis'));
-        newAgent.append(node).append('<a class="element-close-icon" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
+        var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForQueries(this)">').attr('id', (i+('-prop')));
+        var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)"> ').attr('id', (i+'vis'));
+        newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(conIcon).append(prop);
         dropCompleteQueryElement(newAgent,i,e,topP,left);
     }
 
     else if(droptype=="joquerydrop")
     {
-        var prop = $('<a onclick="getJoinConnectionDetails(this)"><b><img src="../Images/settings.png" class="querySettingIconLoc"></b></a> ').attr('id', (i+('-propjoquerydrop')));
-        var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined1"></b></a> ').attr('id', (i+'vis'));
-        newAgent.append(node).append('<a class="boxclose1" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
+        var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick="getJoinConnectionDetails(this)">').attr('id', (i+('-propjoquerydrop')));
+        var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)" >').attr('id', (i+'vis'));
+        newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(conIcon).append(prop);
         dropCompleteJoinQueryElement(newAgent,i,e,topP,left);
     }
     else if(droptype=="stquerydrop")
     {
-        var prop = $('<a onclick="getStateMachineConnectionDetails(this)"><b><img src="../Images/settings.png" class="querySettingIconLoc"></b></a> ').attr('id', (i+('-propstquerydrop')));
-        var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="showIconDefined1"></b></a> ').attr('id', (i+'vis'));
-        newAgent.append(node).append('<a class="boxclose1" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(conIcon).append(prop);
+        var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick="getStateMachineConnectionDetails(this)">').attr('id', (i+('-propstquerydrop')));
+        var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
+        newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(conIcon).append(prop);
         dropCompleteStateMQueryElement(newAgent,i,e,topP,left);
     }
 }
@@ -2368,6 +2186,8 @@ function dropQuery(newAgent, i,e,droptype,topP,left,text)
  * @param newAgent
  * @param i
  * @param e
+ * @param topP
+ * @param left
  * @description Drops the Pass-though,Filter and the window queries as their in and out connectors can permit only one connection each
  *
  */

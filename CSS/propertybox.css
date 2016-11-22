@@ -67,8 +67,6 @@ body {
 
 a.streamproperty{
     float:right;
-    width:26px;
-    height:26px;
     width:20px;
     height: 10px;
     background-color: transparent;
@@ -82,8 +80,6 @@ a.streamproperty{
 }
 a.showConnector {
     float: right;
-    width: 26px;
-    height: 26px;
     width: 20px;
     height: 10px;
     background-color: transparent;
@@ -207,41 +203,41 @@ input {
 
 .lblstreamtype{
     .col-md-4 control-label;
-    margin: 20px 0px 20px 10px;
+    margin: 20px 0 20px 10px;
 }
 
 .istreamlbl{
     .col-md-4 control-label;
-    margin:20px 10px 20px 0px;
+    margin:20px 10px 20px 0;
     float:left;
 }
 
 .estreamlbl{
     .col-md-4 control-label;
-    margin:20px 10px 20px 0px;
+    margin:20px 10px 20px 0;
     float:left;
 }
 
 .iPredefStreamdiv{
-    margin:20px 0px 20px 0px;
+    margin:20px 0 20px 0;
     float: left;
 }
 
 .ePredefStreamdiv{
-    margin:20px 0px 20px 0px;
+    margin:20px 0 20px 0;
     float: left;
 }
 
 .panel-button-moreStreamData{
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
 }
 
 .streamDefDiv{
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
 }
 
 .panel-input-streamName{
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
 }
 
 .disabledbutton{
@@ -251,37 +247,37 @@ input {
 
 .importdiv{
     .form-group;
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
     box-shadow: 3px 4px 5px 6px #707070;
 }
 
 .exportdiv{
     .form-group;
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
     box-shadow: 3px 4px 5px 6px #707070;
 }
 
 .attrDiv{
     .form-group;
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
     box-shadow: 3px 4px 5px 6px #707070;
 }
 
 .streamDiv{
     .form-group;
     min-height: 450px;
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
     box-shadow: 3px 4px 5px 6px #707070;
 }
 
 .btn-import{
     .btn btn-success;
-    margin:10px 100px 10px 0px;
+    margin:10px 100px 10px 0;
 }
 
 .btn-export{
     .myButton;
-    margin:10px 100px 10px 0px;
+    margin:10px 100px 10px 0;
 }
 
 .streambtn{
@@ -306,7 +302,7 @@ input {
 }
 
 .istreamName{
-    margin:20px 100px 20px 0px;
+    margin:20px 100px 20px 0;
     width: 220px;
     background: transparent url('../Images/bg.jpg') no-repeat;
     color : #747862;
@@ -316,7 +312,7 @@ input {
 }
 
 .estreamName{
-    margin:20px 100px 20px 0px;
+    margin:20px 100px 20px 0;
     width: 220px;
     background: transparent url('../Images/bg.jpg') no-repeat;
     color : #747862;
@@ -328,43 +324,37 @@ input {
 .headingimport {
     background-color: #565656;
     text-align: center;
-    margin:20px 0px 20px 0px;
+    margin:20px 0 20px 0;
     color: transparent;
-    text-shadow: 0px 2px 3px rgba(255,255,255,0.3);
+    text-shadow: 0 2px 3px rgba(255,255,255,0.3);
     -webkit-background-clip: text;
-    -moz-background-clip: text;
-    background-clip: text;
 }
 
 .headingexport{
     background-color: #565656;
     text-align: center;
-    margin:20px 0px 20px 0px;
+    margin:20px 0 20px 0;
     color: transparent;
-    text-shadow: 0px 2px 3px rgba(255,255,255,0.3);
+    text-shadow: 0 2px 3px rgba(255,255,255,0.3);
     -webkit-background-clip: text;
-    -moz-background-clip: text;
-    background-clip: text;
 }
 
 .headingstream{
     background-color: #565656;
     text-align: center;
-    margin:20px 0px 20px 0px;
+    margin:20px 0 20px 0;
     color: transparent;
-    text-shadow: 0px 2px 3px rgba(255,255,255,0.3);
+    text-shadow: 0 2px 3px rgba(255,255,255,0.3);
     -webkit-background-clip: text;
-    -moz-background-clip: text;
-    background-clip: text;
 }
 
 .btn-define-stream{
     .myButton;
-    margin:20px 0px 20px 0px
+    margin:20px 0 20px 0
 }
 
 .newStreamName {
-    margin: 20px 100px 20px 0px;
+    margin: 20px 100px 20px 0;
     width: 30%;
     float: left;
     background: transparent url('../Images/bg.jpg') no-repeat;
@@ -375,12 +365,12 @@ input {
 }
 
 .addattrsetbtn{
-    margin:20px 100px 20px 0px;
+    margin:20px 100px 20px 0;
     float: left;
 }
 
 .attr-textfield-stylepair{
-    margin: 20px 0px 10px 0px;
+    margin: 20px 0 10px 0;
     float:left;
     width: 220px;
     background: transparent url('../Images/bg.jpg') no-repeat;
@@ -398,7 +388,7 @@ input {
 
 .inputvalDiv{
 
-    margin:20px 0px 20px 0px
+    margin:20px 0 20px 0
 }
 
 .inputLbl{
@@ -408,43 +398,43 @@ input {
 
 .streamnameLbl{
     float:left;
-    margin: 10px 0px 20px 10px;
+    margin: 10px 0 20px 10px;
     width:30%;
 }
 
 .StreamNameInput{
     width: 30%;
-    margin: 10px 0px 20px 0px;
+    margin: 10px 0 20px 0;
 }
 
 .attrName{
     float: left;
-    margin: 10px 0px 20px 10px;
+    margin: 10px 0 20px 10px;
     width:30%;
 }
 
 .attNam{
     float: left;
     width: 30%;
-    margin: 10px 0px 20px 0px;
+    margin: 10px 0 20px 0;
 }
 
 .attrTypecomboDiv{
     width:15%;
-    margin: 10px 0px 20px 10px;
+    margin: 10px 0 20px 10px;
 }
 
 .addAttrBtn{
     width: 15%;
-    margin: 10px 0px 20px 10px;
+    margin: 10px 0 20px 10px;
 }
 
 .closeAttr{
-    margin: 20px 100px 20px 0px;
+    margin: 20px 100px 20px 0;
 }
 
 .showAttrDivision{
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
     box-shadow: 3px 4px 5px 6px #707070;
     width: 100%;
 }
@@ -458,7 +448,7 @@ td {
     border: 1px solid transparent;
 }
 .queryDiv{
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
     width: 600px;
     box-shadow: 3px 4px 5px 6px #707070;
 }
@@ -466,12 +456,10 @@ td {
 .simpleQueryLabel, .windowStreamLabel{
     background-color: #565656;
     text-align: center;
-    margin:20px 0px 20px 0px;
+    margin:20px 0 20px 0;
     color: transparent;
-    text-shadow: 0px 2px 3px rgba(255,255,255,0.3);
+    text-shadow: 0 2px 3px rgba(255,255,255,0.3);
     -webkit-background-clip: text;
-    -moz-background-clip: text;
-    background-clip: text;
 }
 
 .tableQueryForm{
@@ -516,7 +504,7 @@ td {
 }
 
 .jqueryDivLeft, .jqueryDivRight, .jqueryDivAttrMap , .stqueryDivState, .stqueryDivLogic, .stqueryDivAttrMap , .DefWindowAttrDiv , .rangePartitionTypeTableDiv, .partitionTypeTableDiv {
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
     box-shadow: 3px 4px 5px 6px #707070;
 }
 
@@ -526,7 +514,7 @@ td {
 }
 
 .DefWindowAttrTableDiv{
-    margin: 20px 0px 20px 0px;
+    margin: 20px 0 20px 0;
     box-shadow: 3px 4px 5px 6px grey;
 }
 
@@ -570,14 +558,7 @@ td {
     padding-top: 4px;
 }
 
-
-.windowNameNode{
-    /*margin-top:40px;*/
-    /*margin-right:-3px;*/
-    font-weight:bolder;
-}
-
-.streamNameNode , .queryNameNode{
+.streamNameNode , .queryNameNode , .windowNameNode{
     float:right;
     width:inherit;
     height:inherit;
@@ -596,8 +577,8 @@ td {
     height:20px;
     background-color: transparent;
     border: 1px solid transparent;
-    margin-top:0px;
-    margin-right:0px;
+    margin-top:0;
+    margin-right:0;
     cursor:pointer;
     color: red;
     border-radius: 40px;
@@ -614,7 +595,7 @@ td {
     background-color: transparent;
     border: 1px solid transparent;
     margin-top:-82px;
-    margin-right:0px;
+    margin-right:0;
     cursor:pointer;
     color: red;
     border-radius: 40px;
@@ -630,8 +611,8 @@ td {
     height:20px;
     background-color: transparent;
     border: 1px solid transparent;
-    margin-top:0px;
-    margin-right:0px;
+    margin-top:0;
+    margin-right:0;
     cursor:pointer;
     color: red;
     border-radius: 40px;
@@ -712,8 +693,8 @@ a.boxclose1{
     height:26px;
     background-color: transparent;
     border: 1px solid transparent;
-    margin-top:-34px;
-    margin-right:-120px;
+    margin-top:-95px;
+    margin-right:25px;
     cursor:pointer;
     color: red;
     border-radius: 40px;
@@ -744,8 +725,8 @@ a.boxclose1{
     height:26px;
     background-color: transparent;
     border: 1px solid transparent;
-    margin-top:-34px;
-    margin-right:-95px;
+    margin-top:-95px;
+    margin-right:50px;
     cursor:pointer;
     color: red;
     border-radius: 40px;
@@ -790,7 +771,7 @@ a.boxclose1{
     background-color: transparent;
     border: 1px solid transparent;
     margin-top:-106px;
-    margin-right:0px;
+    margin-right:0;
     cursor:pointer;
     color: red;
     border-radius: 40px;
@@ -855,9 +836,9 @@ a.boxclose{
 }
 
 .myButton {
-    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
-    box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -moz-box-shadow:inset 0 1px 0 0 #ffffff;
+    -webkit-box-shadow:inset 0 1px 0 0 #ffffff;
+    box-shadow:inset 0 1px 0 0 #ffffff;
     background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #b3a8b3));
     background:-moz-linear-gradient(top, #ededed 5%, #b3a8b3 100%);
     background:-webkit-linear-gradient(top, #ededed 5%, #b3a8b3 100%);
@@ -878,7 +859,7 @@ a.boxclose{
     font-weight:bold;
     padding:6px 24px;
     text-decoration:none;
-    text-shadow:0px 1px 0px #ffffff;
+    text-shadow:0 1px 0 #ffffff;
 }
 .myButton:hover {
     background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #b3a8b3), color-stop(1, #ededed));

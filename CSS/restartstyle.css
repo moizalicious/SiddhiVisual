@@ -12,13 +12,8 @@
     height: 800px;
     overflow-x: scroll;
     overflow-y: scroll;
-    /*-webkit-transform:scale(0.75);*/
-    /*-moz-transform:scale(0.75);*/
-    /*-ms-transform:scale(0.75);*/
-    /*-o-transform:scale(0.75);*/
-    /*transform:scale(0.75)*/
-
-
+    background-image: url("../Images/grid.png") ;
+    background-repeat: repeat;
 }
 
 /*
@@ -270,3 +265,27 @@
     cursor: pointer;
 }
 
+/*
+*Styles for the configuration icons
+*/
+.element-prop-icon , .element-conn-icon , .element-close-icon{
+    float:right;
+    width:26px;
+    height:26px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    margin-top:-95px;
+    cursor:pointer;
+    color: red;
+    border-radius: 40px;
+}
+
+.element-prop-icon{
+    margin-right:50px;
+}
+.element-conn-icon{
+    margin-right:25px;
+}
+.element-close-icon{
+    margin-right:0;
+}
