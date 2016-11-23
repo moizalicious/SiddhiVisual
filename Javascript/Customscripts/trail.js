@@ -204,7 +204,7 @@
                 //If the dropped Element is a Window(not window query) then->
                 else if (dropElem == "wstream ui-draggable") {
                     var newAgent = $('<div>').attr('id', i).addClass('wstreamdrop');
-                    //Drop the element instantly since its attributes will be set only when the user requires it
+                    //Drop the element instantly since its projections will be set only when the user requires it
                     dropWindowStream(newAgent, i, e,mouseTop,mouseLeft,"Window");
                     i++;
                     finalElementCount=i;
@@ -214,7 +214,7 @@
                 else if (dropElem == "squery ui-draggable") {
                     var newAgent = $('<div>').attr('id', i).addClass('squerydrop');
                     droptype = "squerydrop";
-                    //Drop the element instantly since its attributes will be set only when the user requires it
+                    //Drop the element instantly since its projections will be set only when the user requires it
                     dropQuery(newAgent, i, e,droptype,mouseTop,mouseLeft,"Empty Query");
                     i++;
                     finalElementCount=i;
@@ -224,7 +224,7 @@
                 else if (dropElem == "filter ui-draggable") {
                     var newAgent = $('<div>').attr('id', i).addClass('filterdrop');
                     droptype = "filterdrop";
-                    //Drop the element instantly since its attributes will be set only when the user requires it
+                    //Drop the element instantly since its projections will be set only when the user requires it
                     dropQuery(newAgent, i, e,droptype,mouseTop,mouseLeft,"Empty Query");
                     i++;
                     finalElementCount=i;
@@ -234,7 +234,7 @@
                 else if (dropElem == "wquery ui-draggable") {
                     var newAgent = $('<div>').attr('id', i).addClass('wquerydrop');
                     droptype = "wquerydrop";
-                    //Drop the element instantly since its attributes will be set only when the user requires it
+                    //Drop the element instantly since its projections will be set only when the user requires it
                     dropQuery(newAgent, i, e, droptype,mouseTop,mouseLeft,"Empty Query");
                     i++;
                     finalElementCount=i;
@@ -244,7 +244,7 @@
                 else if (dropElem == "joquery ui-draggable") {
                     var newAgent = $('<div>').attr('id', i).addClass('joquerydrop');
                     droptype = "joquerydrop";
-                    //Drop the element instantly since its attributes will be set only when the user requires it
+                    //Drop the element instantly since its projections will be set only when the user requires it
                     dropQuery(newAgent, i, e, droptype,mouseTop,mouseLeft,"Empty Query");
                     i++;
                     finalElementCount=i;
@@ -254,7 +254,7 @@
                 else if(dropElem == "stquery ui-draggable") {
                     var newAgent = $('<div>').attr('id', i).addClass('stquerydrop');
                     droptype = "stquerydrop";
-                    //Drop the element instantly since its attributes will be set only when the user requires it
+                    //Drop the element instantly since its projections will be set only when the user requires it
                     dropQuery(newAgent, i, e, droptype,mouseTop,mouseLeft,"Empty Query");
                     i++;
                     finalElementCount=i;
@@ -265,7 +265,7 @@
                     var newAgent = $('<div>').attr('id', i).addClass('partitiondrop');
                     droptype = "partitiondrop";
                     $(droppedElement).draggable({containment: "container"});
-                    //Drop the element instantly since its attributes will be set only when the user requires it
+                    //Drop the element instantly since its projections will be set only when the user requires it
                     dropPartition(newAgent,i,e,droptype,mouseTop,mouseLeft);
                     i++;
                     finalElementCount=i;
@@ -347,9 +347,9 @@
         var node = [];
         //matches - Array that stores element IDs of elements that exist on te canvas
         var matches = [];
-        /*attrArray - Array that stores the attributes of an element
-          Since there maybe multiple attributes for a single element, they need to be related to the element.
-          Hence, attrArray is an array within the 'node' array's 'attributes' object*/
+        /*attrArray - Array that stores the projections of an element
+          Since there maybe multiple projections for a single element, they need to be related to the element.
+          Hence, attrArray is an array within the 'node' array's 'projections' object*/
         var attrArray = [];
         /*states - Array that stores the different states of a state machine query element
          Since there maybe multiple states for a single element, they need to be related to the element.
@@ -881,7 +881,7 @@
                         createdDefinedStreamArray[id][3] = "Defined Stream";
                         createdDefinedStreamArray[id][4] = tblerows;
                         createdDefinedStreamArray[id][2] = [];
-                        var attrArray = elem.attributes;
+                        var attrArray = elem.projections;
                         
                         var r = 0;
                         $.each(attrArray, function (index, elem) {
@@ -971,7 +971,7 @@
                         createdWindowStreamArray[id][2] = null;
                         createdWindowStreamArray[id][3] = null;
                         createdWindowStreamArray[id][4] = [];
-                        var attrArray = elem.attributes;
+                        var attrArray = elem.projections;
 
                         var r = 0;
                         $.each(attrArray, function (index, elem) {
@@ -994,7 +994,7 @@
                     createdPassThroughQueryArray[id][2][1] = elem.fromStream.name;
                     createdPassThroughQueryArray[id][3] = elem.filter;
                     createdPassThroughQueryArray[id][4] = [];
-                    var attrArray = elem.attributes;
+                    var attrArray = elem.projections;
 
                     var r = 0;
                     $.each(attrArray, function (index, elem) {
@@ -1020,7 +1020,7 @@
                     createdSimpleQueryArray[id][2][1] = elem.fromStream.name;
                     createdSimpleQueryArray[id][3] = elem.filter;
                     createdSimpleQueryArray[id][4] = [];
-                    var attrArray = elem.attributes;
+                    var attrArray = elem.projections;
 
                     var r = 0;
                     $.each(attrArray, function (index, elem) {
@@ -1043,12 +1043,12 @@
                     createdWindowQueryArray[id][1] = elem.name;
                     createdWindowQueryArray[id][2][0] = elem.fromStream.index;
                     createdWindowQueryArray[id][2][1] = elem.fromStream.name;
-                    createdWindowQueryArray[id][3] = elem.filter1;
+                    createdWindowQueryArray[id][3] = elem.filter;
                     createdWindowQueryArray[id][4] = elem.window;
                     createdWindowQueryArray[id][5] = elem.filter2;
                     createdWindowQueryArray[id][6] = [];
 
-                    var attrArray = elem.attributes;
+                    var attrArray = elem.projections;
 
                     var r = 0;
                     $.each(attrArray, function (index, elem) {
@@ -1070,16 +1070,16 @@
                     createdJoinQueryArray[id][0] = id;
                     createdJoinQueryArray[id][1] = elem.name;
                     createdJoinQueryArray[id][2][0] = elem.leftStream.name;
-                    createdJoinQueryArray[id][2][1] = elem.leftStream.filter1;
+                    createdJoinQueryArray[id][2][1] = elem.leftStream.filter;
                     createdJoinQueryArray[id][2][2] = elem.leftStream.window;
                     createdJoinQueryArray[id][2][3] = elem.leftStream.filter2;
                     createdJoinQueryArray[id][3][0] = elem.rightStream.name;
-                    createdJoinQueryArray[id][3][1] = elem.rightStream.filter1;
+                    createdJoinQueryArray[id][3][1] = elem.rightStream.filter;
                     createdJoinQueryArray[id][3][2] = elem.rightStream.window;
                     createdJoinQueryArray[id][3][3] = elem.rightStream.filter2;
                     createdJoinQueryArray[id][4] = [];
 
-                    var attrArray = elem.attributes;
+                    var attrArray = elem.projections;
 
                     var r = 0;
                     $.each(attrArray, function (index, elem) {
@@ -1101,7 +1101,7 @@
                     createdStateMachineQueryArray[id][1] = elem.name;
                     createdStateMachineQueryArray[id][2] = [];
                     createdStateMachineQueryArray[id][4] = [];
-                    var attrArray = elem.attributes;
+                    var attrArray = elem.projections;
 
                     var r = 0;
                     $.each(attrArray, function (index, elem) {
@@ -1140,7 +1140,7 @@
                     createdPartitionConditionArray[id][4]== elem.numberOfAttributes;
                     createdPartitionConditionArray[id][4]== elem.subPartitionConditionId;
                     
-                    var attrArray = elem.attributes;
+                    var attrArray = elem.projections;
 
                     var r = 0;
                     $.each(attrArray, function (index, elem) {
@@ -1157,7 +1157,7 @@
                     var newAgent = $('<div style="width:'+width+'px;height:'+height+'px">').attr('id', id).addClass('partitiondrop');
                     droptype = "partitiondrop";
                     $(droppedElement).draggable({containment: "container"});
-                    //Drop the element instantly since its attributes will be set only when the user requires it
+                    //Drop the element instantly since its projections will be set only when the user requires it
                     // dropPartition(newAgent,id,e,droptype,top,left);
                     
                     var thisId = id + '-pc'+ elem.subPartitionConditionId;
@@ -1881,7 +1881,7 @@
         var StrName= document.getElementById("StreamNameInput").value;
         var StreamElementID = i;
 
-        //The attributes added to the table displayed in the Define Section of the Stream form will only be taken as the attributes for the Defined Stream
+        //The projections added to the table displayed in the Define Section of the Stream form will only be taken as the projections for the Defined Stream
         var table = document.getElementById('attrtable');
         var tblerows = (table.rows.length);
         createdDefinedStreamArray[i][2]=new Array(tblerows);    //Create an array within the 2nd row of the createdDefinedStreamArray to store the attribute details
@@ -2139,7 +2139,7 @@
             //`w<3` as There are 3 rows for each Stream
             for (var w=0; w<3; w++)
             {
-                //`r<5` as there are only 5 attributes and corresponding types for each stream
+                //`r<5` as there are only 5 projections and corresponding types for each stream
                 for(var r=0; r<5;r++)
                 {
                     if(q==0 && w==1)
@@ -2306,7 +2306,7 @@
         $("#container").addClass("disabledbutton");
         $("#toolbox").addClass("disabledbutton");
 
-        var tableWindowStreamForm = document.createElement('table');    //To display the attributes defined for the window
+        var tableWindowStreamForm = document.createElement('table');    //To display the projections defined for the window
         tableWindowStreamForm.id = "tableWindowStreamForm";
         tableWindowStreamForm.className = "tableWindowStreamForm";
 
@@ -2349,7 +2349,7 @@
         DefAddAttributes.id="DefAddAttributes";
         DefAddAttributes.innerHTML="Add Atribute";
         DefAddAttributes.onclick = function () {
-            addAttributeForWindow();    /* Open the form to add attributes to the Window */
+            addAttributeForWindow();    /* Open the form to add projections to the Window */
         };
 
         DefCreateWindow=document.createElement("button");
@@ -2560,7 +2560,7 @@
     /*--------------------Global Variables needed for the Window Attributes Table--------------------------------*/
 
     /**
-     * @function Append Added attributes to the display table
+     * @function Append Added projections to the display table
      */
 
     function showAttributesForWindowInTable()
@@ -2865,10 +2865,10 @@
         }
 
 
-        //To retrieve the number of attributes
+        //To retrieve the number of projections
         getAttributes(selctedSt);
         // alert("element ID: "+ elementID);
-        //attrNumber gives the number of attributes
+        //attrNumber gives the number of projections
         //streamInd gives the index of the selected stream
         if(droptype=="squerydrop")
         {
@@ -3216,7 +3216,7 @@
 
 
     /**
-     * @function Append Added attributes to the display table
+     * @function Append Added projections to the display table
      */
 
     function showAttributes()
@@ -3438,7 +3438,7 @@
 
         function dragMoveListener (event) {
             var target = event.target,
-            // keep the dragged position in the data-x/data-y attributes
+            // keep the dragged position in the data-x/data-y projections
                 x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
                 y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
@@ -3447,7 +3447,7 @@
                 target.style.transform =
                     'translate(' + x + 'px, ' + y + 'px)';
 
-            // update the posiion attributes
+            // update the posiion projections
             target.setAttribute('data-x', x);
             target.setAttribute('data-y', y);
         }
@@ -4364,9 +4364,9 @@
             }
 
         }
-        //To retrieve the number of attributes
+        //To retrieve the number of projections
         getAttributes(selctedSt);
-        //attrNumber gives the number of attributes
+        //attrNumber gives the number of projections
         //streamInd gives the index of the selected stream
         createWindowStreamForm(elementID, fromNameSt,fromStreamIndex,streamType, defAttrNum);
     }
@@ -5855,9 +5855,9 @@
         }
 
       
-        //To retrieve the number of attributes
+        //To retrieve the number of projections
         getAttributes(selctedSt);
-        //attrNumber gives the number of attributes
+        //attrNumber gives the number of projections
         //streamInd gives the index of the selected stream
         createJoinQueryForm(elementID, fromNameSt1,fromNameSt2, intoNameSt, fromStreamIndex1,fromStreamIndex2, intoStreamIndex, streamType, defAttrNum);
     }
@@ -6030,9 +6030,9 @@
 
         //alert("Final fromNameLIstArray: "+fromStreamNameListArray);
         elementID=elID.charAt(0);
-        //To retrieve the number of attributes
+        //To retrieve the number of projections
         getAttributes(selctedSt);
-        //attrNumber gives the number of attributes
+        //attrNumber gives the number of projections
         //streamInd gives the index of the selected stream
         createStateMachineQueryForm(elementID, fromStreamNameListArray, intoNameSt, intoStreamIndex, streamType, defAttrNum);
     }
@@ -6077,9 +6077,9 @@
             }
         }
 
-        //To retrieve the number of attributes
+        //To retrieve the number of projections
         getAttributes(selctedSt);
-        //attrNumber gives the number of attributes
+        //attrNumber gives the number of projections
         //streamInd gives the index of the selected stream
         setPartitionConditionform(clickedId,selctedSt,fromStreamName,streamType,fromStreamIndex, defAttrNum, type);
     }

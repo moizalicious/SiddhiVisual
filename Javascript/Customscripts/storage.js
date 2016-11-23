@@ -1,35 +1,34 @@
-
 var app = {}; // create namespace for our app
 
 app.Stream = Backbone.Model.extend({
     defaults: {
-        id : '',
+        id: '',
         name: '',
-        asName:'',
+        asName: '',
         type: '',
-        attributes:[]
+        attributes: []
     }
 });
 
 app.Receiver = Backbone.Model.extend({
     defaults: {
-        id : '',
+        id: '',
         name: '',
-        stream:''
+        stream: ''
     }
 });
 
 app.Publisher = Backbone.Model.extend({
     defaults: {
-        id : '',
+        id: '',
         name: '',
-        stream:''
+        stream: ''
     }
 });
 
 app.ExecutionPlan = Backbone.Model.extend({
     defaults: {
-        id : '',
+        id: '',
         name: '',
         inStream: [],
         outStream: []
@@ -37,13 +36,13 @@ app.ExecutionPlan = Backbone.Model.extend({
 });
 
 app.FilterQuery = Backbone.Model.extend({
-    defaults :{
-        id : '',
+    defaults: {
+        id: '',
         name: '',
-        inStream:'',
+        inStream: '',
         outStream: '',
         filter: '',
-        attributes:[]
+        attributes: []
     }
 });
 
@@ -53,7 +52,7 @@ app.PassThroughQuery = Backbone.Model.extend({
         name: '',
         inStream: '',
         outStream: '',
-        attributes:[]
+        attributes: []
     }
 });
 
@@ -65,22 +64,39 @@ app.WindowQuery = Backbone.Model.extend({
         outStream: '',
         filter1: '',
         filter2: '',
-        window:'',
+        window: '',
         attributes: []
     }
 });
+//model for all 3 simple queries ( passthrough, window and filter)
 app.Query = Backbone.Model.extend({
+    defaults: {
+        "id": '',
+        "name": '',
+        "from": '',
+        "insert-into": '',
+        "filter": '',
+        "post-window-query": '',
+        "window": '',
+        "output-type": '',
+        "projections": []
+    }
+});
+
+app.Pattern = Backbone.Model.extend({
     defaults: {
         id: '',
         name: '',
-        inStream: '',
-        outStream: '',
-        filter1: '',
-        filter2: '',
-        window:'',
-        attributes: []
+        states: [],
+        logic: '',
+        projection: [],
+        having: '',
+        groupby: '',
+        into: '',
+        from: []
     }
 });
+
 //--------------
 // Collections
 //--------------
@@ -110,7 +126,11 @@ app.WindowQueryList = Backbone.Collection.extend({
 app.QueryList = Backbone.Collection.extend({
     model: app.Query
 });
+app.PatternList = Backbone.Collection.extend({
+    model: app.Pattern
+});
 
+//initiates the collections
 streamList = new app.StreamList();
 receiverList = new app.ReceiverList();
 publisherList = new app.PublisherList();
@@ -119,3 +139,4 @@ filterList = new app.FilterList();
 passThroughList = new app.PassThroughList();
 windowQueryList = new app.WindowQueryList();
 queryList = new app.QueryList();
+patternList = new app.PatternList();

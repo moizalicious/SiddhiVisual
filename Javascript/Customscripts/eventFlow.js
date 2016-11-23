@@ -70,7 +70,7 @@ jsPlumb.ready(function () {
             else if (dropElem == "receiver ui-draggable") {
 
                 newAgent = $('<div>').attr('id', i).addClass('receiver-drop');
-                //Drop the element instantly since its attributes will be set only when the user requires it
+                //Drop the element instantly since its projections will be set only when the user requires it
                 dropReceiver(newAgent, i, mouseTop, mouseLeft, "Receiver");
                 i++;
                 finalElementCount = i;
@@ -80,7 +80,7 @@ jsPlumb.ready(function () {
             else if (dropElem == "publisher ui-draggable") {
                 newAgent = $('<div>').attr('id', i).addClass('publisher-drop');
                 droptype = "squerydrop";
-                //Drop the element instantly since its attributes will be set only when the user requires it
+                //Drop the element instantly since its projections will be set only when the user requires it
                 dropPublisher(newAgent, i,mouseTop, mouseLeft, "Publisher");
 
                 i++;
@@ -91,7 +91,7 @@ jsPlumb.ready(function () {
             else if (dropElem == "execution-plan ui-draggable") {
                 newAgent = $('<div>').attr('id', i).addClass('execution-plan-drop');
                 droptype = "squerydrop";
-                //Drop the element instantly since its attributes will be set only when the user requires it
+                //Drop the element instantly since its projections will be set only when the user requires it
                 dropExecutionPlan(newAgent, i,mouseTop, mouseLeft, "Plan");
 
                 i++;
@@ -184,39 +184,39 @@ jsPlumb.ready(function () {
         if (targetClass == 'execution-plan-drop ui-draggable'){
             model = executionPlanList.get(targetId);
             if(target.charAt(target.indexOf('-') +1) == 'I'){
-                streams = model.get('inStream');
+                streams = model.get('from');
                 if (streams == undefined){
                     streams = [ sourceId]
                 }
                 else streams.push(sourceId);
-                model.set('inStream', streams);
+                model.set('from', streams);
             }
             else if(target.charAt(target.indexOf('-') +1) == 'O') {
-                streams = model.get('outStream');
+                streams = model.get('insert-into');
                 if (streams== undefined){
                     streams = [ sourceId]
                 }
                 else streams.push(sourceId);
-                model.set('outStream', streams)
+                model.set('insert-into', streams)
             }
         }
         else if (sourceClass =='execution-plan-drop ui-draggable' ){
             model = executionPlanList.get(sourceId);
             if(source.charAt(source.indexOf('-') +1) == 'I'){
-                streams = model.get('inStream');
+                streams = model.get('from');
                 if (streams== undefined){
                     streams = [ targetId]
                 }
                 else streams.push(targetId);
-                model.set('inStream', streams);
+                model.set('from', streams);
                 }
             else if(source.charAt(source.indexOf('-') +1) == 'O') {
-                streams = model.get('outStream');
+                streams = model.get('insert-into');
                 if (streams== undefined){
                     streams = [ targetId]
                 }
                 else streams.push(targetId);
-                model.set('outStream', streams)
+                model.set('insert-into', streams)
             }
         }
     });
@@ -258,31 +258,31 @@ jsPlumb.ready(function () {
         if( targetClass == 'execution-plan-drop ui-draggable'){
             var model = executionPlanList.get(targetId);
             if(target.charAt(target.indexOf('-') +1) == 'I'){
-                streams = model.get('inStream');
+                streams = model.get('from');
                 var removedStream = streams.indexOf(sourceId);
                 streams.splice(removedStream,1);
-                model.set('inStream', streams);
+                model.set('from', streams);
             }
             else if(target.charAt(target.indexOf('-') +1) == 'O') {
-                streams = model.get('outStream');
+                streams = model.get('insert-into');
                 var removedStream = streams.indexOf(sourceId);
                 streams.splice(removedStream,1);
-                model.set('outStream', streams);
+                model.set('insert-into', streams);
             }
         }
         else if ( sourceClass == 'execution-plan-drop ui-draggable'){
             var model = executionPlanList.get(sourceId);
             if(source.charAt(source.indexOf('-') +1) == 'I'){
-                streams = model.get('inStream');
+                streams = model.get('from');
                 var removedStream = streams.indexOf(targetId);
                 streams.splice(removedStream,1);
-                model.set('inStream', streams);
+                model.set('from', streams);
             }
             else if(source.charAt(source.indexOf('-') +1) == 'O') {
-                streams = model.get('outStream');
+                streams = model.get('insert-into');
                 var removedStream = streams.indexOf(targetId);
                 streams.splice(removedStream,1);
-                model.set('outStream', streams);
+                model.set('insert-into', streams);
             }
         }
     });
@@ -536,7 +536,7 @@ jsPlumb.ready(function () {
                         createdDefinedStreamArray[id][3] = "Defined Stream";
                         createdDefinedStreamArray[id][4] = tblerows;
                         createdDefinedStreamArray[id][2] = [];
-                        var attrArray = element.attributes;
+                        var attrArray = element.projections;
 
                         var r = 0;
                         $.each(attrArray, function (index, elem) {
@@ -635,8 +635,8 @@ jsPlumb.ready(function () {
                     clickedModel = executionPlanList.get(newAgent.attr('id'));
                     alert( 'Name : ' + clickedModel.get('name')+ '\n'+
                         'Element ID : ' + clickedModel.get('id') + '\n'+
-                        'Stream connected IN : ' + clickedModel.get('inStream')+ '\n'+
-                        'Stream connected OUT : ' + clickedModel.get('outStream'));
+                        'Stream connected IN : ' + clickedModel.get('from')+ '\n'+
+                        'Stream connected OUT : ' + clickedModel.get('insert-into'));
                 }
 
 

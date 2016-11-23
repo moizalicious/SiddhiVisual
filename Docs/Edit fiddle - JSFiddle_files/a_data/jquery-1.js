@@ -159,7 +159,7 @@ jQuery.fn = jQuery.prototype = {
 							if ( jQuery.isFunction( this[ match ] ) ) {
 								this[ match ]( context[ match ] );
 
-							// ...and otherwise set as attributes
+							// ...and otherwise set as projections
 							} else {
 								this.attr( match, context[ match ] );
 							}
@@ -1794,7 +1794,7 @@ jQuery.fn.extend({
 				data = jQuery.data( elem );
 
 				if ( elem.nodeType === 1 && !jQuery._data( elem, "parsedAttrs" ) ) {
-					attrs = elem.attributes;
+					attrs = elem.projections;
 					for ( ; i < attrs.length; i++ ) {
 						name = attrs[i].name;
 
@@ -2264,9 +2264,9 @@ jQuery.extend({
 	valHooks: {
 		option: {
 			get: function( elem ) {
-				// attributes.value is undefined in Blackberry 4.7 but
+				// projections.value is undefined in Blackberry 4.7 but
 				// uses .value. See #6932
-				var val = elem.attributes.value;
+				var val = elem.projections.value;
 				return !val || val.specified ? elem.value : elem.text;
 			}
 		},
@@ -2327,19 +2327,19 @@ jQuery.extend({
 		var hooks, notxml, ret,
 			nType = elem.nodeType;
 
-		// don't get/set attributes on text, comment and attribute nodes
+		// don't get/set projections on text, comment and attribute nodes
 		if ( !elem || nType === 3 || nType === 8 || nType === 2 ) {
 			return;
 		}
 
-		// Fallback to prop when attributes are not supported
+		// Fallback to prop when projections are not supported
 		if ( typeof elem.getAttribute === core_strundefined ) {
 			return jQuery.prop( elem, name, value );
 		}
 
 		notxml = nType !== 1 || !jQuery.isXMLDoc( elem );
 
-		// All attributes are lowercase
+		// All projections are lowercase
 		// Grab necessary hook if one is defined
 		if ( notxml ) {
 			name = name.toLowerCase();
@@ -2370,7 +2370,7 @@ jQuery.extend({
 				ret =  elem.getAttribute( name );
 			}
 
-			// Non-existent attributes return null, we normalize to undefined
+			// Non-existent projections return null, we normalize to undefined
 			return ret == null ?
 				undefined :
 				ret;
@@ -2386,9 +2386,9 @@ jQuery.extend({
 			while ( (name = attrNames[i++]) ) {
 				propName = jQuery.propFix[ name ] || name;
 
-				// Boolean attributes get special treatment (#10870)
+				// Boolean projections get special treatment (#10870)
 				if ( rboolean.test( name ) ) {
-					// Set corresponding property to false for boolean attributes
+					// Set corresponding property to false for boolean projections
 					// Also clear defaultChecked/defaultSelected (if appropriate) for IE<8
 					if ( !getSetAttribute && ruseDefault.test( name ) ) {
 						elem[ jQuery.camelCase( "default-" + name ) ] =
@@ -2491,7 +2491,7 @@ jQuery.extend({
 	}
 });
 
-// Hook for boolean attributes
+// Hook for boolean projections
 boolHook = {
 	get: function( elem, name ) {
 		var
@@ -2504,7 +2504,7 @@ boolHook = {
 
 				getSetInput && getSetAttribute ?
 					attr != null :
-					// oldIE fabricates an empty string for missing boolean attributes
+					// oldIE fabricates an empty string for missing boolean projections
 					// and conflates checked/selected into attroperties
 					ruseDefault.test( name ) ?
 						elem[ jQuery.camelCase( "default-" + name ) ] :
@@ -2519,7 +2519,7 @@ boolHook = {
 	},
 	set: function( elem, value, name ) {
 		if ( value === false ) {
-			// Remove boolean attributes when set to false
+			// Remove boolean projections when set to false
 			jQuery.removeAttr( elem, name );
 		} else if ( getSetInput && getSetAttribute || !ruseDefault.test( name ) ) {
 			// IE<8 needs the *property* name
@@ -2558,7 +2558,7 @@ if ( !getSetInput || !getSetAttribute ) {
 	};
 }
 
-// IE6/7 do not support getting/setting some attributes with get/setAttribute
+// IE6/7 do not support getting/setting some projections with get/setAttribute
 if ( !getSetAttribute ) {
 
 	// Use this for any attribute in IE6/7
@@ -2612,7 +2612,7 @@ if ( !getSetAttribute ) {
 }
 
 
-// Some attributes require a special call on IE
+// Some projections require a special call on IE
 // http://msdn.microsoft.com/en-us/library/ms536429%28VS.85%29.aspx
 if ( !jQuery.support.hrefNormalized ) {
 	jQuery.each([ "href", "src", "width", "height" ], function( i, name ) {
@@ -4035,11 +4035,11 @@ setDocument = Sizzle.setDocument = function( node ) {
 		return !div.getElementsByTagName("*").length;
 	});
 
-	// Check if attributes should be retrieved by attribute nodes
-	support.attributes = assert(function( div ) {
+	// Check if projections should be retrieved by attribute nodes
+	support.projections = assert(function(div ) {
 		div.innerHTML = "<select></select>";
 		var type = typeof div.lastChild.getAttribute("multiple");
-		// IE8 returns a string for some attributes even when not present
+		// IE8 returns a string for some projections even when not present
 		return type !== "boolean" && type !== "string";
 	});
 
@@ -4051,7 +4051,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 			return false;
 		}
 
-		// Safari 3.2 caches class attributes and doesn't catch changes
+		// Safari 3.2 caches class projections and doesn't catch changes
 		div.lastChild.className = "e";
 		return div.getElementsByClassName("e").length === 2;
 	});
@@ -4078,7 +4078,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 		return pass;
 	});
 
-	// IE6/7 return modified attributes
+	// IE6/7 return modified projections
 	Expr.attrHandle = assert(function( div ) {
 		div.innerHTML = "<a href='#'></a>";
 		return div.firstChild && typeof div.firstChild.getAttribute !== strundefined &&
@@ -4192,7 +4192,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 			// http://bugs.jquery.com/ticket/12359
 			div.innerHTML = "<select><option selected=''></option></select>";
 
-			// IE8 - Some boolean attributes are not treated correctly
+			// IE8 - Some boolean projections are not treated correctly
 			if ( !div.querySelectorAll("[selected]").length ) {
 				rbuggyQSA.push( "\\[" + whitespace + "*(?:checked|disabled|ismap|multiple|readonly|selected|value)" );
 			}
@@ -4409,7 +4409,7 @@ Sizzle.attr = function( elem, name ) {
 	if ( (val = Expr.attrHandle[ name ]) ) {
 		return val( elem );
 	}
-	if ( documentIsXML || support.attributes ) {
+	if ( documentIsXML || support.projections ) {
 		return elem.getAttribute( name );
 	}
 	return ( (val = elem.getAttributeNode( name )) || elem.getAttribute( name ) ) && elem[ name ] === true ?
@@ -6986,7 +6986,7 @@ if ( window.getComputedStyle ) {
 
 		// If we're not dealing with a regular pixel number
 		// but a number that has a weird ending, we need to convert it to pixels
-		// but not position css attributes, as those are proportional to the parent element instead
+		// but not position css projections, as those are proportional to the parent element instead
 		// and we can't measure the parent instead because it might trigger a "stacking dolls" problem
 		if ( rnumnonpx.test( ret ) && !rposition.test( name ) ) {
 
@@ -8914,7 +8914,7 @@ function defaultPrefilter( elem, props, opts ) {
 	// height/width overflow pass
 	if ( elem.nodeType === 1 && ( "height" in props || "width" in props ) ) {
 		// Make sure that nothing sneaks out
-		// Record all 3 overflow attributes because IE does not
+		// Record all 3 overflow projections because IE does not
 		// change the overflow attribute when overflowX and
 		// overflowY are set to the same value
 		opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];

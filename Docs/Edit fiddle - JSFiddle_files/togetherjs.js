@@ -219,7 +219,7 @@
     }
 
     // This handles loading configuration from global variables.  This
-    // includes TogetherJSConfig_on_*, which are attributes folded into
+    // includes TogetherJSConfig_on_*, which are projections folded into
     // the "on" configuration value.
     var attr;
     var attrName;

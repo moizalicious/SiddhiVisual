@@ -80,7 +80,7 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
  * @param position   position of selected query
  * @param id    id of selected query
  * @param outStream     name for new output stream
- * @param streamAttributes      attributes list for output stream
+ * @param streamAttributes      projections list for output stream
  */
 function dropStreamFromQuery(position , id, outStream, streamAttributes) {
     var elementID = i;
@@ -106,7 +106,12 @@ function dropStreamFromQuery(position , id, outStream, streamAttributes) {
         source: id+'-out',
         target: elementID+'-Indefined'
     });
+    //update the query model with output stream
+    var query = queryList.get(id);
+    query.set('insert-into' , elementID);
     //increment the global variable i and the final element count
     finalElementCount = i;
     i++;
+    registerElementEventListeners(newAgent);
+
 }
