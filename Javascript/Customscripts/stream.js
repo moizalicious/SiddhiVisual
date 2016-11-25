@@ -84,7 +84,7 @@ function dropStream(newAgent,i,kind,ptop,left, name) {
  */
 function dropStreamFromQuery(position , id, outStream, streamAttributes) {
     var elementID = i;
-    var newAgent = $('<div>').attr('id', elementID).addClass('streamdrop node');
+    var newAgent = $('<div>').attr('id', elementID).addClass('streamdrop');
 
     //The container and the toolbox are disabled to prevent the user from dropping any elements before initializing a Stream Element
     $('#container').addClass("disabledbutton");

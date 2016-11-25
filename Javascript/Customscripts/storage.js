@@ -79,21 +79,25 @@ app.Query = Backbone.Model.extend({
         "post-window-query": '',
         "window": '',
         "output-type": '',
-        "projections": []
+        "projection": []
     }
 });
 
 app.Pattern = Backbone.Model.extend({
     defaults: {
-        id: '',
-        name: '',
-        states: [],
-        logic: '',
-        projection: [],
-        having: '',
-        groupby: '',
-        into: '',
-        from: []
+        "id": '',
+        "name": '',
+        "states": [],
+        "logic": '',
+        "projection": [],
+        "filter": '',
+        "post-window-filter": '',
+        "window": '',
+        "having": '',
+        "group-by": '',
+        "output-type": '',
+        "insert-into": '',
+        "from": []
     }
 });
 

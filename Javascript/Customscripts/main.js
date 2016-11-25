@@ -326,7 +326,7 @@ jsPlumb.bind('connection' , function(connection){
     else if ( sourceClass == 'stquerydrop ui-draggable'){
         if(targetClass == 'streamdrop ui-draggable'){
             model = patternList.get(sourceId);
-            model.set('into' , targetId);
+            model.set('insert-into' , targetId);
         }
     }
     else if ( targetClass == 'stquerydrop ui-draggable'){
@@ -422,8 +422,10 @@ jsPlumb.bind('connectionDetached', function (connection) {
 function autoAlign() {
     var g = new dagre.graphlib.Graph();
     g.setGraph({
-        rankDir : 'LR',
-        edgesep : 200
+        rankdir: 'LR',
+        edgesep: 150,
+        ranksep: 150,
+        nodesep: 150
     });
     g.setDefaultEdgeLabel(function () {
         return {};
@@ -590,7 +592,7 @@ function dropSimpleQueryElement(newAgent, i, e, topP, left)
 }
 
 /**
- * @function drop the patttern query element ( passthrough, filter and window)
+ * @function drop the pattern query element ( passthrough, filter and window)
  * @param newAgent
  * @param i
  * @param e
