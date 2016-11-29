@@ -34,7 +34,7 @@ function defineStream(newAgent, i, mouseTop, mouseLeft) {
                         type: "object",
                         title : 'Attribute',
                         properties: {
-                            name: {
+                            attribute: {
                                 type: "string"
                             },
                             type: {
@@ -64,8 +64,7 @@ function defineStream(newAgent, i, mouseTop, mouseLeft) {
         // create a new stream model and add to the collection
         var newStream = new app.Stream;
         newStream.set('id', i);
-        newStream.set('name', editor.getValue().name);
-        // newStream.set('type', option);
+        newStream.set('define', editor.getValue().name);
         newStream.set('attributes', editor.getValue().attributes);
         streamList.add(newStream);
         //close the property window
@@ -88,15 +87,15 @@ function generatePropertiesFormForQueries(element) {
     var id = $(element).parent().attr('id');
     var clickedElement = queryList.get(id);
     var queryType = $(element).parent().attr('class');
-    if (clickedElement.get('from') == '') {
+    if (!(clickedElement.get('from'))) {
         alert('Connect to streams');
         $("#container").removeClass('disabledbutton');
         $("#toolbox").removeClass('disabledbutton');
     }
-    else if (clickedElement.get('insert-into') == '') {
+    else if ((!clickedElement.get('insert-into'))) {
         //retrieve the query information from the collection
         var name = clickedElement.get('name');
-        var inStream = (streamList.get(clickedElement.get('from'))).get('name');
+        var inStream = (streamList.get(clickedElement.get('from'))).get('define');
         var filter1 = clickedElement.get('filter');
         var window = clickedElement.get('window');
         var filter2 = clickedElement.get('post-window-filter');
@@ -252,7 +251,7 @@ function generatePropertiesFormForQueries(element) {
             var streamAttributes = [];
             var queryAttributes = [];
             $.each( config.projection, function(key, value ) {
-                streamAttributes.push({ name : value.newName , type : value.type});
+                streamAttributes.push({ attribute : value.newName , type : value.type});
                 queryAttributes.push(value.select);
             });
             clickedElement.set('projection', queryAttributes);
@@ -260,7 +259,7 @@ function generatePropertiesFormForQueries(element) {
             textNode.html(config.name);
             //generate the stream defined as the output stream
             var position = $(element).parent().position();
-            dropStreamFromQuery(position, id, config.insertInto, streamAttributes );
+            dropStreamFromQuery(position, id, config.insertInto, streamAttributes);
         });
 
         //'Cancel' button action
@@ -274,8 +273,8 @@ function generatePropertiesFormForQueries(element) {
     else {
         //retrieve the query information from the collection
         var name = clickedElement.get('name');
-        var inStream = (streamList.get(clickedElement.get('from'))).get('name');
-        var outStream = (streamList.get(clickedElement.get('insert-into'))).get('name');
+        var inStream = (streamList.get(clickedElement.get('from'))).get('define');
+        var outStream = (streamList.get(clickedElement.get('insert-into'))).get('define');
         var filter1 = clickedElement.get('filter');
         var window = clickedElement.get('window');
         var filter2 = clickedElement.get('post-window-filter');
@@ -284,14 +283,14 @@ function generatePropertiesFormForQueries(element) {
         var outStreamAttributes = (streamList.get(clickedElement.get('insert-into'))).get('attributes');
         if (clickedElement.get('projection') == '') {
             for (var i = 0; i < outStreamAttributes.length; i++) {
-                var attr = {select: '', newName: outStreamAttributes[i].name};
+                var attr = {select: '', newName: outStreamAttributes[i].attribute};
                 attrString.push(attr);
             }
         }
         else {
             var selectedAttributes = clickedElement.get('projection');
             for (var i = 0; i < outStreamAttributes.length; i++) {
-                var attr = {select: selectedAttributes[i], newName: outStreamAttributes[i].name};
+                var attr = {select: selectedAttributes[i], newName: outStreamAttributes[i].attribute};
                 attrString.push(attr);
             }
         }
@@ -476,7 +475,7 @@ function generatePropertiesFormForStreams(element){
 
     //retrieve the stream information from the collection
     var clickedElement = streamList.get(id);
-    var name = clickedElement.get('name');
+    var name = clickedElement.get('define');
     var attributes = clickedElement.get('attributes');
     var fillWith = {
         name : name,
@@ -499,7 +498,7 @@ function generatePropertiesFormForStreams(element){
                     items: {
                         type: "object",
                         properties: {
-                            name: {
+                            attribute: {
                                 type: "string"
                             },
                             type: {
@@ -571,21 +570,21 @@ function generatePropertiesFormForPattern(element){
         var streams = [];
         var projections = [];
         $.each(clickedElement.get('from'), function (index, streamID) {
-            streams.push((streamList.get(streamID)).get('name'));
+            streams.push((streamList.get(streamID)).get('define'));
         });
 
-        var insertInto = streamList.get(clickedElement.get('insert-into')).get('name');
+        var insertInto = streamList.get(clickedElement.get('insert-into')).get('define');
         var outStreamAttributes = (streamList.get(clickedElement.get('insert-into'))).get('attributes');
         if (clickedElement.get('projection') == '') {
             for (var i = 0; i < outStreamAttributes.length; i++) {
-                var attr = {select: '', newName: outStreamAttributes[i].name};
+                var attr = {select: '', newName: outStreamAttributes[i].attribute};
                 projections.push(attr);
             }
         }
         else {
             var selectedAttributes = clickedElement.get('projection');
             for (var i = 0; i < outStreamAttributes.length; i++) {
-                var attr = {select: selectedAttributes[i], newName: outStreamAttributes[i].name};
+                var attr = {select: selectedAttributes[i], newName: outStreamAttributes[i].attribute};
                 projections.push(attr);
             }
         }
@@ -805,7 +804,7 @@ function generatePropertiesFormForPattern(element){
     }
 }
 
-function generatePropertiesFormForJoinQuery(element){
+function generatePropertiesFormForJoinQuery(element) {
 
     var propertyWindow = document.getElementsByClassName('property');
     $(propertyWindow).collapse('show');
@@ -813,40 +812,40 @@ function generatePropertiesFormForJoinQuery(element){
     $("#toolbox").addClass('disabledbutton');
     var id = $(element).parent().attr('id');
     var clickedElement = joinQueryList.get(id);
-    if (!(clickedElement.get('insert-into'))|| !(clickedElement.get('from')) || clickedElement.get('from').length != 2 ){
+    if (!(clickedElement.get('insert-into')) || !(clickedElement.get('from')) || clickedElement.get('from').length != 2) {
         alert('Connect to streams');
         $("#container").removeClass('disabledbutton');
         $("#toolbox").removeClass('disabledbutton');
     }
-    else{
-        var streams=[];
+    else {
+        var streams = [];
         $.each(clickedElement.get('from'), function (index, streamID) {
-            streams.push((streamList.get(streamID)).get('name'));
+            streams.push((streamList.get(streamID)).get('define'));
         });
-        var projections =[];
-        var insertInto = streamList.get(clickedElement.get('insert-into')).get('name');
+        var projections = [];
+        var insertInto = streamList.get(clickedElement.get('insert-into')).get('define');
         var outStreamAttributes = (streamList.get(clickedElement.get('insert-into'))).get('attributes');
         if (!(clickedElement.get('projection'))) {
             for (var i = 0; i < outStreamAttributes.length; i++) {
-                var attr = {select: '', newName: outStreamAttributes[i].name};
+                var attr = {select: '', newName: outStreamAttributes[i].attribute};
                 projections.push(attr);
             }
         }
         else {
             var selectedAttributes = clickedElement.get('projection');
             for (var i = 0; i < outStreamAttributes.length; i++) {
-                var attr = {select: selectedAttributes[i], newName: outStreamAttributes[i].name};
+                var attr = {select: selectedAttributes[i], newName: outStreamAttributes[i].attribute};
                 projections.push(attr);
             }
         }
-        var fillWith={
+        var fillWith = {
             projection: projections,
             outputType: clickedElement.get('output-type'),
             insertInto: insertInto
         };
 
-        if ( clickedElement.get('join')){
-            fillWith.type =clickedElement.get('join').type;
+        if (clickedElement.get('join')) {
+            fillWith.type = clickedElement.get('join').type;
             fillWith.leftStream = clickedElement.get('join')['left-stream'];
             fillWith.rightStream = clickedElement.get('join')['right-stream'];
             fillWith.on = clickedElement.get('join').on;
@@ -869,8 +868,8 @@ function generatePropertiesFormForJoinQuery(element){
                         required: true,
                         propertyOrder: 2,
                         options: {
-                            disable_collapse : false,
-                            disable_properties : true,
+                            disable_collapse: false,
+                            disable_properties: true,
                             collapsed: true
                         },
                         properties: {
@@ -908,8 +907,8 @@ function generatePropertiesFormForJoinQuery(element){
                         required: true,
                         propertyOrder: 3,
                         options: {
-                            disable_collapse : false,
-                            disable_properties : true,
+                            disable_collapse: false,
+                            disable_properties: true,
                             collapsed: true
                         },
                         properties: {
@@ -954,7 +953,7 @@ function generatePropertiesFormForJoinQuery(element){
                         required: true,
                         propertyOrder: 5,
                         options: {
-                            disable_array_add : true,
+                            disable_array_add: true,
                             disable_array_delete: true,
                             disable_array_reorder: true
                         },
@@ -992,7 +991,7 @@ function generatePropertiesFormForJoinQuery(element){
             },
             startval: fillWith,
             no_additional_properties: true,
-            disable_properties :true
+            disable_properties: true
         });
         for (var i = 0; i < outStreamAttributes.length; i++) {
             editor.getEditor('root.projection.' + i + '.newName').disable();
@@ -1008,22 +1007,22 @@ function generatePropertiesFormForJoinQuery(element){
 
             var config = editor.getValue();
             //update selected query model
-            var leftStream ={
-                from : config.leftStream.from,
-                filter : config.leftStream.filter,
-                window :config.leftStream.window,
-                postWindowFilter : config.leftStream.postWindowFilter,
+            var leftStream = {
+                from: config.leftStream.from,
+                filter: config.leftStream.filter,
+                window: config.leftStream.window,
+                postWindowFilter: config.leftStream.postWindowFilter,
                 as: config.leftStream.as
             };
-            var rightStream ={
-                from : config.rightStream.from,
-                filter : config.rightStream.filter,
-                window :config.rightStream.window,
-                postWindowFilter : config.rightStream.postWindowFilter,
+            var rightStream = {
+                from: config.rightStream.from,
+                filter: config.rightStream.filter,
+                window: config.rightStream.window,
+                postWindowFilter: config.rightStream.postWindowFilter,
                 as: config.rightStream.as
             };
-            var join = { 'type' : config.type , 'left-stream' : leftStream, 'right-stream': rightStream, 'on': config.on};
-            clickedElement.set('join',join);
+            var join = {'type': config.type, 'left-stream': leftStream, 'right-stream': rightStream, 'on': config.on};
+            clickedElement.set('join', join);
             var projections = [];
             $.each(config.projection, function (index, attribute) {
                 projections.push(attribute.select);
@@ -1040,5 +1039,4 @@ function generatePropertiesFormForJoinQuery(element){
             $(propertyWindow).collapse('hide');
         });
     }
-
 }

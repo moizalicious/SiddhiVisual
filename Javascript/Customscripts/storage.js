@@ -3,13 +3,16 @@ var app = {}; // create namespace for our app
 app.Stream = Backbone.Model.extend({
     defaults: {
         id: '',
-        name: '',
-        asName: '',
+        define: '',
         type: '',
-        attributes: []
+        attributes: [
+            {
+                attribute:'',
+                type: ''
+            }
+        ]
     }
 });
-
 app.FilterQuery = Backbone.Model.extend({
     defaults: {
         id: '',

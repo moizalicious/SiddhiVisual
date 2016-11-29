@@ -158,7 +158,7 @@ jsPlumb.ready(function() {
             else if (dropElem == "wstream ui-draggable") {
                 newAgent = $('<div>').attr('id', i).addClass('wstreamdrop');
                 //Drop the element instantly since its projections will be set only when the user requires it
-                dropWindowStream(newAgent, i, e,mouseTop,mouseLeft,"Window");
+                dropWindowStream(newAgent, i,mouseTop,mouseLeft,"Window");
                 finalElementCount=i;
                 i++;
             }
@@ -378,6 +378,7 @@ jsPlumb.bind('connectionDetached', function (connection) {
     var sourceClass = $('#'+sourceId).attr('class');
 
     var model;
+    var streams;
     if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable'){
         model = queryList.get(targetId);
         if (model != undefined){
@@ -402,7 +403,7 @@ jsPlumb.bind('connectionDetached', function (connection) {
         if(sourceClass == 'streamdrop ui-draggable'){
             model = joinQueryList.get(targetId);
             if (model != undefined){
-                var streams = model.get('from');
+                streams = model.get('from');
                 var removedStream = streams.indexOf(sourceId);
                 streams.splice(removedStream,1);
                 model.set('from', streams);
@@ -421,7 +422,7 @@ jsPlumb.bind('connectionDetached', function (connection) {
         if(sourceClass == 'streamdrop ui-draggable'){
             model = patternList.get(targetId);
             if (model != undefined){
-                var streams = model.get('from');
+                streams = model.get('from');
                 var removedStream = streams.indexOf(sourceId);
                 streams.splice(removedStream,1);
                 model.set('from', streams);
@@ -594,7 +595,7 @@ function dropStreamFromQuery(position , id, outStream, streamAttributes) {
     //add the new out stream to the stream collection
     var newStream = new app.Stream;
     newStream.set('id', elementID);
-    newStream.set('name', outStream);
+    newStream.set('define', outStream);
     newStream.set('type', 'define-stream');
     newStream.set('attributes', streamAttributes);
     streamList.add(newStream);
@@ -616,7 +617,6 @@ function dropStreamFromQuery(position , id, outStream, streamAttributes) {
  * @function drop the query element on the canvas
  * @param newAgent
  * @param i
- * @param e
  * @param droptype
  * @param top
  * @param left
@@ -794,7 +794,7 @@ function dropCompleteJoinQueryElement(newAgent,i, top,left)
  * @param asName
  */
 
-function dropWindowStream(newAgent, i, e,topP,left,asName)
+function dropWindowStream(newAgent, i,topP,left,asName)
 {
     /*
      The node hosts a text node where the Window's name, input by the user will be held.

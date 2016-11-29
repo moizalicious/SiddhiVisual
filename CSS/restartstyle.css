@@ -17,6 +17,16 @@
 }
 
 /*
+    Tool Palette
+*/
+.toolPalatte {
+    float: left;
+    margin-top: 10px;
+    background: #f4f4f4;
+    border: 1px solid #aaaaaa;
+    height: 800px;
+}
+/*
     Toolbox Elements
 */
 
@@ -243,6 +253,10 @@
     margin-top: 10px;
     background: #f4f4f4;
     border: 1px solid #aaaaaa;
+    height: 800px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+
 }
 .jsplumb-connector {
     z-index: 4;
