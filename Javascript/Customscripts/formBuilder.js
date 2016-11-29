@@ -61,19 +61,17 @@ function defineStream(newAgent, i, mouseTop, mouseLeft) {
     $(propertyWindow).append('<div id="submit"><button>Submit</button></div>');
     //'Submit' button action
     document.getElementById('submit').addEventListener('click', function () {
-        var option = 'define-stream';
-
         // create a new stream model and add to the collection
         var newStream = new app.Stream;
         newStream.set('id', i);
         newStream.set('name', editor.getValue().name);
-        newStream.set('type', option);
+        // newStream.set('type', option);
         newStream.set('attributes', editor.getValue().attributes);
         streamList.add(newStream);
         //close the property window
         $(propertyWindow).html('');
         $(propertyWindow).collapse('hide');
-        dropStream(newAgent, i, option, mouseTop, mouseLeft, editor.getValue().name);
+        dropStream(newAgent, i, mouseTop, mouseLeft, editor.getValue().name);
     });
 
 }
@@ -570,9 +568,9 @@ function generatePropertiesFormForPattern(element){
     }
     else {
         //retrieve the pattern information from the collection
-        var streams= [];
-        var projections =[];
-        $.each(clickedElement.get('from') , function(index, streamID){
+        var streams = [];
+        var projections = [];
+        $.each(clickedElement.get('from'), function (index, streamID) {
             streams.push((streamList.get(streamID)).get('name'));
         });
 
@@ -595,32 +593,32 @@ function generatePropertiesFormForPattern(element){
         $.each(clickedElement.get('states'), function (index, state) {
             for (var event in state) {
                 if (state.hasOwnProperty(event)) {
-                    var restoredState = { stateID : event , stream : state[event].stream , filter : state[event].filter};
+                    var restoredState = {stateID: event, stream: state[event].stream, filter: state[event].filter};
                     states.push(restoredState);
                 }
             }
         });
 
-        var fillWith ={
-            name : clickedElement.get('name'),
-            states :states,
-            logic : clickedElement.get('logic'),
-            outputType : clickedElement.get('output-type'),
-            projection : projections
+        var fillWith = {
+            name: clickedElement.get('name'),
+            states: states,
+            logic: clickedElement.get('logic'),
+            outputType: clickedElement.get('output-type'),
+            projection: projections
         };
-        if ( clickedElement.get('filter')){
+        if (clickedElement.get('filter')) {
             fillWith.filter = clickedElement.get('filter');
         }
-        if (clickedElement.get('window')){
+        if (clickedElement.get('window')) {
             fillWith.window = clickedElement.get('window');
         }
-        if (clickedElement.get('post-window-filter')){
+        if (clickedElement.get('post-window-filter')) {
             fillWith.postWindowFilter = clickedElement.get('post-window-filter');
         }
-        if ( clickedElement.get('having')){
+        if (clickedElement.get('having')) {
             fillWith.having = clickedElement.get('having');
         }
-        if ( clickedElement.get('group-by')){
+        if (clickedElement.get('group-by')) {
             fillWith.groupBy = clickedElement.get('group-by');
         }
         var editor = new JSONEditor(document.getElementById('propertypane'), {
@@ -638,15 +636,17 @@ function generatePropertiesFormForPattern(element){
                     states: {
                         type: 'array',
                         title: 'State',
-                        format : 'tabs',
-                        id : 'states_id',
+                        format: 'tabs',
                         uniqueItems: true,
                         required: true,
                         propertyOrder: 2,
                         items: {
                             type: 'object',
                             title: 'state',
-                            headerTemplate: "State"+ "{{i1}}",
+                            headerTemplate: "State" + "{{i1}}",
+                            options: {
+                                disable_properties: true
+                            },
                             properties: {
                                 stateID: {
                                     type: 'string',
@@ -661,9 +661,10 @@ function generatePropertiesFormForPattern(element){
                                     required: true,
                                     propertyOrder: 2
                                 },
-                                filter:{
+                                filter: {
                                     type: 'string',
                                     title: 'Filter',
+                                    required: true,
                                     propertyOrder: 3
                                 }
                             }
@@ -706,10 +707,13 @@ function generatePropertiesFormForPattern(element){
                         format: 'table',
                         required: true,
                         propertyOrder: 9,
-                        id: 'projection_id',
+                        options: {
+                            disable_array_add: true,
+                            disable_array_delete: true
+                        },
                         items: {
                             type: 'object',
-                            title : 'Attribute',
+                            title: 'Attribute',
                             properties: {
                                 select: {
                                     type: 'string',
@@ -725,7 +729,7 @@ function generatePropertiesFormForPattern(element){
                     outputType: {
                         type: 'string',
                         title: 'Output Type',
-                        enum : ['all events' , 'current events' , 'expired events'],
+                        enum: ['all events', 'current events', 'expired events'],
                         default: 'all events',
                         required: true,
                         propertyOrder: 10
@@ -733,40 +737,26 @@ function generatePropertiesFormForPattern(element){
                     insertInto: {
                         type: 'string',
                         title: 'Insert Into',
-                        template : insertInto,
+                        template: insertInto,
                         required: true,
                         propertyOrder: 11
                     }
                 }
             },
-            startval : fillWith,
-            disable_properties : false,
+            startval: fillWith,
+            disable_properties: false,
             display_required_only: true,
             no_additional_properties: true,
             disable_array_delete_all_rows: true,
             disable_array_delete_last_row: true,
             disable_array_reorder: true
         });
-
-  }
         //disable fields that can not be changed
         editor.getEditor('root.insertInto').disable();
 
-        //remove 'Add Attribute' buttons from the projection field.
-        var div = $(".property").find("[data-schemaid='projection_id']");
-        $.each(div.find('.btn-group'), function( index, button){
-          button.remove();
-        });
-        //remove 'Properties' button from states.
-    //     var state_element = $('.property').find("[data-schemaid='states_id']");
-    // console.log(state_element);
-    //     var button = state_element.find(".json-editor-btn-add");
-    // console.log(button);
-    // button.remove();
         for (var i = 0; i < outStreamAttributes.length; i++) {
             editor.getEditor('root.projection.' + i + '.newName').disable();
         }
-
         $(propertyWindow).append('<div><button id="form-submit">Submit</button>' +
             '<button id="form-cancel">Cancel</button></div>');
 
@@ -785,22 +775,22 @@ function generatePropertiesFormForPattern(element){
             clickedElement.set('post-window-filter', config.postWindowFilter);
             clickedElement.set('having', config.having);
             clickedElement.set('group-by', config.groupBy);
-            var states =[];
+            var states = [];
             $.each(config.states, function (index, state) {
                 var stateID = state.stateID;
                 var stream = state.stream;
                 var filter = state.filter;
                 var stateObject = {};
-                stateObject[stateID] = { stream : stream , filter: filter};
+                stateObject[stateID] = {stream: stream, filter: filter};
                 states.push(stateObject);
             });
-
-            clickedElement.set('states' , states);
+            clickedElement.set('states', states);
             var projections = [];
             $.each(config.projection, function (index, attribute) {
                 projections.push(attribute.select);
             });
             clickedElement.set('projection', projections);
+            clickedElement.set('output-type', config.outputType);
             var textNode = $(element).parent().find('.queryNameNode');
             textNode.html(config.name);
         });
@@ -812,4 +802,243 @@ function generatePropertiesFormForPattern(element){
             $(propertyWindow).html('');
             $(propertyWindow).collapse('hide');
         });
+    }
+}
+
+function generatePropertiesFormForJoinQuery(element){
+
+    var propertyWindow = document.getElementsByClassName('property');
+    $(propertyWindow).collapse('show');
+    $("#container").addClass('disabledbutton');
+    $("#toolbox").addClass('disabledbutton');
+    var id = $(element).parent().attr('id');
+    var clickedElement = joinQueryList.get(id);
+    if (!(clickedElement.get('insert-into'))|| !(clickedElement.get('from')) || clickedElement.get('from').length != 2 ){
+        alert('Connect to streams');
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+    }
+    else{
+        var streams=[];
+        $.each(clickedElement.get('from'), function (index, streamID) {
+            streams.push((streamList.get(streamID)).get('name'));
+        });
+        var projections =[];
+        var insertInto = streamList.get(clickedElement.get('insert-into')).get('name');
+        var outStreamAttributes = (streamList.get(clickedElement.get('insert-into'))).get('attributes');
+        if (!(clickedElement.get('projection'))) {
+            for (var i = 0; i < outStreamAttributes.length; i++) {
+                var attr = {select: '', newName: outStreamAttributes[i].name};
+                projections.push(attr);
+            }
+        }
+        else {
+            var selectedAttributes = clickedElement.get('projection');
+            for (var i = 0; i < outStreamAttributes.length; i++) {
+                var attr = {select: selectedAttributes[i], newName: outStreamAttributes[i].name};
+                projections.push(attr);
+            }
+        }
+        var fillWith={
+            projection: projections,
+            outputType: clickedElement.get('output-type'),
+            insertInto: insertInto
+        };
+
+        if ( clickedElement.get('join')){
+            fillWith.type =clickedElement.get('join').type;
+            fillWith.leftStream = clickedElement.get('join')['left-stream'];
+            fillWith.rightStream = clickedElement.get('join')['right-stream'];
+            fillWith.on = clickedElement.get('join').on;
+        }
+        var editor = new JSONEditor(document.getElementById('propertypane'), {
+            ajax: true,
+            schema: {
+                type: 'object',
+                title: 'Query',
+                properties: {
+                    type: {
+                        type: 'string',
+                        title: 'Type',
+                        required: true,
+                        propertyOrder: 1
+                    },
+                    leftStream: {
+                        type: 'object',
+                        title: 'Left Stream',
+                        required: true,
+                        propertyOrder: 2,
+                        options: {
+                            disable_collapse : false,
+                            disable_properties : true,
+                            collapsed: true
+                        },
+                        properties: {
+                            from: {
+                                type: 'string',
+                                title: 'From',
+                                enum: streams,
+                                required: true
+                            },
+                            filter: {
+                                type: 'string',
+                                title: 'Filter',
+                                required: true
+                            },
+                            window: {
+                                type: 'string',
+                                title: 'Window',
+                                required: true
+                            },
+                            postWindowFilter: {
+                                type: 'string',
+                                title: 'Post Window Filter',
+                                required: true
+                            },
+                            as: {
+                                type: 'string',
+                                title: 'As',
+                                required: true
+                            }
+                        }
+                    },
+                    rightStream: {
+                        type: 'object',
+                        title: 'Right Stream',
+                        required: true,
+                        propertyOrder: 3,
+                        options: {
+                            disable_collapse : false,
+                            disable_properties : true,
+                            collapsed: true
+                        },
+                        properties: {
+                            from: {
+                                type: 'string',
+                                title: 'From',
+                                enum: streams,
+                                required: true
+                            },
+                            filter: {
+                                type: 'string',
+                                title: 'Filter',
+                                required: true
+                            },
+                            window: {
+                                type: 'string',
+                                title: 'Window',
+                                required: true
+                            },
+                            postWindowFilter: {
+                                type: 'string',
+                                title: 'Post Window Filter',
+                                required: true
+                            },
+                            as: {
+                                type: 'string',
+                                title: 'As',
+                                required: true
+                            }
+                        }
+                    },
+                    on: {
+                        type: 'string',
+                        title: 'On',
+                        required: true,
+                        propertyOrder: 4
+                    },
+                    projection: {
+                        type: 'array',
+                        title: 'Projection',
+                        format: 'table',
+                        required: true,
+                        propertyOrder: 5,
+                        options: {
+                            disable_array_add : true,
+                            disable_array_delete: true,
+                            disable_array_reorder: true
+                        },
+                        items: {
+                            type: 'object',
+                            title: 'Attribute',
+                            properties: {
+                                select: {
+                                    type: 'string',
+                                    title: 'select'
+                                },
+                                newName: {
+                                    type: 'string',
+                                    title: 'as'
+                                }
+                            }
+                        }
+                    },
+                    outputType: {
+                        type: 'string',
+                        title: 'Output Type',
+                        enum: ['all events', 'current events', 'expired events'],
+                        default: 'all events',
+                        required: true,
+                        propertyOrder: 6
+                    },
+                    insertInto: {
+                        type: 'string',
+                        title: 'Insert Into',
+                        template: insertInto,
+                        required: true,
+                        propertyOrder: 7
+                    }
+                }
+            },
+            startval: fillWith,
+            no_additional_properties: true,
+            disable_properties :true
+        });
+        for (var i = 0; i < outStreamAttributes.length; i++) {
+            editor.getEditor('root.projection.' + i + '.newName').disable();
+        }
+        $(propertyWindow).append('<div><button id="form-submit">Submit</button>' +
+            '<button id="form-cancel">Cancel</button></div>');
+
+        document.getElementById('form-submit').addEventListener('click', function () {
+            $("#container").removeClass('disabledbutton');
+            $("#toolbox").removeClass('disabledbutton');
+            $(propertyWindow).html('');
+            $(propertyWindow).collapse('hide');
+
+            var config = editor.getValue();
+            //update selected query model
+            var leftStream ={
+                from : config.leftStream.from,
+                filter : config.leftStream.filter,
+                window :config.leftStream.window,
+                postWindowFilter : config.leftStream.postWindowFilter,
+                as: config.leftStream.as
+            };
+            var rightStream ={
+                from : config.rightStream.from,
+                filter : config.rightStream.filter,
+                window :config.rightStream.window,
+                postWindowFilter : config.rightStream.postWindowFilter,
+                as: config.rightStream.as
+            };
+            var join = { 'type' : config.type , 'left-stream' : leftStream, 'right-stream': rightStream, 'on': config.on};
+            clickedElement.set('join',join);
+            var projections = [];
+            $.each(config.projection, function (index, attribute) {
+                projections.push(attribute.select);
+            });
+            clickedElement.set('projection', projections);
+            clickedElement.set('output-type', config.outputType);
+        });
+
+        //'Cancel' button action
+        document.getElementById('form-cancel').addEventListener('click', function () {
+            $("#container").removeClass('disabledbutton');
+            $("#toolbox").removeClass('disabledbutton');
+            $(propertyWindow).html('');
+            $(propertyWindow).collapse('hide');
+        });
+    }
+
 }

@@ -10,31 +10,6 @@ app.Stream = Backbone.Model.extend({
     }
 });
 
-app.Receiver = Backbone.Model.extend({
-    defaults: {
-        id: '',
-        name: '',
-        stream: ''
-    }
-});
-
-app.Publisher = Backbone.Model.extend({
-    defaults: {
-        id: '',
-        name: '',
-        stream: ''
-    }
-});
-
-app.ExecutionPlan = Backbone.Model.extend({
-    defaults: {
-        id: '',
-        name: '',
-        inStream: [],
-        outStream: []
-    }
-});
-
 app.FilterQuery = Backbone.Model.extend({
     defaults: {
         id: '',
@@ -97,8 +72,36 @@ app.Pattern = Backbone.Model.extend({
         "group-by": '',
         "output-type": '',
         "insert-into": '',
+        //additional attribute for form generation
         "from": []
     }
+});
+
+app.JoinQuery = Backbone.Model.extend({
+
+    "join":{
+        "type":'',
+        "left-stream":{
+            "from":'',
+            "filter":'',
+            "window":'',
+            "post-window-query":'',
+            "as":''
+        },
+        "right-stream":{
+            "from":'',
+            "filter":'',
+            "window":'',
+            "post-window-query":'',
+            "as":''
+        },
+        "on":''
+    },
+    "projection":[],
+    "output-type": '',
+    "insert-into":'',
+    //additional attribute for form generation
+    "from" : []
 });
 
 //--------------
@@ -108,16 +111,6 @@ app.StreamList = Backbone.Collection.extend({
     model: app.Stream
 });
 
-app.ReceiverList = Backbone.Collection.extend({
-    model: app.Receiver
-});
-
-app.PublisherList = Backbone.Collection.extend({
-    model: app.Publisher
-});
-app.ExecutionPlanList = Backbone.Collection.extend({
-    model: app.Publisher
-});
 app.FilterList = Backbone.Collection.extend({
     model: app.FilterQuery
 });
@@ -133,14 +126,18 @@ app.QueryList = Backbone.Collection.extend({
 app.PatternList = Backbone.Collection.extend({
     model: app.Pattern
 });
+app.PatternList = Backbone.Collection.extend({
+    model: app.Pattern
+});
+app.JoinQueryList = Backbone.Collection.extend({
+    model: app.JoinQuery
+});
 
 //initiates the collections
 streamList = new app.StreamList();
-receiverList = new app.ReceiverList();
-publisherList = new app.PublisherList();
-executionPlanList = new app.ExecutionPlanList();
 filterList = new app.FilterList();
 passThroughList = new app.PassThroughList();
 windowQueryList = new app.WindowQueryList();
 queryList = new app.QueryList();
 patternList = new app.PatternList();
+joinQueryList = new app.JoinQueryList();
