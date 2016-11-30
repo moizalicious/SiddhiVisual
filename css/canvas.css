@@ -12,7 +12,7 @@
     height: 800px;
     overflow-x: scroll;
     overflow-y: scroll;
-    background-image: url("../Images/grid.png") ;
+    background-image: url("../images/grid.png") ;
     background-repeat: repeat;
 }
 
@@ -54,32 +54,32 @@
     transition: box-shadow 0.15s ease-in;
 }
 .stream{
-    background-image: url("../Images/stream.png") ;
+    background-image: url("../images/stream.png") ;
 }
 
 .wstream {
-    background-image: url("../Images/windowStream.png");
+    background-image: url("../images/windowStream.png");
 }
 
 .squery {
-    background-image: url("../Images/Passthrough.png");
+    background-image: url("../images/Passthrough.png");
 
 }
 
 .filter {
-    background-image: url("../Images/filter.png");
+    background-image: url("../images/filter.png");
 }
 
 .wquery {
-    background-image: url("../Images/window1.png");
+    background-image: url("../images/window1.png");
 
 }
 .joquery {
-    background-image: url("../Images/join.png");
+    background-image: url("../images/join.png");
 
 }
 .stquery {
-    background-image: url("../Images/statemachine.png");
+    background-image: url("../images/statemachine.png");
 }
 /*
     Grouping Element
@@ -141,30 +141,30 @@
 }
 
 .streamdrop{
-    background-image: url("../Images/stream.png") ;
+    background-image: url("../images/stream.png") ;
 }
 .wstreamdrop {
-    background-image: url("../Images/windowStream.png");
+    background-image: url("../images/windowStream.png");
 }
 
 .squerydrop {
-    background-image: url("../Images/Passthrough.png");
+    background-image: url("../images/Passthrough.png");
 }
 
 .filterdrop {
-    background-image: url("../Images/filter.png");
+    background-image: url("../images/filter.png");
 }
 
 .wquerydrop {
-    background-image: url("../Images/window1.png");
+    background-image: url("../images/window1.png");
 }
 
 .joquerydrop {
-    background-image: url("../Images/join.png");
+    background-image: url("../images/join.png");
 }
 
 .stquerydrop {
-    background-image: url("../Images/statemachine.png");
+    background-image: url("../images/statemachine.png");
 }
 
 /*

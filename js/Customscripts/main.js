@@ -198,7 +198,7 @@ jsPlumb.ready(function() {
                 newAgent = $('<div>').attr('id', i).addClass('joquerydrop');
                 droptype = "joquerydrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
-                dropQuery(newAgent, i, droptype,mouseTop,mouseLeft,"Empty Query");
+                dropQuery(newAgent, i, droptype,mouseTop,mouseLeft,"Join Query");
                 finalElementCount=i;
                 i++;
             }
@@ -208,7 +208,7 @@ jsPlumb.ready(function() {
                 newAgent = $('<div>').attr('id', i).addClass('stquerydrop');
                 droptype = "stquerydrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
-                dropQuery(newAgent, i, droptype,mouseTop,mouseLeft,"Join Query");
+                dropQuery(newAgent, i, droptype,mouseTop,mouseLeft,"Pattern Query");
                 finalElementCount=i;
                 i++;
             }
@@ -340,7 +340,7 @@ jsPlumb.bind('connection' , function(connection){
     connectionObject.addOverlay([
         "Custom", {
             create:function() {
-                return $('<img src="../Images/Cancel.png" alt="">');
+                return $('<img src="../images/Cancel.png" alt="">');
             },
             location :0.60,
             id:"close",
@@ -530,9 +530,9 @@ function dropStream(newAgent,i,top,left, name) {
      conIcon --> Clicking this icon is supposed to toggle between showing and hiding the "Connection Anchor Points" (Not implemented)
      boxclose --> Icon to remove/delete an element
      */
-    var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick ="generatePropertiesFormForStreams(this)">').attr('id', (i+'-propImportStream'));
-    // var conIcon = $('<img src="../Images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon collapse ">').attr('id', (i+'vis'));
-    newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+    var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick ="generatePropertiesFormForStreams(this)">').attr('id', (i+'-propImportStream'));
+    // var conIcon = $('<img src="../images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon collapse ">').attr('id', (i+'vis'));
+    newAgent.append(node).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
     var finalElement = newAgent;
 
     /*
@@ -634,9 +634,9 @@ function dropQuery(newAgent, i,droptype,top,left,text)
         var newQuery = new app.Query;
         newQuery.set('id', i);
         queryList.add(newQuery);
-        var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForQueries(this)">').attr('id', (i+('-prop')));
-        // var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)"> ').attr('id', (i+'vis'));
-        newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+        var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForQueries(this)">').attr('id', (i+('-prop')));
+        // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)"> ').attr('id', (i+'vis'));
+        newAgent.append(node).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
         dropSimpleQueryElement(newAgent,i,top,left);
     }
 
@@ -645,9 +645,9 @@ function dropQuery(newAgent, i,droptype,top,left,text)
         var newJoinQuery = new app.JoinQuery;
         newJoinQuery.set('id', i);
         joinQueryList.add(newJoinQuery);
-        var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForJoinQuery(this)">').attr('id', (i+('-propjoquerydrop')));
-        // var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)" >').attr('id', (i+'vis'));
-        newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+        var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForJoinQuery(this)">').attr('id', (i+('-propjoquerydrop')));
+        // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)" >').attr('id', (i+'vis'));
+        newAgent.append(node).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
         dropCompleteJoinQueryElement(newAgent,i,top,left);
     }
     else if(droptype=="stquerydrop")
@@ -655,9 +655,9 @@ function dropQuery(newAgent, i,droptype,top,left,text)
         var newPattern = new app.Pattern;
         newPattern.set('id', i);
         patternList.add(newPattern);
-        var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForPattern(this)">').attr('id', (i+('-propstquerydrop')));
-        // var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
-        newAgent.append(node).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+        var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForPattern(this)">').attr('id', (i+('-propstquerydrop')));
+        // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
+        newAgent.append(node).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
         dropPatternQueryElement(newAgent,i,top,left);
     }
 }
@@ -805,9 +805,9 @@ function dropWindowStream(newAgent, i,topP,left,asName)
     windowTextnode.id = i+"-windowTextnode";
     windowNode.appendChild(windowTextnode);
 
-    var prop = $('<img src="../Images/settings.png" class="element-prop-icon collapse" onclick="getConnectionDetailsForWindow(this)">').attr('id', (i+('-prop')));
-    var conIcon = $('<img src="../Images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
-    newAgent.append(windowNode).append('<img src="../Images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(conIcon).append(prop);
+    var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="">').attr('id', (i+('-prop')));
+    // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
+    newAgent.append(windowNode).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
 
     $(droppedElement).draggable({containment: "container"});
 
@@ -856,8 +856,8 @@ function dropWindowStream(newAgent, i,topP,left,asName)
 
 function dropPartition(newAgent, i,mouseTop,mouseLeft)
 {
-    var prop = $('<a><img src="../Images/settings.png" class="element-prop-icon " onclick =""></a>').attr('id', (i+('-propPartition')));
-    newAgent.append('<img src="../Images/Cancel.png" class="element-close-icon " id="boxclose">').append(prop);
+    var prop = $('<a><img src="../images/settings.png" class="element-prop-icon " onclick =""></a>').attr('id', (i+('-propPartition')));
+    newAgent.append('<img src="../images/Cancel.png" class="element-close-icon " id="boxclose">').append(prop);
     dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft);
 
 }

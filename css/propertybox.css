@@ -304,7 +304,7 @@ input {
 .istreamName{
     margin:20px 100px 20px 0;
     width: 220px;
-    background: transparent url('../Images/bg.jpg') no-repeat;
+    background: transparent url('../images/bg.jpg') no-repeat;
     color : #747862;
     height:20px;
     border:0;
@@ -314,7 +314,7 @@ input {
 .estreamName{
     margin:20px 100px 20px 0;
     width: 220px;
-    background: transparent url('../Images/bg.jpg') no-repeat;
+    background: transparent url('../images/bg.jpg') no-repeat;
     color : #747862;
     height:20px;
     border:0;
@@ -357,7 +357,7 @@ input {
     margin: 20px 100px 20px 0;
     width: 30%;
     float: left;
-    background: transparent url('../Images/bg.jpg') no-repeat;
+    background: transparent url('../images/bg.jpg') no-repeat;
     color: #747862;
     height: 20px;
     border: 0;
@@ -373,7 +373,7 @@ input {
     margin: 20px 0 10px 0;
     float:left;
     width: 220px;
-    background: transparent url('../Images/bg.jpg') no-repeat;
+    background: transparent url('../images/bg.jpg') no-repeat;
     color: #747862;
     height: 20px;
     border: 0;
