@@ -437,10 +437,7 @@ jsPlumb.bind('connectionDetached', function (connection) {
 function autoAlign() {
     var g = new dagre.graphlib.Graph();
     g.setGraph({
-        rankdir: 'LR',
-        edgesep: 150,
-        ranksep: 150,
-        nodesep: 150
+        rankdir: 'LR'
     });
     g.setDefaultEdgeLabel(function () {
         return {};
