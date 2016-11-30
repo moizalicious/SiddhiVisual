@@ -217,9 +217,8 @@ jsPlumb.ready(function() {
             else{
                 newAgent = $('<div>').attr('id', i).addClass('partitiondrop');
                 droptype = "partitiondrop";
-                $(droppedElement).draggable({containment: "container"});
                 //Drop the element instantly since its projections will be set only when the user requires it
-                dropPartition(newAgent,i, droptype,mouseTop,mouseLeft);
+                dropPartition(newAgent,i,mouseTop,mouseLeft);
                 finalElementCount=i;
                 i++;
             }
@@ -480,8 +479,6 @@ function autoAlign() {
         });
 
     }
-
-
 }
 
 /**
@@ -857,11 +854,10 @@ function dropWindowStream(newAgent, i,topP,left,asName)
  * @param mouseLeft
  */
 
-function dropPartition(newAgent, i,droptype,mouseTop,mouseLeft)
+function dropPartition(newAgent, i,mouseTop,mouseLeft)
 {
-
-    var prop = $('<a><b><img src="../Images/settings.png" class="querySettingIconLoc"></b></a>').attr('id', (i+('-propPartition')));
-    newAgent.append('<a class="boxclose1" id="boxclose"><b><img src="../Images/Cancel.png"></b></a> ').append(prop);
+    var prop = $('<a><img src="../Images/settings.png" class="element-prop-icon " onclick =""></a>').attr('id', (i+('-propPartition')));
+    newAgent.append('<img src="../Images/Cancel.png" class="element-close-icon " id="boxclose">').append(prop);
     dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft);
 
 }
@@ -873,16 +869,39 @@ function dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft)
 
     var finalElement =  newAgent;
 
+    $(finalElement).draggable({
+        containment: "container",
+        drag:function(e){
+            $(this).find('._jsPlumb_endpoint_anchor_').each(function(i,e){
+                if($(e).hasClass("connect"))
+                    jsPlumb.repaint($(e).parent());
+                else
+                    jsPlumb.repaint($(e));
+            });
+        }
+    }).resizable();
+    var x =1;
     $(finalElement).on('dblclick',function () {
 
-        var connectionIn = $('<div class="connectorInPart" onclick="getPartitionConnectionDetails(this.id)">').attr('id', i + '-pc'+ x).addClass('connection').text("pc"+x);
+        var connectionIn = $('<div class="connectorInPart" >').attr('id', i + '-pc'+ x).addClass('connection');
         finalElement.append(connectionIn);
 
+        // jsPlumb.addEndpoint(connectionIn, {
+        //     isTarget: true,
+        //     isSource: true
+        // });
+        // jsPlumb.addGroup({
+        //     el:"id",
+        //     id:"aGroup"
+        // });
+        jsPlumb.draggable(finalElement, {
+            containment: 'parent'
+        });
         jsPlumb.makeTarget(connectionIn, {
-            anchor: 'Left'
+            anchor: 'Top'
         });
         jsPlumb.makeSource(connectionIn, {
-            anchor: 'Right'
+            anchor: 'Top'
         });
 
         x++;
@@ -893,7 +912,8 @@ function dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft)
         'left': mouseLeft
     });
 
-    $(function() { $(finalElement).draggable().resizable(); });
+    // $(function() { $(finalElement).draggable().resizable(); });
+
     $('#container').append(finalElement);
 
     // $(finalElement).resizable({

@@ -183,7 +183,7 @@
     border-radius: 0.5em;
     opacity: 0.8;
     width: 120px;
-    height: 72px;
+    height: 80px;
     line-height: 80px;
     cursor: move;
     text-align: center;
@@ -202,7 +202,7 @@
 }
 
 /*
-    Element Divisions added as clases when the element is appended
+    Element Divisions added as classes when the element is appended
 */
 
 .task {

@@ -438,7 +438,7 @@ function generatePropertiesFormForQueries(element) {
             }
 
             //update selected query model
-            clickedElement.set('name', config.name);
+            clickedElement.set('define', config.name);
             clickedElement.set('filter', config.filter);
             clickedElement.set('window', config.window);
             clickedElement.set('post-window-filter', config.postWindowFilter);
@@ -996,6 +996,7 @@ function generatePropertiesFormForJoinQuery(element) {
         for (var i = 0; i < outStreamAttributes.length; i++) {
             editor.getEditor('root.projection.' + i + '.newName').disable();
         }
+        editor.getEditor('root.insertInto').disable();
         $(propertyWindow).append('<div><button id="form-submit">Submit</button>' +
             '<button id="form-cancel">Cancel</button></div>');
 
