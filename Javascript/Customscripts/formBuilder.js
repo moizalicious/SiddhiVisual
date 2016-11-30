@@ -438,7 +438,7 @@ function generatePropertiesFormForQueries(element) {
             }
 
             //update selected query model
-            clickedElement.set('define', config.name);
+            clickedElement.set('name', config.name);
             clickedElement.set('filter', config.filter);
             clickedElement.set('window', config.window);
             clickedElement.set('post-window-filter', config.postWindowFilter);
@@ -804,6 +804,10 @@ function generatePropertiesFormForPattern(element){
     }
 }
 
+/**
+ * @function generate property window for Join Query
+ * @param element
+ */
 function generatePropertiesFormForJoinQuery(element) {
 
     var propertyWindow = document.getElementsByClassName('property');

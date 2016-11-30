@@ -208,7 +208,7 @@ jsPlumb.ready(function() {
                 newAgent = $('<div>').attr('id', i).addClass('stquerydrop');
                 droptype = "stquerydrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
-                dropQuery(newAgent, i, droptype,mouseTop,mouseLeft,"Empty Query");
+                dropQuery(newAgent, i, droptype,mouseTop,mouseLeft,"Join Query");
                 finalElementCount=i;
                 i++;
             }
@@ -871,7 +871,7 @@ function dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft)
 
     $(finalElement).draggable({
         containment: "container",
-        drag:function(e){
+        drag:function(){
             $(this).find('._jsPlumb_endpoint_anchor_').each(function(i,e){
                 if($(e).hasClass("connect"))
                     jsPlumb.repaint($(e).parent());
@@ -879,8 +879,10 @@ function dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft)
                     jsPlumb.repaint($(e));
             });
         }
-    }).resizable();
+    });
     var x =1;
+    $(finalElement).resizable();
+    // jsPlumb.setContainer($('#'+i));
     $(finalElement).on('dblclick',function () {
 
         var connectionIn = $('<div class="connectorInPart" >').attr('id', i + '-pc'+ x).addClass('connection');
@@ -889,10 +891,6 @@ function dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft)
         // jsPlumb.addEndpoint(connectionIn, {
         //     isTarget: true,
         //     isSource: true
-        // });
-        // jsPlumb.addGroup({
-        //     el:"id",
-        //     id:"aGroup"
         // });
         jsPlumb.draggable(finalElement, {
             containment: 'parent'
