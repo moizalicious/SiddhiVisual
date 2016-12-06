@@ -7,7 +7,13 @@ JSONEditor.plugins.sceditor.emoticonsEnabled = true;
 JSONEditor.defaults.options.disable_collapse = true;
 JSONEditor.plugins.selectize.enable = true;
 
-
+/**
+ * @function generate the form to define the stream once it is dropped on the canvas
+ * @param newAgent
+ * @param i
+ * @param mouseTop
+ * @param mouseLeft
+ */
 function defineStream(newAgent, i, mouseTop, mouseLeft) {
     var propertyWindow = document.getElementsByClassName('property');
     $(propertyWindow).collapse('show');
@@ -76,6 +82,93 @@ function defineStream(newAgent, i, mouseTop, mouseLeft) {
 }
 
 /**
+ * @function generate the property window for an existing stream
+ * @param element
+ */
+function generatePropertiesFormForStreams(element){
+    var propertyWindow = document.getElementsByClassName('property');
+    $(propertyWindow).collapse('show');
+    $("#container").addClass('disabledbutton');
+    $("#toolbox").addClass('disabledbutton');
+    var id = $(element).parent().attr('id');
+
+    //retrieve the stream information from the collection
+    var clickedElement = streamList.get(id);
+    var name = clickedElement.get('define');
+    var attributes = clickedElement.get('attributes');
+    var fillWith = {
+        name : name,
+        attributes : attributes
+    };
+    var editor = new JSONEditor(document.getElementById('propertypane'), {
+        schema: {
+            type: "object",
+            title: "Stream",
+            properties: {
+                name: {
+                    type: "string",
+                    title: "Name"
+                },
+                attributes: {
+                    type: "array",
+                    format: "table",
+                    title: "Attributes",
+                    uniqueItems: true,
+                    items: {
+                        type: "object",
+                        properties: {
+                            attribute: {
+                                type: "string"
+                            },
+                            type: {
+                                type: "string",
+                                enum: [
+                                    "int",
+                                    "long",
+                                    "float",
+                                    "double",
+                                    "boolean"
+                                ],
+                                default: "int"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        disable_properties: true,
+        disable_array_delete_all_rows: true,
+        disable_array_delete_last_row: true,
+        startval: fillWith
+    });
+    $(propertyWindow).append('<div><button id="form-submit">Submit</button>' +
+        '<button id="form-cancel">Cancel</button></div>');
+
+    document.getElementById('form-submit').addEventListener('click', function () {
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+        $(propertyWindow).html('');
+        $(propertyWindow).collapse('hide');
+        var config = editor.getValue();
+
+        //update selected stream model
+        clickedElement.set('name', config.name);
+        clickedElement.set('attributes', config.attributes);
+
+        var textNode = $(element).parent().find('.streamnamenode');
+        textNode.html(config.name);
+    });
+
+    //'Cancel' button action
+    document.getElementById('form-cancel').addEventListener('click', function () {
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+        $(propertyWindow).html('');
+        $(propertyWindow).collapse('hide');
+    });
+}
+
+/**
  * @function generate the property window for the simple queries ( passthrough, filter and window)
  * @param element selected element(query)
  */
@@ -100,14 +193,14 @@ function generatePropertiesFormForQueries(element) {
         var window = clickedElement.get('window');
         var filter2 = clickedElement.get('post-window-filter');
         var fillWith;
-        if (queryType == 'squerydrop ui-draggable') {
+        if (queryType == constants.PASS_THROUGH) {
             fillWith = {
                 name: name,
                 from: inStream,
                 projection: ''
             };
         }
-        else if (queryType == 'filterdrop ui-draggable') {
+        else if (queryType == constants.FILTER) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -115,7 +208,7 @@ function generatePropertiesFormForQueries(element) {
                 projection: ''
             };
         }
-        else if (queryType == 'wquerydrop ui-draggable') {
+        else if (queryType == constants.WINDOW_QUERY) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -231,15 +324,15 @@ function generatePropertiesFormForQueries(element) {
             //change the query icon depending on the fileds filled
             if (config.window) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass('wquerydrop ui-draggable');
+                $(element).parent().addClass(constants.WINDOW_QUERY);
             }
             else if (config.filter || config.postWindowFilter) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass('filterdrop ui-draggable');
+                $(element).parent().addClass(constants.FILTER);
             }
             else if (!(config.filter || config.postWindowFilter || config.window )) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass('squerydrop ui-draggable');
+                $(element).parent().addClass(constants.PASS_THROUGH);
             }
             //obtain values from the form and update the query model
             var config = editor.getValue();
@@ -296,7 +389,7 @@ function generatePropertiesFormForQueries(element) {
         }
 
         var fillWith;
-        if (queryType == 'squerydrop ui-draggable') {
+        if (queryType == constants.PASS_THROUGH) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -305,7 +398,7 @@ function generatePropertiesFormForQueries(element) {
                 insertInto: outStream
             };
         }
-        else if (queryType == 'filterdrop ui-draggable') {
+        else if (queryType == constants.FILTER) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -315,7 +408,7 @@ function generatePropertiesFormForQueries(element) {
                 insertInto: outStream
             };
         }
-        else if (queryType == 'wquerydrop ui-draggable') {
+        else if (queryType == constants.WINDOW_QUERY) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -426,15 +519,15 @@ function generatePropertiesFormForQueries(element) {
             //change the query icon depending on the fields(filter, window) filled
             if (config.window) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass('wquerydrop ui-draggable');
+                $(element).parent().addClass(constants.WINDOW_QUERY);
             }
             else if (config.filter || config.postWindowFilter) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass('filterdrop ui-draggable');
+                $(element).parent().addClass(constants.FILTER);
             }
             else if (!(config.filter || config.postWindowFilter || config.window )) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass('squerydrop ui-draggable');
+                $(element).parent().addClass(constants.PASS_THROUGH);
             }
 
             //update selected query model
@@ -462,92 +555,7 @@ function generatePropertiesFormForQueries(element) {
     }
 }
 
-/**
- * @function generate the property window for an existing stream
- * @param element
- */
-function generatePropertiesFormForStreams(element){
-    var propertyWindow = document.getElementsByClassName('property');
-    $(propertyWindow).collapse('show');
-    $("#container").addClass('disabledbutton');
-    $("#toolbox").addClass('disabledbutton');
-    var id = $(element).parent().attr('id');
 
-    //retrieve the stream information from the collection
-    var clickedElement = streamList.get(id);
-    var name = clickedElement.get('define');
-    var attributes = clickedElement.get('attributes');
-    var fillWith = {
-        name : name,
-        attributes : attributes
-    };
-    var editor = new JSONEditor(document.getElementById('propertypane'), {
-        schema: {
-            type: "object",
-            title: "Stream",
-            properties: {
-                name: {
-                    type: "string",
-                    title: "Name"
-                },
-                attributes: {
-                    type: "array",
-                    format: "table",
-                    title: "Attributes",
-                    uniqueItems: true,
-                    items: {
-                        type: "object",
-                        properties: {
-                            attribute: {
-                                type: "string"
-                            },
-                            type: {
-                                type: "string",
-                                enum: [
-                                    "int",
-                                    "long",
-                                    "float",
-                                    "double",
-                                    "boolean"
-                                ],
-                                default: "int"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        disable_properties: true,
-        disable_array_delete_all_rows: true,
-        disable_array_delete_last_row: true,
-        startval: fillWith
-    });
-    $(propertyWindow).append('<div><button id="form-submit">Submit</button>' +
-        '<button id="form-cancel">Cancel</button></div>');
-
-    document.getElementById('form-submit').addEventListener('click', function () {
-        $("#container").removeClass('disabledbutton');
-        $("#toolbox").removeClass('disabledbutton');
-        $(propertyWindow).html('');
-        $(propertyWindow).collapse('hide');
-        var config = editor.getValue();
-
-        //update selected stream model
-        clickedElement.set('name', config.name);
-        clickedElement.set('attributes', config.attributes);
-
-        var textNode = $(element).parent().find('.streamnamenode');
-        textNode.html(config.name);
-    });
-
-    //'Cancel' button action
-    document.getElementById('form-cancel').addEventListener('click', function () {
-        $("#container").removeClass('disabledbutton');
-        $("#toolbox").removeClass('disabledbutton');
-        $(propertyWindow).html('');
-        $(propertyWindow).collapse('hide');
-    });
-}
 
 /**
  * @function generate property window for state machine

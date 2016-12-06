@@ -1,3 +1,15 @@
+var constants = {
+    STREAM: 'streamdrop jtk-draggable',
+    PASS_THROUGH : 'squerydrop jtk-draggable',
+    FILTER : 'filterdrop jtk-draggable',
+    JOIN : 'joquerydrop jtk-draggable',
+    WINDOW_QUERY : 'wquerydrop jtk-draggable',
+    PATTERN : 'stquerydrop jtk-draggable',
+    WINDOW_STREAM :'',
+    PARTITION :''
+};
+
+
 // i --> newAgent ID (Dropped Element ID)
 var i = 1;
 // finalElementCount --> Number of elements that exist on the canvas at the time of saving the model
@@ -8,15 +20,27 @@ var finalElementCount=0;
  */
 
 jsPlumb.ready(function() {
-
-    jsPlumb.Defaults.PaintStyle = {strokeStyle: "darkblue",outlineColor:"transparent", outlineWidth:"25", lineWidth: 2 }; //Connector line style
-    jsPlumb.Defaults.HoverPaintStyle = { strokeStyle: 'darkblue',lineWidth : 3};
-    jsPlumb.Defaults.EndpointStyle = {radius: 3}; //Connector endpoint/anchor style
-    jsPlumb.Defaults.Overlays =[["Arrow",  {location:1.0, id:"arrow" }] ];
     jsPlumb.importDefaults({
+        PaintStyle : {
+            strokeWidth:2,
+            stroke: 'darkblue',
+            outlineStroke:"transparent",
+            outlineWidth:"5"
+            // lineWidth: 2
+        },
+        HoverPaintStyle :{
+            strokeStyle: 'darkblue',
+            strokeWidth : 3
+        },
+        Overlays : [["Arrow",  {location:1.0, id:"arrow" }]],
+        DragOptions : { cursor: "crosshair" },
+        Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
+        EndpointStyle : {
+            radius: 3
+        },
         ConnectionsDetachable:false,
         Connector: ["Bezier", {curviness: 50}]
-    }); //Connector line style
+    });
     jsPlumb.setContainer($('#container'));
     var canvas = $('#container');
 
@@ -260,16 +284,17 @@ jsPlumb.bind('beforeDrop', function(connection){
     var sourceId = source.substr(0, source.indexOf('-'));
     var sourceClass = $('#'+sourceId).attr('class');
 
-    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable'
-        || targetClass == 'stquerydrop ui-draggable' || targetClass == 'joquerydrop ui-draggable') {
-        if (sourceClass != 'streamdrop ui-draggable') {
+    if( targetClass == constants.PASS_THROUGH || targetClass == constants.FILTER || targetClass == constants.WINDOW_QUERY
+        || targetClass == constants.PATTERN || targetClass == constants.JOIN) {
+        if (sourceClass != constants.STREAM) {
             connectionValidity = false;
             alert("Invalid Connection");
         }
     }
-    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop ui-draggable' || sourceClass == 'wquerydrop ui-draggable'
-        || sourceClass == 'stquerydrop ui-draggable' || sourceClass == 'joquerydrop ui-draggable'){
-        if(targetClass != 'streamdrop ui-draggable'){
+
+    else if( sourceClass == constants.PASS_THROUGH || sourceClass == constants.FILTER || sourceClass == constants.WINDOW_QUERY
+        || sourceClass == constants.PATTERN || sourceClass == constants.JOIN) {
+        if(targetClass != constants.STREAM){
             connectionValidity = false;
             alert("Invalid Connection");
         }
@@ -288,26 +313,26 @@ jsPlumb.bind('connection' , function(connection){
     var sourceClass = $('#'+sourceId).attr('class');
 
     var model;
-    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable'){
-        if( sourceClass == 'streamdrop ui-draggable') {
+    if( targetClass == constants.PASS_THROUGH || targetClass == constants.FILTER || targetClass == constants.WINDOW_QUERY){
+        if( sourceClass == constants.STREAM) {
             model = queryList.get(targetId);
             model.set('from', sourceId);
         }
     }
-    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop ui-draggable' || sourceClass == 'wquerydrop ui-draggable'){
-        if(targetClass == 'streamdrop ui-draggable'){
+    else if( sourceClass == constants.PASS_THROUGH  || sourceClass == constants.FILTER || sourceClass == constants.WINDOW_QUERY){
+        if(targetClass == constants.STREAM){
             model = queryList.get(sourceId);
             model.set('insert-into' , targetId);
         }
     }
-    else if ( sourceClass == 'stquerydrop ui-draggable'){
-        if(targetClass == 'streamdrop ui-draggable'){
+    else if ( sourceClass == constants.PATTERN){
+        if(targetClass == constants.STREAM){
             model = patternList.get(sourceId);
             model.set('insert-into' , targetId);
         }
     }
-    else if ( targetClass == 'stquerydrop ui-draggable'){
-        if(sourceClass == 'streamdrop ui-draggable'){
+    else if ( targetClass == constants.PATTERN){
+        if(sourceClass == constants.STREAM){
             model = patternList.get(targetId);
             var streams = model.get('from');
             if (streams== undefined){
@@ -318,14 +343,14 @@ jsPlumb.bind('connection' , function(connection){
         }
     }
 
-    else if ( sourceClass == 'joquerydrop ui-draggable'){
-        if(targetClass == 'streamdrop ui-draggable'){
+    else if ( sourceClass == constants.JOIN){
+        if(targetClass == constants.STREAM){
             model = joinQueryList.get(sourceId);
             model.set('insert-into', targetId);
         }
     }
-    else if ( targetClass == 'joquerydrop ui-draggable'){
-        if(sourceClass == 'streamdrop ui-draggable'){
+    else if ( targetClass == constants.JOIN){
+        if(sourceClass == constants.STREAM){
             model = joinQueryList.get(targetId);
             var streams = model.get('from');
             if (streams== undefined){
@@ -337,12 +362,12 @@ jsPlumb.bind('connection' , function(connection){
     }
     var connectionObject = connection.connection;
     //add a overlay of a close icon for connection. connection can be detached by clicking on it
-    connectionObject.addOverlay([
+    var close_icon_overlay = connectionObject.addOverlay([
         "Custom", {
             create:function() {
                 return $('<img src="../images/Cancel.png" alt="">');
             },
-            location :0.60,
+            location : 0.60,
             id:"close",
             events:{
                 click:function() {
@@ -354,14 +379,14 @@ jsPlumb.bind('connection' , function(connection){
             }
         }
     ]);
-    connectionObject.hideOverlay('close');
+    close_icon_overlay.setVisible(false);
     //show the close icon when mouse is over the connection
-    connectionObject.bind('mouseenter', function(conn) {
-        conn.showOverlay('close');
+    connectionObject.bind('mouseover', function(conn) {
+        close_icon_overlay.setVisible(true);
     });
-    //hide the close icon when the mouse is not on the connection path
-    connectionObject.bind('mouseleave', function(conn) {
-        conn.hideOverlay('close');
+    // //hide the close icon when the mouse is not on the connection path
+    connectionObject.bind('mouseout', function(conn) {
+        close_icon_overlay.setVisible(false);
     });
 });
 
@@ -378,28 +403,28 @@ jsPlumb.bind('connectionDetached', function (connection) {
 
     var model;
     var streams;
-    if( targetClass == 'squerydrop ui-draggable' || targetClass == 'filterdrop ui-draggable' || targetClass == 'wquerydrop ui-draggable'){
+    if( targetClass == constants.PASS_THROUGH || targetClass == constants.FILTER || targetClass == constants.WINDOW_QUERY){
         model = queryList.get(targetId);
         if (model != undefined){
             model.set('from' , '');
         }
     }
-    else if( sourceClass == 'squerydrop ui-draggable' || sourceClass == 'filterdrop ui-draggable' || sourceClass == 'wquerydrop ui-draggable'){
+    else if( sourceClass == constants.PASS_THROUGH || sourceClass == constants.FILTER || sourceClass == constants.WINDOW_QUERY){
         model = queryList.get(sourceId);
         if (model != undefined){
             model.set('insert-into' , '');
         }
     }
-    else if ( sourceClass == 'joquerydrop ui-draggable'){
-        if(targetClass == 'streamdrop ui-draggable'){
+    else if ( sourceClass == constants.JOIN){
+        if(targetClass == constants.STREAM){
             model = joinQueryList.get(sourceId);
             if (model != undefined){
                 model.set('insert-into' , '');
             }
         }
     }
-    else if ( targetClass == 'joquerydrop ui-draggable'){
-        if(sourceClass == 'streamdrop ui-draggable'){
+    else if ( targetClass == constants.JOIN){
+        if(sourceClass == constants.STREAM){
             model = joinQueryList.get(targetId);
             if (model != undefined){
                 streams = model.get('from');
@@ -409,16 +434,16 @@ jsPlumb.bind('connectionDetached', function (connection) {
             }
         }
     }
-    else if ( sourceClass == 'stquerydrop ui-draggable'){
-        if(targetClass == 'streamdrop ui-draggable'){
+    else if ( sourceClass == constants.PATTERN){
+        if(targetClass == constants.STREAM){
             model = patternList.get(sourceId);
             if (model != undefined){
                 model.set('insert-into' , '');
             }
         }
     }
-    else if ( targetClass == 'stquerydrop ui-draggable'){
-        if(sourceClass == 'streamdrop ui-draggable'){
+    else if ( targetClass == constants.PATTERN){
+        if(sourceClass == constants.STREAM){
             model = patternList.get(targetId);
             if (model != undefined){
                 streams = model.get('from');

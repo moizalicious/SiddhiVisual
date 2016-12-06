@@ -87,7 +87,6 @@ jsPlumb.ready(function () {
             //To further manipulate the jsplumb element, remove the jquery UI clone helper as jsPlumb doesn't support it
             ui.helper.remove();
             $(droppedElement).removeAttr("class");
-            $(droppedElement).draggable({containment: "container"});
             //Repaint to reposition all the elements that are on the canvas after the drop/addition of a new element on the canvas
             jsPlumb.repaint(ui.helper);
             $(droppedElement).draggable({containment: "container"});
