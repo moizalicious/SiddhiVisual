@@ -91,7 +91,7 @@ function generatePropertiesFormForStreams(element){
     $("#container").addClass('disabledbutton');
     $("#toolbox").addClass('disabledbutton');
     var id = $(element).parent().attr('id');
-
+    console.log(streamList);
     //retrieve the stream information from the collection
     var clickedElement = streamList.get(id);
     var name = clickedElement.get('define');
@@ -152,7 +152,7 @@ function generatePropertiesFormForStreams(element){
         var config = editor.getValue();
 
         //update selected stream model
-        clickedElement.set('name', config.name);
+        clickedElement.set('define', config.name);
         clickedElement.set('attributes', config.attributes);
 
         var textNode = $(element).parent().find('.streamnamenode');
@@ -179,13 +179,15 @@ function generatePropertiesFormForQueries(element) {
     $("#toolbox").addClass('disabledbutton');
     var id = $(element).parent().attr('id');
     var clickedElement = queryList.get(id);
+    console.log(clickedElement);
     var queryType = $(element).parent().attr('class');
+    var type= $(element).parent();
     if (!(clickedElement.get('from'))) {
         alert('Connect to streams');
         $("#container").removeClass('disabledbutton');
         $("#toolbox").removeClass('disabledbutton');
     }
-    else if ((!clickedElement.get('insert-into'))) {
+    else if (!(clickedElement.get('insert-into'))) {
         //retrieve the query information from the collection
         var name = clickedElement.get('name');
         var inStream = (streamList.get(clickedElement.get('from'))).get('define');
@@ -193,14 +195,14 @@ function generatePropertiesFormForQueries(element) {
         var window = clickedElement.get('window');
         var filter2 = clickedElement.get('post-window-filter');
         var fillWith;
-        if (queryType == constants.PASS_THROUGH) {
+        if (type.hasClass(constants.PASS_THROUGH)) {
             fillWith = {
                 name: name,
                 from: inStream,
                 projection: ''
             };
         }
-        else if (queryType == constants.FILTER) {
+        else if (type.hasClass(constants.FILTER)) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -208,7 +210,7 @@ function generatePropertiesFormForQueries(element) {
                 projection: ''
             };
         }
-        else if (queryType == constants.WINDOW_QUERY) {
+        else if (type.hasClass(constants.WINDOW_QUERY)) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -270,7 +272,7 @@ function generatePropertiesFormForQueries(element) {
                         title: 'Attributes',
                         format: 'table',
                         required: true,
-                        propertyOrder: 7,
+                        propertyOrder: 8,
                         uniqueItems: true,
                         items: {
                             type: 'object',
@@ -322,17 +324,18 @@ function generatePropertiesFormForQueries(element) {
             var config = editor.getValue();
 
             //change the query icon depending on the fileds filled
+
             if (config.window) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass(constants.WINDOW_QUERY);
+                $(element).parent().addClass(constants.WINDOW_QUERY + ' jtk-draggable');
             }
             else if (config.filter || config.postWindowFilter) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass(constants.FILTER);
+                $(element).parent().addClass(constants.FILTER + ' jtk-draggable');
             }
             else if (!(config.filter || config.postWindowFilter || config.window )) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass(constants.PASS_THROUGH);
+                $(element).parent().addClass(constants.PASS_THROUGH+ ' jtk-draggable');
             }
             //obtain values from the form and update the query model
             var config = editor.getValue();
@@ -389,7 +392,7 @@ function generatePropertiesFormForQueries(element) {
         }
 
         var fillWith;
-        if (queryType == constants.PASS_THROUGH) {
+        if (type.hasClass(constants.PASS_THROUGH)) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -398,7 +401,7 @@ function generatePropertiesFormForQueries(element) {
                 insertInto: outStream
             };
         }
-        else if (queryType == constants.FILTER) {
+        else if (type.hasClass(queryType == constants.FILTER)) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -408,7 +411,7 @@ function generatePropertiesFormForQueries(element) {
                 insertInto: outStream
             };
         }
-        else if (queryType == constants.WINDOW_QUERY) {
+        else if (type.hasClass(constants.WINDOW_QUERY)) {
             fillWith = {
                 name: name,
                 from: inStream,
@@ -441,7 +444,7 @@ function generatePropertiesFormForQueries(element) {
                     },
                     filter: {
                         type: 'string',
-                        title: 'Filter 1',
+                        title: 'Filter',
                         propertyOrder: 3
                     },
                     window: {
@@ -451,7 +454,7 @@ function generatePropertiesFormForQueries(element) {
                     },
                     postWindowQuery: {
                         type: 'string',
-                        title: 'Filter 2',
+                        title: 'Post Window Filter',
                         propertyOrder: 5
                     },
                     projection: {
@@ -481,13 +484,13 @@ function generatePropertiesFormForQueries(element) {
                         enum : ['all events' , 'current events' , 'expired events'],
                         default: 'all events',
                         required : true,
-                        propertyOrder: 5
+                        propertyOrder: 7
                     },
                     insertInto: {
                         type: 'string',
                         template: outStream,
                         required: true,
-                        propertyOrder: 7
+                        propertyOrder: 8
                     }
                 }
             },
@@ -519,15 +522,15 @@ function generatePropertiesFormForQueries(element) {
             //change the query icon depending on the fields(filter, window) filled
             if (config.window) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass(constants.WINDOW_QUERY);
+                $(element).parent().addClass(constants.WINDOW_QUERY + ' jtk-draggable');
             }
             else if (config.filter || config.postWindowFilter) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass(constants.FILTER);
+                $(element).parent().addClass(constants.FILTER + ' jtk-draggable');
             }
             else if (!(config.filter || config.postWindowFilter || config.window )) {
                 $(element).parent().removeClass();
-                $(element).parent().addClass(constants.PASS_THROUGH);
+                $(element).parent().addClass(constants.PASS_THROUGH + ' jtk-draggable');
             }
 
             //update selected query model
@@ -1052,4 +1055,62 @@ function generatePropertiesFormForJoinQuery(element) {
             $(propertyWindow).collapse('hide');
         });
     }
+}
+
+function generatePartitionKeyForm(element){
+    var id = $(element.target).parent().attr('id');
+    var partition = partitionList.get(id);
+    var propertyWindow = document.getElementsByClassName('property');
+    $(propertyWindow).collapse('show');
+    $("#container").addClass('disabledbutton');
+    $("#toolbox").addClass('disabledbutton');
+    var editor = new JSONEditor(document.getElementById('propertypane'), {
+        ajax: true,
+        schema: {
+            type: 'object',
+            title: 'Partition Key',
+            properties: {
+                stream: {
+                    type: 'string',
+                    title: 'Stream',
+                    required: true,
+                    propertyOrder: 1
+                },
+                property: {
+                    type: 'string',
+                    title: 'Property',
+                    required: true,
+                    propertyOrder: 2
+                }
+            }
+        },
+        disable_properties: true
+    });
+    $(propertyWindow).append('<div>'+
+        '<button id="form-submit">Submit</button>' +
+        '<button id="form-cancel">Cancel</button></div>');
+
+    document.getElementById('form-submit').addEventListener('click', function () {
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+        $(propertyWindow).html('');
+        $(propertyWindow).collapse('hide');
+        var config = editor.getValue();
+
+        //update selected query model
+        var partitionKey = { 'stream' : config.stream , 'property' :config.property};
+        var xx = partition.get('partition');
+        console.log(xx.with);
+        xx['with'].push(partitionKey);
+        console.log(partition);
+    });
+
+    //'Cancel' button action
+    document.getElementById('form-cancel').addEventListener('click', function () {
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+        $(propertyWindow).html('');
+        $(propertyWindow).collapse('hide');
+    });
+
 }

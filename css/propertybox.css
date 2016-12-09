@@ -491,10 +491,12 @@ td {
 }
 
 .connectorInPart{
-    float: right;
-    margin-right: 10px;
-    margin-left: 10px;
-    margin-top: -5px;
+    margin-left: -5px;
+    margin-top: 20px;
+    width: 15px;
+    height: 15px;
+    border: 1px solid darkblue;
+    background-color: darkblue;
 }
 
 .connectorStream{
@@ -558,7 +560,7 @@ td {
     padding-top: 4px;
 }
 
-.streamNameNode , .queryNameNode , .windowNameNode{
+.streamNameNode , .queryNameNode , .windowNameNode, .partitionNameNode{
     float:right;
     width:inherit;
     height:inherit;

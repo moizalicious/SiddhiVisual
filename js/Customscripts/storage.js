@@ -107,6 +107,16 @@ app.JoinQuery = Backbone.Model.extend({
     "from" : []
 });
 
+app.Partition = Backbone.Model.extend({
+    defaults:{
+        "partition": {
+            "with" :[] // this will contain json objects { stream : '', property :''}
+        },
+        "queries" :[]
+    }
+
+});
+
 //--------------
 // Collections
 //--------------
@@ -135,7 +145,9 @@ app.PatternList = Backbone.Collection.extend({
 app.JoinQueryList = Backbone.Collection.extend({
     model: app.JoinQuery
 });
-
+app.PartitionList = Backbone.Collection.extend({
+    model: app.Partition
+});
 //initiates the collections
 streamList = new app.StreamList();
 filterList = new app.FilterList();
@@ -144,3 +156,4 @@ windowQueryList = new app.WindowQueryList();
 queryList = new app.QueryList();
 patternList = new app.PatternList();
 joinQueryList = new app.JoinQueryList();
+partitionList = new app.PartitionList();

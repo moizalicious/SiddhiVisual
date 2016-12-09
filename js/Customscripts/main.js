@@ -1,12 +1,12 @@
 var constants = {
-    STREAM: 'streamdrop jtk-draggable',
-    PASS_THROUGH : 'squerydrop jtk-draggable',
-    FILTER : 'filterdrop jtk-draggable',
-    JOIN : 'joquerydrop jtk-draggable',
-    WINDOW_QUERY : 'wquerydrop jtk-draggable',
-    PATTERN : 'stquerydrop jtk-draggable',
+    STREAM: 'streamdrop',
+    PASS_THROUGH : 'squerydrop',
+    FILTER : 'filterdrop',
+    JOIN : 'joquerydrop',
+    WINDOW_QUERY : 'wquerydrop',
+    PATTERN : 'stquerydrop',
     WINDOW_STREAM :'',
-    PARTITION :''
+    PARTITION :'partitiondrop'
 };
 
 
@@ -244,9 +244,11 @@ jsPlumb.ready(function() {
                 //Drop the element instantly since its projections will be set only when the user requires it
                 dropPartition(newAgent,i,mouseTop,mouseLeft);
                 finalElementCount=i;
+
                 i++;
             }
             registerElementEventListeners(newAgent);
+            // console.log(document.elementFromPoint(newAgent.position().top , newAgent.position().left));
         }
     });
 
@@ -278,23 +280,43 @@ jsPlumb.bind('beforeDrop', function(connection){
     var connectionValidity= true;
     var target = connection.targetId;
     var targetId= target.substr(0, target.indexOf('-'));
-    var targetClass = $('#'+targetId).attr('class');
+    var targetElement = $('#'+targetId);
 
     var source = connection.sourceId;
     var sourceId = source.substr(0, source.indexOf('-'));
-    var sourceClass = $('#'+sourceId).attr('class');
+    var sourceElement = $('#'+sourceId);
 
-    if( targetClass == constants.PASS_THROUGH || targetClass == constants.FILTER || targetClass == constants.WINDOW_QUERY
-        || targetClass == constants.PATTERN || targetClass == constants.JOIN) {
-        if (sourceClass != constants.STREAM) {
+
+    //avoid the expose of inner-streams outside the group
+    if( targetElement.hasClass(constants.STREAM) && jsPlumb.getGroupFor(sourceId)!=undefined ){
+        if( jsPlumb.getGroupFor(sourceId) != jsPlumb.getGroupFor(targetId)){
+            connectionValidity = false;
+            alert("Invalid Connection");
+        }
+    }
+    else if( targetElement.hasClass(constants.STREAM) && jsPlumb.getGroupFor(targetId) != undefined ){
+        if( jsPlumb.getGroupFor(targetId) != jsPlumb.getGroupFor(sourceId)){
+            connectionValidity = false;
+            alert("Invalid Connection");
+        }
+    }
+    else if($('#'+sourceId).hasClass(constants.PARTITION)){
+        if(jsPlumb.getGroupFor(targetId) != sourceId){
             connectionValidity = false;
             alert("Invalid Connection");
         }
     }
 
-    else if( sourceClass == constants.PASS_THROUGH || sourceClass == constants.FILTER || sourceClass == constants.WINDOW_QUERY
-        || sourceClass == constants.PATTERN || sourceClass == constants.JOIN) {
-        if(targetClass != constants.STREAM){
+    else if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER) || targetElement.hasClass(constants.WINDOW_QUERY)
+        || targetElement.hasClass(constants.PATTERN) || targetElement.hasClass(constants.JOIN)) {
+        if (!(sourceElement.hasClass(constants.STREAM)))  {
+            connectionValidity = false;
+            alert("Invalid Connection");
+        }
+    }
+    else if( sourceElement.hasClass(constants.PASS_THROUGH) || sourceElement.hasClass(constants.FILTER) || sourceElement.hasClass(constants.WINDOW_QUERY)
+        || sourceElement.hasClass(constants.PATTERN) || sourceElement.hasClass(constants.JOIN)) {
+        if (!(targetElement.hasClass(constants.STREAM))) {
             connectionValidity = false;
             alert("Invalid Connection");
         }
@@ -306,33 +328,33 @@ jsPlumb.bind('beforeDrop', function(connection){
 jsPlumb.bind('connection' , function(connection){
     var target = connection.targetId;
     var targetId= target.substr(0, target.indexOf('-'));
-    var targetClass = $('#'+targetId).attr('class');
+    var targetElement = $('#'+targetId);
 
     var source = connection.sourceId;
     var sourceId = source.substr(0, source.indexOf('-'));
-    var sourceClass = $('#'+sourceId).attr('class');
+    var sourceElement = $('#'+sourceId);
 
     var model;
-    if( targetClass == constants.PASS_THROUGH || targetClass == constants.FILTER || targetClass == constants.WINDOW_QUERY){
-        if( sourceClass == constants.STREAM) {
+    if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER) || targetElement.hasClass(constants.WINDOW_QUERY)){
+        if(sourceElement.hasClass(constants.STREAM)) {
             model = queryList.get(targetId);
             model.set('from', sourceId);
         }
     }
-    else if( sourceClass == constants.PASS_THROUGH  || sourceClass == constants.FILTER || sourceClass == constants.WINDOW_QUERY){
-        if(targetClass == constants.STREAM){
+    else if( sourceElement.hasClass(constants.PASS_THROUGH) || sourceElement.hasClass(constants.FILTER) || sourceElement.hasClass(constants.WINDOW_QUERY)){
+        if(targetElement.hasClass(constants.STREAM)){
             model = queryList.get(sourceId);
             model.set('insert-into' , targetId);
         }
     }
-    else if ( sourceClass == constants.PATTERN){
-        if(targetClass == constants.STREAM){
+    else if (sourceElement.hasClass(constants.PATTERN)){
+        if(targetElement.hasClass(constants.STREAM)){
             model = patternList.get(sourceId);
             model.set('insert-into' , targetId);
         }
     }
-    else if ( targetClass == constants.PATTERN){
-        if(sourceClass == constants.STREAM){
+    else if (targetElement.hasClass(constants.PATTERN)){
+        if(sourceElement.hasClass( constants.STREAM)){
             model = patternList.get(targetId);
             var streams = model.get('from');
             if (streams== undefined){
@@ -343,14 +365,14 @@ jsPlumb.bind('connection' , function(connection){
         }
     }
 
-    else if ( sourceClass == constants.JOIN){
-        if(targetClass == constants.STREAM){
+    else if (sourceElement.hasClass(constants.JOIN)){
+        if(targetElement.hasClass(constants.STREAM)){
             model = joinQueryList.get(sourceId);
             model.set('insert-into', targetId);
         }
     }
-    else if ( targetClass == constants.JOIN){
-        if(sourceClass == constants.STREAM){
+    else if (targetElement.hasClass(constants.JOIN)){
+        if(sourceElement.hasClass(constants.STREAM)){
             model = joinQueryList.get(targetId);
             var streams = model.get('from');
             if (streams== undefined){
@@ -395,36 +417,38 @@ jsPlumb.bind('connectionDetached', function (connection) {
 
     var target = connection.targetId;
     var targetId= target.substr(0, target.indexOf('-'));
-    var targetClass = $('#'+targetId).attr('class');
+    var targetElement = $('#'+targetId);
 
     var source = connection.sourceId;
     var sourceId = source.substr(0, source.indexOf('-'));
-    var sourceClass = $('#'+sourceId).attr('class');
+    var sourceElement = $('#'+sourceId);
 
     var model;
     var streams;
-    if( targetClass == constants.PASS_THROUGH || targetClass == constants.FILTER || targetClass == constants.WINDOW_QUERY){
+    if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER)
+        || targetElement.hasClass(constants.WINDOW_QUERY)){
         model = queryList.get(targetId);
         if (model != undefined){
             model.set('from' , '');
         }
     }
-    else if( sourceClass == constants.PASS_THROUGH || sourceClass == constants.FILTER || sourceClass == constants.WINDOW_QUERY){
+    else if( sourceElement.hasClass(constants.PASS_THROUGH) || sourceElement.hasClass(constants.FILTER)
+        || sourceElement.hasClass(constants.WINDOW_QUERY)){
         model = queryList.get(sourceId);
         if (model != undefined){
             model.set('insert-into' , '');
         }
     }
-    else if ( sourceClass == constants.JOIN){
-        if(targetClass == constants.STREAM){
+    else if ( sourceElement.hasClass(constants.JOIN)){
+        if(targetElement.hasClass(constants.STREAM)){
             model = joinQueryList.get(sourceId);
             if (model != undefined){
                 model.set('insert-into' , '');
             }
         }
     }
-    else if ( targetClass == constants.JOIN){
-        if(sourceClass == constants.STREAM){
+    else if (targetElement.hasClass(constants.JOIN)){
+        if(sourceElement.hasClass(constants.STREAM)){
             model = joinQueryList.get(targetId);
             if (model != undefined){
                 streams = model.get('from');
@@ -434,16 +458,16 @@ jsPlumb.bind('connectionDetached', function (connection) {
             }
         }
     }
-    else if ( sourceClass == constants.PATTERN){
-        if(targetClass == constants.STREAM){
+    else if (sourceElement.hasClass(constants.PATTERN)){
+        if(targetElement.hasClass(constants.STREAM)){
             model = patternList.get(sourceId);
             if (model != undefined){
                 model.set('insert-into' , '');
             }
         }
     }
-    else if ( targetClass == constants.PATTERN){
-        if(sourceClass == constants.STREAM){
+    else if ( targetElement.hasClass(constants.PATTERN)){
+        if(sourceElement.hasClass(constants.STREAM)){
             model = patternList.get(targetId);
             if (model != undefined){
                 streams = model.get('from');
@@ -455,7 +479,11 @@ jsPlumb.bind('connectionDetached', function (connection) {
     }
 });
 
+jsPlumb.bind('group:addMember' , function (event){
+    console.log(event.group);
+    console.log(event.el);
 
+});
 /**
  * @function Auto align the diagram
  */
@@ -467,7 +495,16 @@ function autoAlign() {
     g.setDefaultEdgeLabel(function () {
         return {};
     });
-    var nodes = document.getElementById("container").children;
+    var nodes =[];
+    Array.prototype.push.apply(nodes,document.getElementsByClassName(constants.STREAM));
+    Array.prototype.push.apply(nodes,document.getElementsByClassName(constants.PASS_THROUGH));
+    Array.prototype.push.apply(nodes,document.getElementsByClassName(constants.FILTER));
+    Array.prototype.push.apply(nodes,document.getElementsByClassName(constants.WINDOW_QUERY));
+    Array.prototype.push.apply(nodes,document.getElementsByClassName(constants.JOIN));
+    Array.prototype.push.apply(nodes,document.getElementsByClassName(constants.PATTERN));
+    Array.prototype.push.apply(nodes,document.getElementsByClassName(constants.WINDOW_STREAM));
+    Array.prototype.push.apply(nodes,document.getElementsByClassName(constants.PARTITION));
+
     // var nodes = $(".ui-draggable");
     for (var i = 0; i < nodes.length; i++) {
         var n = nodes[i];
@@ -490,17 +527,19 @@ function autoAlign() {
         $("#" + v).css("left", g.node(v).x + "px");
         $("#" + v).css("top", g.node(v).y + "px");
     });
-    edges = edges.slice(0);
-    for (var j = 0; j<edges.length ; j++){
-        var source = edges[j].sourceId;
-        var target = edges[j].targetId;
-        jsPlumb.detach(edges[j]);
-        jsPlumb.connect({
-            source: source,
-            target: target
-        });
 
-    }
+    jsPlumb.repaintEverything();
+    // edges = edges.slice(0);
+    // for (var j = 0; j<edges.length ; j++){
+    //     var source = edges[j].sourceId;
+    //     var target = edges[j].targetId;
+    //     jsPlumb.detach(edges[j]);
+    //     jsPlumb.connect({
+    //         source: source,
+    //         target: target
+    //     });
+    //
+    // }
 }
 
 /**
@@ -878,71 +917,58 @@ function dropWindowStream(newAgent, i,topP,left,asName)
 
 function dropPartition(newAgent, i,mouseTop,mouseLeft)
 {
-    var prop = $('<a><img src="../images/settings.png" class="element-prop-icon " onclick =""></a>').attr('id', (i+('-propPartition')));
-    newAgent.append('<img src="../images/Cancel.png" class="element-close-icon " id="boxclose">').append(prop);
-    dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft);
-
-}
-
-function dropCompletePartitionElement(newAgent,i,mouseTop,mouseLeft)
-{
-
-    // $(droppedElement).draggable({containment: "container"});
 
     var finalElement =  newAgent;
 
     $(finalElement).draggable({
         containment: "container",
-        drag:function(){
-            $(this).find('._jsPlumb_endpoint_anchor_').each(function(i,e){
-                if($(e).hasClass("connect"))
-                    jsPlumb.repaint($(e).parent());
-                else
-                    jsPlumb.repaint($(e));
+        drag:function(event,ui){
+            jsPlumb.repaintEverything();
+            $(this).find(".connection").each(function(i,e){
             });
         }
     });
     var x =1;
     $(finalElement).resizable();
-    // jsPlumb.setContainer($('#'+i));
-    $(finalElement).on('dblclick',function () {
-
-        var connectionIn = $('<div class="connectorInPart" >').attr('id', i + '-pc'+ x).addClass('connection');
-        finalElement.append(connectionIn);
-
-        // jsPlumb.addEndpoint(connectionIn, {
-        //     isTarget: true,
-        //     isSource: true
-        // });
-        jsPlumb.draggable(finalElement, {
-            containment: 'parent'
-        });
-        jsPlumb.makeTarget(connectionIn, {
-            anchor: 'Top'
-        });
-        jsPlumb.makeSource(connectionIn, {
-            anchor: 'Top'
-        });
-
-        x++;
-    });
 
     finalElement.css({
         'top': mouseTop,
         'left': mouseLeft
     });
+    var connectionIn;
+    $(finalElement).on('dblclick',function () {
+        connectionIn = $('<div class="connectorInPart" >').attr('id', i + '-pc'+ x);
+        finalElement.append(connectionIn);
+        //
+        jsPlumb.makeTarget(connectionIn, {
+            anchor: 'Left'
+        });
+        jsPlumb.makeSource(connectionIn, {
+            anchor: 'Right'
+        });
 
-    // $(function() { $(finalElement).draggable().resizable(); });
+        x++;
+        $(connectionIn).on('click', function(endpoint, originalEvent){
+            generatePartitionKeyForm(endpoint);
+        });
+    });
 
     $('#container').append(finalElement);
+    jsPlumb.addGroup({
+        el: document.getElementById(i),
+        id: i,
+        droppable:true,
+        constrain:true,
+        dropOverride:false,
+        draggable:false
+    });
 
-    // $(finalElement).resizable({
-    //     resize: function (e, ui) {
-    //         jsPlumb.repaint(ui.helper);
-    //     }
-    // });
+    var newPartition = new app.Partition;
+    newPartition.set('id', i);
+    partitionList.add(newPartition);
 
 }
+
 
 
 

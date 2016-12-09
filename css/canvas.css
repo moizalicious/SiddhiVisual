@@ -87,7 +87,7 @@
 
 .partition {
     border: 1px solid #346789;
-    resize: both;
+    /*resize: both;*/
     box-shadow: 2px 2px 19px #aaa;
     -o-box-shadow: 2px 2px 19px #aaa;
     -webkit-box-shadow: 2px 2px 19px #aaa;
@@ -127,7 +127,6 @@
     text-align: center;
     z-index: 20;
     position: absolute;
-    background-color: transparent;
     background-size: 120px 80px;
     background-repeat: no-repeat;
     color: black;
@@ -173,18 +172,10 @@
 
 .partitiondrop {
     border: 1px solid #346789;
-    resize: both;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    box-shadow: 2px 2px 19px #aaa;
-    -o-box-shadow: 2px 2px 19px #aaa;
-    -webkit-box-shadow: 2px 2px 19px #aaa;
-    -moz-box-shadow: 2px 2px 19px #aaa;
-    -moz-border-radius: 0.5em;
+    width: 250px;
+    height: 250px;
     border-radius: 0.5em;
     opacity: 0.8;
-    width: 120px;
-    height: 80px;
     line-height: 80px;
     cursor: move;
     text-align: center;
@@ -193,13 +184,14 @@
     background-color: transparent;
     color: black;
     font-family: helvetica, sans-serif;
-    padding: 0.5em;
+    /*background-image: url("../images/grid.png");*/
     font-size: 0.9em;
     -webkit-transition: -webkit-box-shadow 0.15s ease-in;
     -moz-transition: -moz-box-shadow 0.15s ease-in;
     -o-transition: -o-box-shadow 0.15s ease-in;
     transition: box-shadow 0.15s ease-in;
     box-sizing: border-box;
+
 }
 
 /*
