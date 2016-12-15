@@ -179,7 +179,6 @@ function generatePropertiesFormForQueries(element) {
     $("#toolbox").addClass('disabledbutton');
     var id = $(element).parent().attr('id');
     var clickedElement = queryList.get(id);
-    console.log(clickedElement);
     var queryType = $(element).parent().attr('class');
     var type= $(element).parent();
     if (!(clickedElement.get('from'))) {
@@ -1098,10 +1097,9 @@ function generatePartitionKeyForm(element){
         var config = editor.getValue();
 
         //update selected query model
-        var partitionKey = { 'stream' : config.stream , 'property' :config.property};
-        var xx = partition.get('partition');
-        console.log(xx.with);
-        xx['with'].push(partitionKey);
+        var newPartitionKey = { 'stream' : config.stream , 'property' :config.property};
+        var partitionKeys = (partition.get('partition'));
+        partitionKeys['with'].push(newPartitionKey);
         console.log(partition);
     });
 

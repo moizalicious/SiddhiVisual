@@ -288,23 +288,29 @@ jsPlumb.bind('beforeDrop', function(connection){
 
 
     //avoid the expose of inner-streams outside the group
-    if( targetElement.hasClass(constants.STREAM) && jsPlumb.getGroupFor(sourceId)!=undefined ){
+    if( sourceElement.hasClass(constants.STREAM) && jsPlumb.getGroupFor(sourceId)!=undefined ){
         if( jsPlumb.getGroupFor(sourceId) != jsPlumb.getGroupFor(targetId)){
             connectionValidity = false;
-            alert("Invalid Connection");
+            alert("Invalid Connection: Inner Streams are not exposed to outside");
         }
     }
     else if( targetElement.hasClass(constants.STREAM) && jsPlumb.getGroupFor(targetId) != undefined ){
         if( jsPlumb.getGroupFor(targetId) != jsPlumb.getGroupFor(sourceId)){
             connectionValidity = false;
-            alert("Invalid Connection");
+            alert("Invalid Connection: Inner Streams are not exposed to outside");
         }
     }
     else if($('#'+sourceId).hasClass(constants.PARTITION)){
-        if(jsPlumb.getGroupFor(targetId) != sourceId){
+        if($(jsPlumb.getGroupFor(targetId)).attr('id') != sourceId){
             connectionValidity = false;
-            alert("Invalid Connection");
+            alert("Invalid Connection: Connect to a partition query");
         }
+        var connections = jsPlumb.getAllConnections({source : source});
+        // else if(jsPlumb.getAllConnections({
+        //         'target' : source}) == []){
+        //     connectionValidity = false;
+        //     alert("Invalid Connection: Define partition key");
+        // }
     }
 
     else if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER) || targetElement.hasClass(constants.WINDOW_QUERY)
@@ -480,10 +486,19 @@ jsPlumb.bind('connectionDetached', function (connection) {
 });
 
 jsPlumb.bind('group:addMember' , function (event){
-    console.log(event.group);
-    console.log(event.el);
-
+    var partitionId = $(event.group).attr('id');
+    var partition = partitionList.get(partitionId);
+    var queries = partition.get('queries');
+    if($(event.el).hasClass(constants.FILTER) || $(event.el).hasClass(constants.PASS_THROUGH) || $(event.el).hasClass(constants.WINDOW_QUERY)){
+        queries.push(queryList.get($(event.el).attr('id')));
+        partition.set('queries', queries);
+    }
+    else if($(event.el).hasClass(constants.JOIN)){
+        queries.push(joinQueryList.get($(event.el).attr('id')));
+        partition.set('queries', queries);
+    }
 });
+
 /**
  * @function Auto align the diagram
  */
@@ -564,7 +579,25 @@ function registerElementEventListeners(newElement){
 
     //register event listener to remove the element when the close icon is clicked
     newElement.on('click', '.element-close-icon', function () {
-        jsPlumb.remove(newElement);
+        console.log($(newElement).attr('id'));
+        if(jsPlumb.getGroupFor(newElement)){
+            var queries = partitionList.get(jsPlumb.getGroupFor(newElement)).get('queries');
+            var removedQueryIndex = null;
+            $.each( queries , function (index, query) {
+                if(query.id == $(newElement).attr('id')){
+                    removedQueryIndex = index;
+                }
+            });
+            queries.splice(removedQueryIndex,1);
+            partitionList.get(jsPlumb.getGroupFor(newElement)).set('queries', queries);
+            jsPlumb.remove(newElement);
+            jsPlumb.removeFromGroup(newElement);
+        }
+        else{
+            jsPlumb.remove(newElement);
+        }
+
+        console.log( partitionList.get(jsPlumb.getGroupFor(newElement)));
     });
 }
 
@@ -922,7 +955,7 @@ function dropPartition(newAgent, i,mouseTop,mouseLeft)
 
     $(finalElement).draggable({
         containment: "container",
-        drag:function(event,ui){
+        drag:function(){
             jsPlumb.repaintEverything();
             $(this).find(".connection").each(function(i,e){
             });
