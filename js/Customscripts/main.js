@@ -305,14 +305,12 @@ jsPlumb.bind('beforeDrop', function(connection){
             connectionValidity = false;
             alert("Invalid Connection: Connect to a partition query");
         }
-        var connections = jsPlumb.getAllConnections({source : source});
-        // else if(jsPlumb.getAllConnections({
-        //         'target' : source}) == []){
+        var connections = jsPlumb.getConnections({target : source});
+        // if( connections.length == 0){
         //     connectionValidity = false;
-        //     alert("Invalid Connection: Define partition key");
+        //     alert("Invalid Connection: Define a stream for partitioning");
         // }
     }
-
     else if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER) || targetElement.hasClass(constants.WINDOW_QUERY)
         || targetElement.hasClass(constants.PATTERN) || targetElement.hasClass(constants.JOIN)) {
         if (!(sourceElement.hasClass(constants.STREAM)))  {
@@ -341,53 +339,123 @@ jsPlumb.bind('connection' , function(connection){
     var sourceElement = $('#'+sourceId);
 
     var model;
-    if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER) || targetElement.hasClass(constants.WINDOW_QUERY)){
-        if(sourceElement.hasClass(constants.STREAM)) {
+
+    if (sourceElement.hasClass(constants.STREAM)) {
+        if (targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER) || targetElement.hasClass(constants.WINDOW_QUERY)) {
             model = queryList.get(targetId);
             model.set('from', sourceId);
         }
-    }
-    else if( sourceElement.hasClass(constants.PASS_THROUGH) || sourceElement.hasClass(constants.FILTER) || sourceElement.hasClass(constants.WINDOW_QUERY)){
-        if(targetElement.hasClass(constants.STREAM)){
-            model = queryList.get(sourceId);
-            model.set('insert-into' , targetId);
-        }
-    }
-    else if (sourceElement.hasClass(constants.PATTERN)){
-        if(targetElement.hasClass(constants.STREAM)){
-            model = patternList.get(sourceId);
-            model.set('insert-into' , targetId);
-        }
-    }
-    else if (targetElement.hasClass(constants.PATTERN)){
-        if(sourceElement.hasClass( constants.STREAM)){
+
+        else if (targetElement.hasClass(constants.PATTERN)){
             model = patternList.get(targetId);
             var streams = model.get('from');
             if (streams== undefined){
                 streams = [ sourceId]
             }
-            else streams.push(sourceId);
+            else
+                streams.push(sourceId);
             model.set('from', streams)
+        }
+        else if (targetElement.hasClass(constants.JOIN)) {
+            model = joinQueryList.get(targetId);
+            var streams = model.get('from');
+            if (streams == undefined) {
+                streams = [sourceId]
+            }
+            else
+                streams.push(sourceId);
+            model.set('from', streams);
+        }
+        else if ( targetElement.hasClass(constants.PARTITION)){
+            model = partitionList.get(targetId);
+            var newPartitionKey = { 'stream' : sourceId , 'property' :''};
+            var partitionKeys = (model.get('partition'));
+            partitionKeys['with'].push(newPartitionKey);
+
+            var connectedQueries = jsPlumb.getConnections({source : target});
+            $.each(connectedQueries , function (index, connectedQuery) {
+                var query= connectedQuery.targetId;
+                var queryID = query.substr(0, query.indexOf('-'));
+                var queryElement = $('#'+queryID);
+                if( queryElement.hasClass(constants.PASS_THROUGH) || queryElement.hasClass(constants.FILTER) || queryElement.hasClass(constants.WINDOW_QUERY)){
+                    model = queryList.get(queryID);
+                    model.set('from', sourceId);
+                }
+                else if (queryElement.hasClass(constants.JOIN)){
+                    model = joinQueryList.get(queryID);
+                    var streams = model.get('from');
+                    if (streams == undefined) {
+                        streams = [sourceId]
+                    }
+                    else
+                        streams.push(sourceId);
+                    model.set('from', streams);
+                }
+                else if (queryElement.hasClass(constants.PATTERN)){
+                    model = patternList.get(queryID);
+                    var streams = model.get('from');
+                    if (streams== undefined){
+                        streams = [ sourceId]
+                    }
+                    else
+                        streams.push(sourceId);
+                    model.set('from', streams)
+                }
+            });
+
         }
     }
 
-    else if (sourceElement.hasClass(constants.JOIN)){
-        if(targetElement.hasClass(constants.STREAM)){
-            model = joinQueryList.get(sourceId);
-            model.set('insert-into', targetId);
-        }
-    }
-    else if (targetElement.hasClass(constants.JOIN)){
-        if(sourceElement.hasClass(constants.STREAM)){
-            model = joinQueryList.get(targetId);
-            var streams = model.get('from');
-            if (streams== undefined){
-                streams = [ sourceId]
+    else if (sourceElement.hasClass(constants.PARTITION)){
+        var connectedStreams = jsPlumb.getConnections({target : source});
+        var streamID = null;
+        $.each(connectedStreams , function (index, connectedStream) {
+            var stream= connectedStream.sourceId;
+            streamID = stream.substr(0, stream.indexOf('-'));
+        });
+        if(streamID != null){
+            if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER) || targetElement.hasClass(constants.WINDOW_QUERY)){
+                model = queryList.get(targetId);
+                model.set('from', streamID);
             }
-            else streams.push(sourceId);
-            model.set('from', streams)
+            else if (targetElement.hasClass(constants.JOIN)){
+                model = joinQueryList.get(targetId);
+                var streams = model.get('from');
+                if (streams == undefined) {
+                    streams = [streamID]
+                }
+                else
+                    streams.push(streamID);
+                model.set('from', streams);
+            }
+            else if (targetElement.hasClass(constants.PATTERN)){
+                model = patternList.get(targetId);
+                var streams = model.get('from');
+                if (streams== undefined){
+                    streams = [ streamID]
+                }
+                else
+                    streams.push(streamID);
+                model.set('from', streams)
+            }
         }
     }
+
+    else if (targetElement.hasClass(constants.STREAM)){
+        if( sourceElement.hasClass(constants.PASS_THROUGH) || sourceElement.hasClass(constants.FILTER) || sourceElement.hasClass(constants.WINDOW_QUERY)){
+                model = queryList.get(sourceId);
+                model.set('insert-into' , targetId);
+        }
+        else if (sourceElement.hasClass(constants.PATTERN)){
+                model = patternList.get(sourceId);
+                model.set('insert-into' , targetId);
+        }
+        else if (sourceElement.hasClass(constants.JOIN)){
+                model = joinQueryList.get(sourceId);
+                model.set('insert-into', targetId);
+        }
+    }
+
     var connectionObject = connection.connection;
     //add a overlay of a close icon for connection. connection can be detached by clicking on it
     var close_icon_overlay = connectionObject.addOverlay([
@@ -412,7 +480,7 @@ jsPlumb.bind('connection' , function(connection){
     connectionObject.bind('mouseover', function(conn) {
         close_icon_overlay.setVisible(true);
     });
-    // //hide the close icon when the mouse is not on the connection path
+    //hide the close icon when the mouse is not on the connection path
     connectionObject.bind('mouseout', function(conn) {
         close_icon_overlay.setVisible(false);
     });
@@ -431,58 +499,140 @@ jsPlumb.bind('connectionDetached', function (connection) {
 
     var model;
     var streams;
-    if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER)
-        || targetElement.hasClass(constants.WINDOW_QUERY)){
-        model = queryList.get(targetId);
-        if (model != undefined){
-            model.set('from' , '');
+    if ( sourceElement.hasClass(constants.STREAM)){
+        if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER)
+            || targetElement.hasClass(constants.WINDOW_QUERY)){
+                model = queryList.get(targetId);
+                if (model != undefined){
+                    model.set('from' , '');
+                }
         }
-    }
-    else if( sourceElement.hasClass(constants.PASS_THROUGH) || sourceElement.hasClass(constants.FILTER)
-        || sourceElement.hasClass(constants.WINDOW_QUERY)){
-        model = queryList.get(sourceId);
-        if (model != undefined){
-            model.set('insert-into' , '');
+        else if (targetElement.hasClass(constants.JOIN)){
+                model = joinQueryList.get(targetId);
+                if (model != undefined){
+                    streams = model.get('from');
+                    var removedStream = streams.indexOf(sourceId);
+                    streams.splice(removedStream,1);
+                    model.set('from', streams);
+                }
         }
-    }
-    else if ( sourceElement.hasClass(constants.JOIN)){
-        if(targetElement.hasClass(constants.STREAM)){
-            model = joinQueryList.get(sourceId);
+        else if ( targetElement.hasClass(constants.PATTERN)){
+                model = patternList.get(targetId);
+                if (model != undefined){
+                    streams = model.get('from');
+                    var removedStream = streams.indexOf(sourceId);
+                    streams.splice(removedStream,1);
+                    model.set('from', streams);
+                }
+        }
+        else if ( targetElement.hasClass(constants.PARTITION)){
+            model = partitionList.get(targetId);
             if (model != undefined){
-                model.set('insert-into' , '');
+                var removedPartitionKey = null;
+                var partitionKeys = (model.get('partition').with);
+                $.each(partitionKeys, function ( index , key) {
+                    if( key.stream == sourceId){
+                        removedPartitionKey = index;
+                    }
+                });
+                partitionKeys.splice(removedPartitionKey,1);
+                var partitionKeysObj = { 'with' : partitionKeys};
+                model.set('partition', partitionKeysObj);
+
+                var connectedQueries = jsPlumb.getConnections({source : target});
+                $.each(connectedQueries , function (index, connectedQuery) {
+                    var query= connectedQuery.targetId;
+                    var queryID = query.substr(0, query.indexOf('-'));
+                    var queryElement = $('#'+queryID);
+                    if( queryElement.hasClass(constants.PASS_THROUGH) || queryElement.hasClass(constants.FILTER) || queryElement.hasClass(constants.WINDOW_QUERY)){
+                        model = queryList.get(queryID);
+                        if (model != undefined){
+                            model.set('from' , '');
+                        }
+                    }
+                    else if (queryElement.hasClass(constants.JOIN)){
+                        model = joinQueryList.get(queryID);
+                        if (model != undefined){
+                            streams = model.get('from');
+                            var removedStream = streams.indexOf(sourceId);
+                            streams.splice(removedStream,1);
+                            model.set('from', streams);
+                        }
+                    }
+                    else if (queryElement.hasClass(constants.PATTERN)){
+                        model = patternList.get(queryID);
+                        if (model != undefined){
+                            streams = model.get('from');
+                            var removedStream = streams.indexOf(sourceId);
+                            streams.splice(removedStream,1);
+                            model.set('from', streams);
+                        }
+                    }
+                });
             }
         }
     }
-    else if (targetElement.hasClass(constants.JOIN)){
-        if(sourceElement.hasClass(constants.STREAM)){
+
+    else if ( sourceElement.hasClass(constants.PARTITION)){
+
+        var connectedStreams = jsPlumb.getConnections({target : source});
+        var streamID = null;
+        $.each(connectedStreams , function (index, connectedStream) {
+            var stream= connectedStream.sourceId;
+            streamID = stream.substr(0, stream.indexOf('-'));
+        });
+        if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER)
+            || targetElement.hasClass(constants.WINDOW_QUERY)){
+            model = queryList.get(targetId);
+            if (model != undefined){
+                model.set('from' , '');
+            }
+        }
+        else if (targetElement.hasClass(constants.JOIN)){
             model = joinQueryList.get(targetId);
             if (model != undefined){
                 streams = model.get('from');
-                var removedStream = streams.indexOf(sourceId);
+                var removedStream = streams.indexOf(streamID);
                 streams.splice(removedStream,1);
                 model.set('from', streams);
             }
         }
+        else if (targetElement.hasClass(constants.PATTERN)) {
+            model = patternList.get(targetId);
+            if (model != undefined) {
+                streams = model.get('from');
+                var removedStream = streams.indexOf(streamID);
+                streams.splice(removedStream, 1);
+                model.set('from', streams);
+            }
+        }
     }
-    else if (sourceElement.hasClass(constants.PATTERN)){
-        if(targetElement.hasClass(constants.STREAM)){
-            model = patternList.get(sourceId);
+    if(targetElement.hasClass(constants.STREAM)){
+        if( sourceElement.hasClass(constants.PASS_THROUGH) || sourceElement.hasClass(constants.FILTER)
+            || sourceElement.hasClass(constants.WINDOW_QUERY)){
+            model = queryList.get(sourceId);
             if (model != undefined){
                 model.set('insert-into' , '');
             }
         }
-    }
-    else if ( targetElement.hasClass(constants.PATTERN)){
-        if(sourceElement.hasClass(constants.STREAM)){
-            model = patternList.get(targetId);
-            if (model != undefined){
-                streams = model.get('from');
-                var removedStream = streams.indexOf(sourceId);
-                streams.splice(removedStream,1);
-                model.set('from', streams);
+        else if ( sourceElement.hasClass(constants.JOIN)){
+            if(targetElement.hasClass(constants.STREAM)){
+                model = joinQueryList.get(sourceId);
+                if (model != undefined){
+                    model.set('insert-into' , '');
+                }
+            }
+        }
+        else if (sourceElement.hasClass(constants.PATTERN)){
+            if(targetElement.hasClass(constants.STREAM)){
+                model = patternList.get(sourceId);
+                if (model != undefined){
+                    model.set('insert-into' , '');
+                }
             }
         }
     }
+
 });
 
 jsPlumb.bind('group:addMember' , function (event){
@@ -974,7 +1124,8 @@ function dropPartition(newAgent, i,mouseTop,mouseLeft)
         finalElement.append(connectionIn);
         //
         jsPlumb.makeTarget(connectionIn, {
-            anchor: 'Left'
+            anchor: 'Left',
+            maxConnections : 1
         });
         jsPlumb.makeSource(connectionIn, {
             anchor: 'Right'

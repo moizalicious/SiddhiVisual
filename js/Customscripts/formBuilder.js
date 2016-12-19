@@ -182,7 +182,7 @@ function generatePropertiesFormForQueries(element) {
     var queryType = $(element).parent().attr('class');
     var type= $(element).parent();
     if (!(clickedElement.get('from'))) {
-        alert('Connect to streams');
+        alert('Connect an input stream');
         $("#container").removeClass('disabledbutton');
         $("#toolbox").removeClass('disabledbutton');
     }
@@ -557,8 +557,6 @@ function generatePropertiesFormForQueries(element) {
     }
 }
 
-
-
 /**
  * @function generate property window for state machine
  * @param element
@@ -570,11 +568,17 @@ function generatePropertiesFormForPattern(element){
     $("#toolbox").addClass('disabledbutton');
     var id = $(element).parent().attr('id');
     var clickedElement = patternList.get(id);
-    if (clickedElement.get('insert-into') == '' || clickedElement.get('from').length == 0) {
-        alert('Connect to streams');
+    if (clickedElement.get('from').length == 0) {
+        alert('Connect input streams');
         $("#container").removeClass('disabledbutton');
         $("#toolbox").removeClass('disabledbutton');
     }
+    else if (clickedElement.get('insert-into') == '') {
+        alert('Connect an output stream');
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+    }
+
     else {
         //retrieve the pattern information from the collection
         var streams = [];
@@ -826,11 +830,17 @@ function generatePropertiesFormForJoinQuery(element) {
     $("#toolbox").addClass('disabledbutton');
     var id = $(element).parent().attr('id');
     var clickedElement = joinQueryList.get(id);
-    if (!(clickedElement.get('insert-into')) || !(clickedElement.get('from')) || clickedElement.get('from').length != 2) {
-        alert('Connect to streams');
+    if (!(clickedElement.get('from')) || clickedElement.get('from').length != 2) {
+        alert('Connect TWO input streams');
         $("#container").removeClass('disabledbutton');
         $("#toolbox").removeClass('disabledbutton');
     }
+    else if (!(clickedElement.get('insert-into'))) {
+        alert('Connect an output stream');
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+    }
+
     else {
         var streams = [];
         $.each(clickedElement.get('from'), function (index, streamID) {
@@ -1059,56 +1069,89 @@ function generatePropertiesFormForJoinQuery(element) {
 function generatePartitionKeyForm(element){
     var id = $(element.target).parent().attr('id');
     var partition = partitionList.get(id);
-    var propertyWindow = document.getElementsByClassName('property');
-    $(propertyWindow).collapse('show');
-    $("#container").addClass('disabledbutton');
-    $("#toolbox").addClass('disabledbutton');
-    var editor = new JSONEditor(document.getElementById('propertypane'), {
-        ajax: true,
-        schema: {
-            type: 'object',
-            title: 'Partition Key',
-            properties: {
-                stream: {
-                    type: 'string',
-                    title: 'Stream',
-                    required: true,
-                    propertyOrder: 1
-                },
-                property: {
-                    type: 'string',
-                    title: 'Property',
-                    required: true,
-                    propertyOrder: 2
+    var connections = jsPlumb.getConnections(element);
+    var connected= false;
+    var connectedStream = null;
+    $.each(connections, function (index, connection) {
+        var target = connection.targetId;
+        if(target.substr(0, target.indexOf('-')) == id){
+            connected = true;
+            var source = connection.sourceId;
+            connectedStream = source.substr(0, source.indexOf('-'));
+        }
+    });
+    if(!(connected)){
+        alert('Connect a stream for partitioning');
+        $("#container").removeClass('disabledbutton');
+        $("#toolbox").removeClass('disabledbutton');
+    }
+    else{
+        var fillWith= {};
+        var partitionKeys = partition.get('partition').with;
+        $.each(partitionKeys, function ( index , key) {
+            if( key.stream == connectedStream){
+                fillWith ={
+                    stream : (streamList.get(connectedStream)).get('define'),
+                    property : key.property
                 }
             }
-        },
-        disable_properties: true
-    });
-    $(propertyWindow).append('<div>'+
-        '<button id="form-submit">Submit</button>' +
-        '<button id="form-cancel">Cancel</button></div>');
+        });
+        var propertyWindow = document.getElementsByClassName('property');
+        $(propertyWindow).collapse('show');
+        $("#container").addClass('disabledbutton');
+        $("#toolbox").addClass('disabledbutton');
+        var editor = new JSONEditor(document.getElementById('propertypane'), {
+            ajax: true,
+            schema: {
+                type: 'object',
+                title: 'Partition Key',
+                properties: {
+                    stream: {
+                        type: 'string',
+                        title: 'Stream',
+                        required: true,
+                        propertyOrder: 1,
+                        template: (streamList.get(connectedStream)).get('define')
+                    },
+                    property: {
+                        type: 'string',
+                        title: 'Property',
+                        required: true,
+                        propertyOrder: 2
+                    }
+                }
+            },
+            startval: fillWith,
+            disable_properties: true
+        });
+        $(propertyWindow).append('<div>'+
+            '<button id="form-submit">Submit</button>' +
+            '<button id="form-cancel">Cancel</button></div>');
 
-    document.getElementById('form-submit').addEventListener('click', function () {
-        $("#container").removeClass('disabledbutton');
-        $("#toolbox").removeClass('disabledbutton');
-        $(propertyWindow).html('');
-        $(propertyWindow).collapse('hide');
-        var config = editor.getValue();
-
-        //update selected query model
-        var newPartitionKey = { 'stream' : config.stream , 'property' :config.property};
-        var partitionKeys = (partition.get('partition'));
-        partitionKeys['with'].push(newPartitionKey);
+        document.getElementById('form-submit').addEventListener('click', function () {
+            $("#container").removeClass('disabledbutton');
+            $("#toolbox").removeClass('disabledbutton');
+            $(propertyWindow).html('');
+            $(propertyWindow).collapse('hide');
+            var config = editor.getValue();
+            $.each(partitionKeys, function ( index , key) {
+                if( key.stream == connectedStream){
+                        key.property = config.property
+                }
+                else {
+                    var key = { stream : connectedStream , property : config.property};
+                    partitionKeys['with'].push(key);
+                }
+            });
+        });
         console.log(partition);
-    });
-
-    //'Cancel' button action
-    document.getElementById('form-cancel').addEventListener('click', function () {
-        $("#container").removeClass('disabledbutton');
-        $("#toolbox").removeClass('disabledbutton');
-        $(propertyWindow).html('');
-        $(propertyWindow).collapse('hide');
-    });
+        //'Cancel' button action
+        document.getElementById('form-cancel').addEventListener('click', function () {
+            $("#container").removeClass('disabledbutton');
+            $("#toolbox").removeClass('disabledbutton');
+            $(propertyWindow).html('');
+            $(propertyWindow).collapse('hide');
+        });
+    }
 
 }
