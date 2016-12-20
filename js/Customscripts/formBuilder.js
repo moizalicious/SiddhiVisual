@@ -1144,7 +1144,6 @@ function generatePartitionKeyForm(element){
                 }
             });
         });
-        console.log(partition);
         //'Cancel' button action
         document.getElementById('form-cancel').addEventListener('click', function () {
             $("#container").removeClass('disabledbutton');

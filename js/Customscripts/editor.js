@@ -15,7 +15,7 @@ flow.streamsList = new flow.StreamsList();
 
 flow.StreamTemplate = _.template(
     "<div class='streamNameNode'>Stream</div>"+
-    "<a class='boxclose'><b><img src='../Images/Cancel.png'></b></a>"+
+    "<a class='boxclose'><b><img src='../Images/cancel.png'></b></a>"+
     "<img src='../Images/connection.png' class='showIconDefined'>"+
     "<a><b><img src='../Images/settings.png' class='settingsIconLoc'></b></a>"+
     "<div class='connectorInExecutionPlan'></div>"+

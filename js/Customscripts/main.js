@@ -150,12 +150,10 @@ jsPlumb.ready(function() {
         drop: function (e, ui) {
             var mouseTop = e.pageY - canvas.offset().top +canvas.scrollTop()- 40;
             var mouseLeft = e.pageX - canvas.offset().left +canvas.scrollLeft()- 60;
-            var dropElem = ui.draggable.attr('class');
             //Clone the element in the toolbox in order to drop the clone on the canvas
-            droppedElement = ui.helper.clone();
+            var droppedElement = ui.helper.clone();
             //To further manipulate the jsplumb element, remove the jquery UI clone helper as jsPlumb doesn't support it
             ui.helper.remove();
-            $(droppedElement).removeAttr("class");
             $(droppedElement).draggable({containment: "container"});
             //Repaint to reposition all the elements that are on the canvas after the drop/addition of a new element on the canvas
             jsPlumb.repaint(ui.helper);
@@ -163,7 +161,7 @@ jsPlumb.ready(function() {
             var droptype;
             var newAgent;
             //If the dropped Element is a Stream then->
-            if (dropElem == "stream ui-draggable") {
+            if ($(droppedElement).hasClass('stream')) {
                 newAgent = $('<div>').attr('id', i).addClass('streamdrop ');
 
                 //The container and the toolbox are disabled to prevent the user from dropping any elements before initializing a Stream Element
@@ -179,7 +177,7 @@ jsPlumb.ready(function() {
             }
 
             //If the dropped Element is a Window(not window query) then->
-            else if (dropElem == "wstream ui-draggable") {
+            else if ($(droppedElement).hasClass('wstream')) {
                 newAgent = $('<div>').attr('id', i).addClass('wstreamdrop');
                 //Drop the element instantly since its projections will be set only when the user requires it
                 dropWindowStream(newAgent, i,mouseTop,mouseLeft,"Window");
@@ -188,8 +186,8 @@ jsPlumb.ready(function() {
             }
 
             //If the dropped Element is a Pass through Query then->
-            else if (dropElem == "squery ui-draggable") {
-                newAgent = $('<div>').attr('id', i).addClass('squerydrop ');
+            else if ($(droppedElement).hasClass('squery')) {
+                newAgent = $('<div>').attr('id', i).addClass('squerydrop');
                 droptype = "squerydrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
                 dropQuery(newAgent, i,droptype,mouseTop,mouseLeft,"Empty Query");
@@ -198,7 +196,7 @@ jsPlumb.ready(function() {
             }
 
             //If the dropped Element is a Filter query then->
-            else if (dropElem == "filter ui-draggable") {
+            else if ($(droppedElement).hasClass('filter')) {
                 newAgent = $('<div>').attr('id', i).addClass('filterdrop ');
                 droptype = "filterdrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
@@ -208,7 +206,7 @@ jsPlumb.ready(function() {
             }
 
             //If the dropped Element is a Window Query then->
-            else if (dropElem == "wquery ui-draggable") {
+            else if ($(droppedElement).hasClass('wquery')) {
                 newAgent = $('<div>').attr('id', i).addClass('wquerydrop ');
                 droptype = "wquerydrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
@@ -218,7 +216,7 @@ jsPlumb.ready(function() {
             }
 
             //If the dropped Element is a Join Query then->
-            else if (dropElem == "joquery ui-draggable") {
+            else if ($(droppedElement).hasClass('joquery')) {
                 newAgent = $('<div>').attr('id', i).addClass('joquerydrop');
                 droptype = "joquerydrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
@@ -228,7 +226,7 @@ jsPlumb.ready(function() {
             }
 
             //If the dropped Element is a State machine Query(Pattern and Sequence) then->
-            else if(dropElem == "stquery ui-draggable") {
+            else if($(droppedElement).hasClass('stquery')) {
                 newAgent = $('<div>').attr('id', i).addClass('stquerydrop');
                 droptype = "stquerydrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
@@ -240,7 +238,6 @@ jsPlumb.ready(function() {
             //If the dropped Element is a Partition then->
             else{
                 newAgent = $('<div>').attr('id', i).addClass('partitiondrop');
-                droptype = "partitiondrop";
                 //Drop the element instantly since its projections will be set only when the user requires it
                 dropPartition(newAgent,i,mouseTop,mouseLeft);
                 finalElementCount=i;
@@ -248,24 +245,7 @@ jsPlumb.ready(function() {
                 i++;
             }
             registerElementEventListeners(newAgent);
-            // console.log(document.elementFromPoint(newAgent.position().top , newAgent.position().left));
         }
-    });
-
-    //Display the model in Json format in the text area
-    $('#saveButton').click(function(){
-        saveFlowchart();
-        //generateForms();
-    });
-
-    //Export the generated Json output as a text file for storage purposes
-    $('#exportButton').click(function(){
-        exportFlowChart();
-    });
-
-    //Recreate the model based on the Json output provided
-    $('#loadButton').click(function(e){
-        loadFlowchart(e);
     });
 
     //auto align the diagram when the button is clicked
@@ -300,16 +280,11 @@ jsPlumb.bind('beforeDrop', function(connection){
             alert("Invalid Connection: Inner Streams are not exposed to outside");
         }
     }
-    else if($('#'+sourceId).hasClass(constants.PARTITION)){
+    if($('#'+sourceId).hasClass(constants.PARTITION)){
         if($(jsPlumb.getGroupFor(targetId)).attr('id') != sourceId){
             connectionValidity = false;
             alert("Invalid Connection: Connect to a partition query");
         }
-        var connections = jsPlumb.getConnections({target : source});
-        // if( connections.length == 0){
-        //     connectionValidity = false;
-        //     alert("Invalid Connection: Define a stream for partitioning");
-        // }
     }
     else if( targetElement.hasClass(constants.PASS_THROUGH) || targetElement.hasClass(constants.FILTER) || targetElement.hasClass(constants.WINDOW_QUERY)
         || targetElement.hasClass(constants.PATTERN) || targetElement.hasClass(constants.JOIN)) {
@@ -461,7 +436,7 @@ jsPlumb.bind('connection' , function(connection){
     var close_icon_overlay = connectionObject.addOverlay([
         "Custom", {
             create:function() {
-                return $('<img src="../images/Cancel.png" alt="">');
+                return $('<img src="../images/cancel.png" alt="">');
             },
             location : 0.60,
             id:"close",
@@ -477,11 +452,11 @@ jsPlumb.bind('connection' , function(connection){
     ]);
     close_icon_overlay.setVisible(false);
     //show the close icon when mouse is over the connection
-    connectionObject.bind('mouseover', function(conn) {
+    connectionObject.bind('mouseover', function() {
         close_icon_overlay.setVisible(true);
     });
     //hide the close icon when the mouse is not on the connection path
-    connectionObject.bind('mouseout', function(conn) {
+    connectionObject.bind('mouseout', function() {
         close_icon_overlay.setVisible(false);
     });
 });
@@ -653,6 +628,7 @@ jsPlumb.bind('group:addMember' , function (event){
  * @function Auto align the diagram
  */
 function autoAlign() {
+    //TODO auto aligning does not support 'Partition'
     var g = new dagre.graphlib.Graph();
     g.setGraph({
         rankdir: 'LR'
@@ -729,7 +705,6 @@ function registerElementEventListeners(newElement){
 
     //register event listener to remove the element when the close icon is clicked
     newElement.on('click', '.element-close-icon', function () {
-        console.log($(newElement).attr('id'));
         if(jsPlumb.getGroupFor(newElement)){
             var queries = partitionList.get(jsPlumb.getGroupFor(newElement)).get('queries');
             var removedQueryIndex = null;
@@ -746,8 +721,6 @@ function registerElementEventListeners(newElement){
         else{
             jsPlumb.remove(newElement);
         }
-
-        console.log( partitionList.get(jsPlumb.getGroupFor(newElement)));
     });
 }
 
@@ -774,16 +747,15 @@ function dropStream(newAgent,i,top,left, name) {
      conIcon --> Clicking this icon is supposed to toggle between showing and hiding the "Connection Anchor Points" (Not implemented)
      boxclose --> Icon to remove/delete an element
      */
-    var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick ="generatePropertiesFormForStreams(this)">').attr('id', (i+'-propImportStream'));
-    // var conIcon = $('<img src="../images/connection.png" onclick="connectionShowHideToggle(this)" class="element-conn-icon collapse ">').attr('id', (i+'vis'));
-    newAgent.append(node).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+    var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick ="generatePropertiesFormForStreams(this)">');
+    newAgent.append(node).append('<img src="../images/cancel.png" class="element-close-icon collapse">').append(prop);
     var finalElement = newAgent;
 
     /*
      connection --> The connection anchor point is appended to the element
      */
-    var connection1 = $('<div class="connectorInStream">').attr('id', i+"-Indefined" ).addClass('connection');
-    var connection2 = $('<div class="connectorOutStream">').attr('id', i+"-Outdefined" ).addClass('connection');
+    var connection1 = $('<div class="connectorInStream">').attr('id', i+"-in" ).addClass('connection');
+    var connection2 = $('<div class="connectorOutStream">').attr('id', i+"-out" ).addClass('connection');
 
 
 
@@ -874,41 +846,38 @@ function dropQuery(newAgent, i,droptype,top,left,text)
     textnode.id = i+"-textnodeInitial";
     node.appendChild(textnode);
 
-    if( droptype=='squerydrop' || droptype =='wquerydrop' || droptype == 'filterdrop'){
+    if( droptype==constants.PASS_THROUGH|| droptype ==constants.WINDOW_QUERY || droptype == constants.FILTER){
         var newQuery = new app.Query;
         newQuery.set('id', i);
         queryList.add(newQuery);
-        var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForQueries(this)">').attr('id', (i+('-prop')));
-        // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)"> ').attr('id', (i+'vis'));
-        newAgent.append(node).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+        var propertiesIcon = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForQueries(this)">');
+        newAgent.append(node).append('<img src="../images/cancel.png" class="element-close-icon collapse">').append(propertiesIcon);
         dropSimpleQueryElement(newAgent,i,top,left);
     }
 
-    else if(droptype=="joquerydrop")
+    else if(droptype==constants.JOIN)
     {
         var newJoinQuery = new app.JoinQuery;
         newJoinQuery.set('id', i);
         joinQueryList.add(newJoinQuery);
-        var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForJoinQuery(this)">').attr('id', (i+('-propjoquerydrop')));
-        // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)" >').attr('id', (i+'vis'));
-        newAgent.append(node).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+        var propertiesIcon = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForJoinQuery(this)">');
+        newAgent.append(node).append('<img src="../images/cancel.png" class="element-close-icon collapse">').append(propertiesIcon);
         dropCompleteJoinQueryElement(newAgent,i,top,left);
     }
-    else if(droptype=="stquerydrop")
+    else if(droptype==constants.PATTERN)
     {
         var newPattern = new app.Pattern;
         newPattern.set('id', i);
         patternList.add(newPattern);
-        var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForPattern(this)">').attr('id', (i+('-propstquerydrop')));
-        // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
-        newAgent.append(node).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+        var propertiesIcon = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="generatePropertiesFormForPattern(this)">');
+        newAgent.append(node).append('<img src="../images/cancel.png" class="element-close-icon collapse">').append(propertiesIcon);
         dropPatternQueryElement(newAgent,i,top,left);
     }
 }
 
 
 /**
- * @function drop the simple query element ( passthrough, filter and window)
+ * @function draw the simple query element ( passthrough, filter and window)
  * @param newAgent
  * @param i
  * @param top
@@ -951,7 +920,7 @@ function dropSimpleQueryElement(newAgent, i, top, left)
 }
 
 /**
- * @function drop the pattern query element ( passthrough, filter and window)
+ * @function draw the pattern query element ( passthrough, filter and window)
  * @param newAgent
  * @param i
  * @param top
@@ -990,6 +959,13 @@ function dropPatternQueryElement(newAgent, i,top, left)
     });
 }
 
+/**
+ * @function draw the join query element on the canvas
+ * @param newAgent
+ * @param i
+ * @param top
+ * @param left
+ */
 function dropCompleteJoinQueryElement(newAgent,i, top,left)
 {
 
@@ -1023,77 +999,11 @@ function dropCompleteJoinQueryElement(newAgent,i, top,left)
     });
 
 }
-// ------------------------------------Drop elements ends------------------------------------
 
 /**
- * @function Drop a window stream on the canvas
+ * @description draw the partition query on the canvas and add the event listeners for it
  * @param newAgent
  * @param i
- * @param e
- * @param topP
- * @param left
- * @param asName
- */
-
-function dropWindowStream(newAgent, i,topP,left,asName)
-{
-    /*
-     The node hosts a text node where the Window's name, input by the user will be held.
-     Rather than simply having a `newAgent.text(windowName)` statement, as the text function tends to
-     reposition the other appended elements with the length of the Stream name input by the user.
-     */
-    var windowNode = document.createElement("div");
-    windowNode.id = i+"-windowNode";
-    windowNode.className = "windowNameNode";
-    var windowTextnode = document.createTextNode(asName);   //Initially the asName will be "Window" as the has not yet initialized the window
-    windowTextnode.id = i+"-windowTextnode";
-    windowNode.appendChild(windowTextnode);
-
-    var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="">').attr('id', (i+('-prop')));
-    // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
-    newAgent.append(windowNode).append('<img src="../images/Cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
-
-    $(droppedElement).draggable({containment: "container"});
-
-    var finalElement =  newAgent;
-
-    var connectionIn = $('<div class="connectorInWindow">').attr('id', i + '-in').addClass('connection');
-    var connectionOut = $('<div class="connectorOutWindow">').attr('id', i + '-out').addClass('connection');
-
-    finalElement.css({
-        'top': topP,
-        'left': left
-    });
-
-    finalElement.append(connectionIn);
-    finalElement.append(connectionOut);
-
-    $('#container').append(finalElement);
-
-    jsPlumb.draggable(finalElement, {
-        containment: 'parent'
-    });
-
-    jsPlumb.makeTarget(connectionIn, {
-        anchor: 'Continuous',
-        maxConnections:1
-    });
-    // jsPlumb.makeTarget(connectionOut, {
-    //     anchor: 'Continuous'
-    // });
-
-    jsPlumb.makeSource(connectionOut, {
-        anchor: 'Continuous'
-    });
-
-}
-
-
-/**
- * @description Method that appends the prop to a partition element and calls the method to drop the partition onto the canvas
- * @param newAgent
- * @param i
- * @param droptype
  * @param mouseTop
  * @param mouseLeft
  */
@@ -1132,7 +1042,7 @@ function dropPartition(newAgent, i,mouseTop,mouseLeft)
         });
 
         x++;
-        $(connectionIn).on('click', function(endpoint, originalEvent){
+        $(connectionIn).on('click', function(endpoint){
             generatePartitionKeyForm(endpoint);
         });
     });
@@ -1152,6 +1062,69 @@ function dropPartition(newAgent, i,mouseTop,mouseLeft)
     partitionList.add(newPartition);
 
 }
+
+// ------------------------------------Drop elements ends------------------------------------
+
+/**
+ * @function Drop a window stream on the canvas
+ * @param newAgent
+ * @param i
+ * @param topP
+ * @param left
+ * @param asName
+ */
+// TODO: not updated
+function dropWindowStream(newAgent, i,topP,left,asName)
+{
+    /*
+     The node hosts a text node where the Window's name, input by the user will be held.
+     Rather than simply having a `newAgent.text(windowName)` statement, as the text function tends to
+     reposition the other appended elements with the length of the Stream name input by the user.
+     */
+    var windowNode = document.createElement("div");
+    windowNode.id = i+"-windowNode";
+    windowNode.className = "windowNameNode";
+    var windowTextnode = document.createTextNode(asName);   //Initially the asName will be "Window" as the has not yet initialized the window
+    windowTextnode.id = i+"-windowTextnode";
+    windowNode.appendChild(windowTextnode);
+
+    var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="">').attr('id', (i+('-prop')));
+    // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
+    newAgent.append(windowNode).append('<img src="../images/cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+    var finalElement =  newAgent;
+
+    var connectionIn = $('<div class="connectorInWindow">').attr('id', i + '-in').addClass('connection');
+    var connectionOut = $('<div class="connectorOutWindow">').attr('id', i + '-out').addClass('connection');
+
+    finalElement.css({
+        'top': topP,
+        'left': left
+    });
+
+    finalElement.append(connectionIn);
+    finalElement.append(connectionOut);
+
+    $('#container').append(finalElement);
+
+    jsPlumb.draggable(finalElement, {
+        containment: 'parent'
+    });
+
+    jsPlumb.makeTarget(connectionIn, {
+        anchor: 'Continuous',
+        maxConnections:1
+    });
+    // jsPlumb.makeTarget(connectionOut, {
+    //     anchor: 'Continuous'
+    // });
+
+    jsPlumb.makeSource(connectionOut, {
+        anchor: 'Continuous'
+    });
+
+}
+
+
 
 
 
