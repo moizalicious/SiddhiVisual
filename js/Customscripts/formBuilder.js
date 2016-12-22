@@ -46,13 +46,14 @@ function defineStream(newAgent, i, mouseTop, mouseLeft) {
                             type: {
                                 type: "string",
                                 enum: [
+                                    "string",
                                     "int",
                                     "long",
                                     "float",
                                     "double",
                                     "boolean"
                                 ],
-                                default: "int"
+                                default: "string"
                             }
                         }
                     }
@@ -91,7 +92,6 @@ function generatePropertiesFormForStreams(element){
     $("#container").addClass('disabledbutton');
     $("#toolbox").addClass('disabledbutton');
     var id = $(element).parent().attr('id');
-    console.log(streamList);
     //retrieve the stream information from the collection
     var clickedElement = streamList.get(id);
     var name = clickedElement.get('define');
@@ -123,13 +123,14 @@ function generatePropertiesFormForStreams(element){
                             type: {
                                 type: "string",
                                 enum: [
+                                    "string",
                                     "int",
                                     "long",
                                     "float",
                                     "double",
                                     "boolean"
                                 ],
-                                default: "int"
+                                default: "string"
                             }
                         }
                     }
@@ -288,13 +289,14 @@ function generatePropertiesFormForQueries(element) {
                                 type: {
                                     type: "string",
                                     enum: [
+                                        "string",
                                         "int",
                                         "long",
                                         "float",
                                         "double",
                                         "boolean"
                                     ],
-                                    default: "int"
+                                    default: "string"
                                 }
                             }
                         }

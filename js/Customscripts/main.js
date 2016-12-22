@@ -745,7 +745,6 @@ function dropStream(newAgent,i,top,left, name) {
      prop --> When clicked on this icon, a definition and related information of the Stream Element will be displayed as an alert message
      showIcon --> An icon that elucidates whether the dropped stream element is an Import/Export/Defined stream (In this case: an Import arrow icon)
      conIcon --> Clicking this icon is supposed to toggle between showing and hiding the "Connection Anchor Points" (Not implemented)
-     boxclose --> Icon to remove/delete an element
      */
     var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick ="generatePropertiesFormForStreams(this)">');
     newAgent.append(node).append('<img src="../images/cancel.png" class="element-close-icon collapse">').append(prop);
@@ -1016,11 +1015,23 @@ function dropPartition(newAgent, i,mouseTop,mouseLeft)
     $(finalElement).draggable({
         containment: "container",
         drag:function(){
-            jsPlumb.repaintEverything();
-            $(this).find(".connection").each(function(i,e){
-            });
+            //jsPlumb.repaintEverything();
+
+            jsPlumb.repaint($("#1"));
+            console.log("AAAAAA");
+            jsPlumb.hide("1");
+            console.log($("#1"));
+
+
+            // var connections = jsPlumb.getConnections(this);
+            // $.each( connections, function(index,connection){
+            //     jsPlumb.repaint(connection);
+            // });
         }
     });
+    // jsPlumb.draggable(finalElement, {
+    //     containment: 'parent'
+    // });
     var x =1;
     $(finalElement).resizable();
 
@@ -1090,7 +1101,7 @@ function dropWindowStream(newAgent, i,topP,left,asName)
 
     var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="">').attr('id', (i+('-prop')));
     // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
-    newAgent.append(windowNode).append('<img src="../images/cancel.png" class="element-close-icon collapse" id="boxclose">').append(prop);
+    newAgent.append(windowNode).append('<img src="../images/cancel.png" class="element-close-icon collapse">').append(prop);
     var finalElement =  newAgent;
 
     var connectionIn = $('<div class="connectorInWindow">').attr('id', i + '-in').addClass('connection');
