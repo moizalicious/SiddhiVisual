@@ -400,7 +400,7 @@ function generatePropertiesFormForQueries(element) {
                 insertInto: outStream
             };
         }
-        else if (type.hasClass(queryType == constants.FILTER)) {
+        else if (type.hasClass(constants.FILTER)) {
             fillWith = {
                 name: name,
                 from: inStream,

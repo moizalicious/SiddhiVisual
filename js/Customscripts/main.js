@@ -815,7 +815,7 @@ function dropStreamFromQuery(position , id, outStream, streamAttributes) {
     //make the connection
     jsPlumb.connect({
         source: id+'-out',
-        target: elementID+'-Indefined'
+        target: elementID+'-in'
     });
     //update the query model with output stream
     var query = queryList.get(id);
