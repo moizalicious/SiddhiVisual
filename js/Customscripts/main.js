@@ -1015,23 +1015,13 @@ function dropPartition(newAgent, i,mouseTop,mouseLeft)
     $(finalElement).draggable({
         containment: "container",
         drag:function(){
-            //jsPlumb.repaintEverything();
-
-            jsPlumb.repaint($("#1"));
-            console.log("AAAAAA");
-            jsPlumb.hide("1");
-            console.log($("#1"));
-
-
+            jsPlumb.repaintEverything();
             // var connections = jsPlumb.getConnections(this);
             // $.each( connections, function(index,connection){
             //     jsPlumb.repaint(connection);
             // });
         }
     });
-    // jsPlumb.draggable(finalElement, {
-    //     containment: 'parent'
-    // });
     var x =1;
     $(finalElement).resizable();
 
@@ -1100,7 +1090,6 @@ function dropWindowStream(newAgent, i,topP,left,asName)
     windowNode.appendChild(windowTextnode);
 
     var prop = $('<img src="../images/settings.png" class="element-prop-icon collapse" onclick="">').attr('id', (i+('-prop')));
-    // var conIcon = $('<img src="../images/connection.png" class="element-conn-icon collapse" onclick="connectionShowHideToggle(this)">').attr('id', (i+'vis'));
     newAgent.append(windowNode).append('<img src="../images/cancel.png" class="element-close-icon collapse">').append(prop);
     var finalElement =  newAgent;
 
@@ -1125,10 +1114,6 @@ function dropWindowStream(newAgent, i,topP,left,asName)
         anchor: 'Continuous',
         maxConnections:1
     });
-    // jsPlumb.makeTarget(connectionOut, {
-    //     anchor: 'Continuous'
-    // });
-
     jsPlumb.makeSource(connectionOut, {
         anchor: 'Continuous'
     });
