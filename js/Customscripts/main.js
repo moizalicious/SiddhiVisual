@@ -648,10 +648,23 @@ function autoAlign() {
     Array.prototype.push.apply(nodes, document.getElementsByClassName(constants.WINDOW_STREAM));
     Array.prototype.push.apply(nodes, document.getElementsByClassName(constants.PARTITION));
 
+    var graphJSON = [];
+    graphJSON.nodes = [];
+    graphJSON.edges = [];
+    graphJSON.groups = [];
+
+    var i = 0;
     nodes.forEach(function (node) {
         graph.setNode(node.id, {width: node.offsetWidth, height: node.offsetHeight});
+        graphJSON.nodes[i] = {
+            id: node.id,
+            width: node.offsetWidth,
+            height: node.offsetHeight
+        };
+        i++;
     });
 
+    i = 0;
     var edges = jsPlumb.getAllConnections();
     edges.forEach(function (edge) {
         var target = edge.targetId;
@@ -659,18 +672,39 @@ function autoAlign() {
         var targetId = target.substr(0, target.indexOf('-'));
         var sourceId = source.substr(0, source.indexOf('-'));
         graph.setEdge(sourceId, targetId);
+        graphJSON.edges[i] = {
+            parent: sourceId,
+            child: targetId
+        };
+        i++;
     });
 
+    i = 0;
     var groups = [];
     Array.prototype.push.apply(groups, document.getElementsByClassName(constants.PARTITION));
     groups.forEach(function (partition) {
+        graphJSON.groups[i] = {
+            id: null,
+            children: []
+        };
+
+        graphJSON.groups[i].id = partition.id;
+
         var children = partition.childNodes;
+
+        var c = 0;
         children.forEach(function (child) {
             var className = child.className;
             if (className.includes(constants.STREAM) || className.includes(constants.PASS_THROUGH) || className.includes(constants.FILTER) || className.includes(constants.WINDOW_QUERY) || className.includes(constants.JOIN) || className.includes(constants.PATTERN)) {
                 graph.setParent(child.id, partition.id);
+
+                graphJSON.groups[i].children[c] = child.id;
+
+                c++;
             }
         });
+
+        i++;
     });
 
     dagre.layout(graph);
@@ -679,10 +713,22 @@ function autoAlign() {
         var node = graph.node(nodeId);
         var jNode = $("#" + nodeId);
 
-        jNode.css("left", node.x + "px");
-        jNode.css("top", node.y + "px");
+        var isInPartition = false;
+        graphJSON.groups.forEach(function (group) {
+           group.children.forEach(function (child) {
+               if (nodeId == child) {
+                   isInPartition = true;
+               }
+           }); 
+        });
+
+        if (!isInPartition) {
+            jNode.css("left", (node.x) + "px");
+            jNode.css("top", (node.y) + "px");
+        }
     });
 
+    console.log(graphJSON);
     console.log(graph._nodes);
 
     jsPlumb.repaintEverything();
