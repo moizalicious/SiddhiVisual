@@ -649,27 +649,43 @@ function autoAlign() {
     Array.prototype.push.apply(nodes, document.getElementsByClassName(constants.PARTITION));
 
     nodes.forEach(function (node) {
-        graph.setNode(node.id, {width: 120, height: 80});
+        graph.setNode(node.id, {width: node.offsetWidth, height: node.offsetHeight});
     });
 
     var edges = jsPlumb.getAllConnections();
     edges.forEach(function (edge) {
         var target = edge.targetId;
         var source = edge.sourceId;
-        var targetId = target.substr(0, target.indexOf("-"));
-        var sourceId = target.substr(0, source.indexOf("-"));
+        var targetId = target.substr(0, target.indexOf('-'));
+        var sourceId = source.substr(0, source.indexOf('-'));
         graph.setEdge(sourceId, targetId);
     });
 
-    // TODO IGNORING GROUPS FOR NOW
+    var groups = [];
+    Array.prototype.push.apply(groups, document.getElementsByClassName(constants.PARTITION));
+    groups.forEach(function (partition) {
+        var children = partition.childNodes;
+        children.forEach(function (child) {
+            var className = child.className;
+            if (className.includes(constants.STREAM) || className.includes(constants.PASS_THROUGH) || className.includes(constants.FILTER) || className.includes(constants.WINDOW_QUERY) || className.includes(constants.JOIN) || className.includes(constants.PATTERN)) {
+                graph.setParent(child.id, partition.id);
+            }
+        });
+    });
 
     dagre.layout(graph);
 
     graph.nodes().forEach(function (nodeId) {
         var node = graph.node(nodeId);
-        $("#" + nodeId).css("left", node.x + "px");
-        $("#" + nodeId).css("top", node.y + "px");
+        var jNode = $("#" + nodeId);
+
+        jNode.css("left", node.x + "px");
+        jNode.css("top", node.y + "px");
     });
+
+    console.log(graph._nodes);
+
+    jsPlumb.repaintEverything();
 
     // var g = new dagre.graphlib.Graph({compound: true});
     // g.setGraph({
