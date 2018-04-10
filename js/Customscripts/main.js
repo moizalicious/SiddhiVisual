@@ -713,25 +713,46 @@ function autoAlign() {
         var node = graph.node(nodeId);
         var jNode = $("#" + nodeId);
 
-        var isInPartition = false;
-        graphJSON.groups.forEach(function (group) {
-           group.children.forEach(function (child) {
-               if (nodeId == child) {
-                   isInPartition = true;
-               }
-           }); 
-        });
+        var left = node.x - (node.width / 2) + 20;
+        var top = node.y - (node.height / 2) + 20;
 
-        if (!isInPartition) {
-            jNode.css("left", (node.x) + "px");
-            jNode.css("top", (node.y) + "px");
-        }
+        jNode.css("left", left + "px");
+        jNode.css("top", top + "px");
     });
+
 
     console.log(graphJSON);
     console.log(graph._nodes);
 
     jsPlumb.repaintEverything();
+
+
+    // graph.nodes().forEach(function (nodeId) {
+    //     var node = graph.node(nodeId);
+    //     var jNode = $("#" + nodeId);
+    //
+    //     var isInPartition = false;
+    //     var partitionId = null;
+    //     graphJSON.groups.forEach(function (group) {
+    //         group.children.forEach(function (child) {
+    //             if (nodeId == child) {
+    //                 isInPartition = true;
+    //
+    //             }
+    //         });
+    //     });
+    //
+    //     if (!isInPartition) {
+    //         jNode.css("left", (node.x) + "px");
+    //         jNode.css("top", (node.y) + "px");
+    //     } else {
+    //
+    //     }
+    // });
+
+
+
+
 
     // var g = new dagre.graphlib.Graph({compound: true});
     // g.setGraph({
