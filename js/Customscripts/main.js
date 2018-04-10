@@ -699,6 +699,7 @@ function autoAlign() {
                 graph.setParent(child.id, partition.id);
 
                 graphJSON.groups[i].children[c] = child.id;
+                graph.setParent(child.id, partition.id);
 
                 c++;
             }
@@ -713,16 +714,44 @@ function autoAlign() {
         var node = graph.node(nodeId);
         var jNode = $("#" + nodeId);
 
-        var left = node.x - (node.width / 2) + 20;
-        var top = node.y - (node.height / 2) + 20;
+        var isInPartition = false;
+        var partitionId = -1;
+        graphJSON.groups.forEach(function (group) {
+            group.children.forEach(function (child) {
+                if (nodeId == child) {
+                    isInPartition = true;
+                    partitionId = group.id;
+                }
+            });
+        });
 
-        jNode.css("left", left + "px");
-        jNode.css("top", top + "px");
+        if (!isInPartition) {
+            var left = node.x - (node.width / 2) + 20;
+            var top = node.y - (node.height / 2) + 20;
+
+            jNode.css("left", left + "px");
+            jNode.css("top", top + "px");
+        } else {
+            var partitionNode = graph.node(partitionId);
+
+            var partitionNodeTop = partitionNode.x - (partitionNode.width / 2) + 20;
+            var partitionNodeLeft = partitionNode.y - (partitionNode.height / 2) + 20;
+
+            // TODO check this.
+            var left = node.x - (node.width / 2) - (partitionNodeLeft / 2) + 20;
+            var top = node.y - (node.height / 2) - (partitionNodeTop / 2) + 20;
+
+            jNode.css("left", left + "px");
+            jNode.css("top", top + "px");
+
+        }
+
+        jNode.css("width", node.width + "px");
+        jNode.css("height", node.height + "px");
     });
 
-
     console.log(graphJSON);
-    console.log(graph._nodes);
+    console.log(graph);
 
     jsPlumb.repaintEverything();
 
@@ -749,9 +778,6 @@ function autoAlign() {
     //
     //     }
     // });
-
-
-
 
 
     // var g = new dagre.graphlib.Graph({compound: true});
