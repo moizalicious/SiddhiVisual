@@ -733,13 +733,14 @@ function autoAlign() {
             jNode.css("top", top + "px");
         } else {
             var partitionNode = graph.node(partitionId);
+            // var $partitionNode = $("#" + partitionId);
 
-            var partitionNodeTop = partitionNode.x - (partitionNode.width / 2) + 20;
-            var partitionNodeLeft = partitionNode.y - (partitionNode.height / 2) + 20;
+            var partitionNodeLeft = partitionNode.x - (partitionNode.width / 2) + 20;
+            var partitionNodeTop = partitionNode.y - (partitionNode.height / 2) + 20;
 
             // TODO check this.
-            var left = node.x - (node.width / 2) - (partitionNodeLeft / 2) + 20;
-            var top = node.y - (node.height / 2) - (partitionNodeTop / 2) + 20;
+            var left = node.x - (node.width / 2) + 20 - partitionNodeLeft;
+            var top = node.y - (node.height / 2) + 20 - partitionNodeTop;
 
             jNode.css("left", left + "px");
             jNode.css("top", top + "px");
